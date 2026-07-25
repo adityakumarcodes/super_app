@@ -1,0 +1,906 @@
+[
+  {
+    "id": 2,
+    "created_at": "2023-11-01 15:26:13+00",
+    "title": "",
+    "description": "To sum up atomic design in a nutshell: \n1) Atoms are UI elements that can’t be broken down any further and serve as the elemental building blocks of an interface. \n2) Molecules are collections of atoms that form relatively simple UI components. \n3) Organisms are relatively complex components that form discrete sections of an interface. \n4) Templates place components within a layout and demonstrate the design’s underlying content structure. \n5) Pages apply real content to templates and articulate variations to demonstrate the final UI and test the resilience of the design system.",
+    "imageUrl": "https://atomicdesign.bradfrost.com/images/content/atomic-design-process.png",
+    "long_desc": {
+      "time": 1701368244004,
+      "blocks": [
+        {
+          "id": "S6WtJfJv7Z",
+          "data": {
+            "items": [
+              {
+                "text": "It is a block-styled editor",
+                "checked": false
+              },
+              {
+                "text": "Clean output data",
+                "checked": true
+              },
+              {
+                "text": "Simple and powerful API",
+                "checked": true
+              }
+            ]
+          },
+          "type": "checklist"
+        }
+      ],
+      "version": "2.28.2"
+    },
+    "user_id": "05244198-7873-488e-a8c5-e9e7646d7df2"
+  },
+  {
+    "id": 251,
+    "created_at": "2023-09-15 14:57:06.016422+00",
+    "title": "Things learned during dev",
+    "description": "",
+    "imageUrl": "http://localhost:3003/public/images/notes/red-background.jpg",
+    "long_desc": {
+      "time": 1703790654188,
+      "blocks": [
+        {
+          "id": "Y3w2hwZ-xG",
+          "data": {
+            "items": [
+              "The nullish coalescing (??) operator is a logical operator that returns its right-hand side operand when its left-hand side operand is null or undefined, and otherwise returns its left-hand side operand."
+            ],
+            "style": "unordered"
+          },
+          "type": "list"
+        },
+        {
+          "id": "sIEWgzLZOO",
+          "data": {
+            "items": [
+              "CSS Grid is for layout; Flexbox is for alignment",
+              "Avoid declaring arrow functions or binding in render for optimal performance.<br>",
+              "By default, Tailwind uses a mobile-first breakpoint system. What this means is that unprefixed utilities (like uppercase) take effect on all screen sizes, while prefixed utilities (like md:uppercase) only take effect at the specified breakpoint and above."
+            ],
+            "style": "unordered"
+          },
+          "type": "list"
+        },
+        {
+          "id": "eRGb1hyIul",
+          "data": {
+            "items": [
+              "The target property returns the element on which the event occurred, opposed to the currentTarget property, which returns the element whose event listener triggered the event."
+            ],
+            "style": "unordered"
+          },
+          "type": "list"
+        },
+        {
+          "id": "Ki2hPDZgVj",
+          "data": {
+            "text": "Strict equality (===) operator",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "9E-EXBe7Dr",
+          "data": {
+            "text": "checks whether its two operands are equal, returning a Boolean result. It always considers operands of different types to be different."
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "w-lD8NMYBi",
+          "data": {
+            "text": "&lt;img loading=\"lazy\"/&gt;",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "_K3R1rpm9v",
+          "data": {
+            "text": "Load the images as you scroll,check the network tab"
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "4L58_-SUq1",
+          "data": {
+            "text": "Rendering patterns",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "g3xxqulNyI",
+          "data": {
+            "text": "A rendering pattern refers to the way in which the HTML, CSS, and JavaScript code is all processed and rendered in a website. Different rendering patterns are used to achieve different performance and user experience goals. The most common rendering patterns in web development are: Client-side rendering (CSR): In CSR, the client's browser generates the HTML content of a web page on the client-side using JavaScript. This approach can provide a fast and interactive user experience but can be slower for initial loading times and bad for SEO. Server-side rendering (SSR): In SSR, the web server generates the HTML content of a web page on the server-side and sends it to the client's browser. This approach can improve initial loading times and SEO (search engine optimization) but can be slower for dynamic content. Server-Side Rendering (SSR) can help improve the initial load time of the application by rendering the initial page on the server-side. This can help improve the Time-to-Interactive (TTI) and First Contentful Paint (FCP) metrics. You can use tools such as Next.js or Gatsby to implement SSR in your application. If your priority is to provide users with a fluid, native-like experience, CSR is probably a good choice. If you need ultra fast page load times, SSR or SSG can be a better option."
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "_hkMFTXnxu",
+          "data": {
+            "text": "npm outdated",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "gp7_f6f-qp",
+          "data": {
+            "text": "This command will check every installed dependency and compare the current version with the latest version in the npm registry."
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "LhX8GkSTCl",
+          "data": {
+            "text": "npm update",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "AJlBCfQ47H",
+          "data": {
+            "text": "With this method, to install updates for every package, you just need to run: npm update Keep in mind that with npm update it will never update to a major breaking-changes version. It updates the dependencies in package.json and package-lock.json. It will use the \"wanted\" version. To obtain the \"latest\" version append @latest to individual installs, for example npm install react@latest."
+          },
+          "type": "paragraph"
+        }
+      ],
+      "version": "2.28.2"
+    },
+    "user_id": "05244198-7873-488e-a8c5-e9e7646d7df2"
+  },
+  {
+    "id": 357,
+    "created_at": "2023-09-22 06:39:38.709897+00",
+    "title": "Daily motivation",
+    "description": "⚡Eat healthy ⚡Think positive ⚡Logical thinking ⚡Be strong ⚡1 hour exercise",
+    "imageUrl": "",
+    "long_desc": {
+      "time": 1701782153875,
+      "blocks": [
+        {
+          "id": "UR2Ak9xbhK",
+          "data": {
+            "text": "⚡Eat healthy "
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "7Rqv-qMQln",
+          "data": {
+            "text": "⚡Think positive "
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "hkHaoV1-mS",
+          "data": {
+            "text": "⚡Logical thinking "
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "vIKIKIe_1T",
+          "data": {
+            "text": "⚡Be strong "
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "PDwIiRKiRP",
+          "data": {
+            "text": "⚡1 hour exercise"
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "ooMMVknqyf",
+          "data": {
+            "text": "⚡Patience "
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "X3RMUtZAQt",
+          "data": {
+            "text": "⚡Consistency "
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "g2Bi6lBbwL",
+          "data": {
+            "text": "⚡Hard work "
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "gbI1vPrz2t",
+          "data": {
+            "text": "⚡Discipline "
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "rw_OSgRNrn",
+          "data": {
+            "text": "⚡Self Confidence "
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "r1vWmQ3uRf",
+          "data": {
+            "text": "⚡Sacrifice"
+          },
+          "type": "paragraph"
+        }
+      ],
+      "version": "2.28.2"
+    },
+    "user_id": "05244198-7873-488e-a8c5-e9e7646d7df2"
+  },
+  {
+    "id": 487,
+    "created_at": "2023-10-06 13:13:50.683507+00",
+    "title": "Shayari",
+    "description": "हज़ारों ख़्वाहिशें ऐसी कि हर ख़्वाहिश पे दम निकले बहुत निकले मिरे अरमान लेकिन फिर भी कम निकले",
+    "imageUrl": "",
+    "long_desc": {
+      "time": 1701783017452,
+      "blocks": [
+        {
+          "id": "XIqtF3O0Tq",
+          "data": {
+            "items": [
+              "उसूलों पे जहाँ आँच आये टकराना ज़रूरी है जो ज़िन्दा हों तो फिर ज़िन्दा नज़र आना ज़रूरी है",
+              "हज़ारों ख़्वाहिशें ऐसी कि हर ख़्वाहिश पे दम निकले बहुत निकले मिरे अरमान लेकिन फिर भी कम निकले<br>"
+            ],
+            "style": "unordered"
+          },
+          "type": "list"
+        }
+      ],
+      "version": "2.28.2"
+    },
+    "user_id": "05244198-7873-488e-a8c5-e9e7646d7df2"
+  },
+  {
+    "id": 555,
+    "created_at": "2023-11-08 06:36:20.465257+00",
+    "title": "",
+    "description": "A cute, happy, 3d candy corn character on an orange background chibi style",
+    "imageUrl": "http://localhost:3003/public/images/notes/corn3.jfif",
+    "long_desc": {
+      "time": 1701368244004,
+      "blocks": [
+        {
+          "id": "toslUZa7ML",
+          "data": {
+            "file": {
+              "url": "http://localhost:3003/public/images/notes/corn1.jfif"
+            },
+            "caption": "Running",
+            "stretched": false,
+            "withBorder": false,
+            "withBackground": false
+          },
+          "type": "image"
+        },
+        {
+          "id": "tadlUZa7ML",
+          "data": {
+            "file": {
+              "url": "http://localhost:3003/public/images/notes/corn2.jfif"
+            },
+            "caption": "Big bro",
+            "stretched": false,
+            "withBorder": false,
+            "withBackground": false
+          },
+          "type": "image"
+        }
+      ],
+      "version": "2.28.2"
+    },
+    "user_id": "05244198-7873-488e-a8c5-e9e7646d7df2"
+  },
+  {
+    "id": 565,
+    "created_at": "2023-11-08 16:36:14.768199+00",
+    "title": "",
+    "description": "generate cute,happy, 3d cat chasing a woolen ball",
+    "imageUrl": "http://localhost:3003/public/images/notes/cat1.jfif",
+    "long_desc": {
+      "time": 1701368244004,
+      "blocks": [
+        {
+          "id": "torlUZa7ML",
+          "data": {
+            "file": {
+              "url": "http://localhost:3003/public/images/notes/cat3.jfif"
+            },
+            "caption": "Cat image",
+            "stretched": false,
+            "withBorder": false,
+            "withBackground": false
+          },
+          "type": "image"
+        },
+        {
+          "id": "torlUZd7ML",
+          "data": {
+            "file": {
+              "url": "http://localhost:3003/public/images/notes/cat2.jfif"
+            },
+            "caption": "generate cute,happy, 3d cat chasing a woolen ball",
+            "stretched": false,
+            "withBorder": false,
+            "withBackground": false
+          },
+          "type": "image"
+        }
+      ],
+      "version": "2.28.2"
+    },
+    "user_id": "05244198-7873-488e-a8c5-e9e7646d7df2"
+  },
+  {
+    "id": 618,
+    "created_at": "2023-12-03 15:17:18.249183+00",
+    "title": "Bugs",
+    "description": "generate a 3d cute bug waiting happily to be resolved in a gradient background without text with red back and shining eyes",
+    "imageUrl": "http://localhost:3003/public/images/notes/bug.jfif",
+    "long_desc": {
+      "time": 1707910370455,
+      "blocks": [
+        {
+          "id": "1FVw80I-3N",
+          "data": {
+            "text": "<b>Goals of ALOHA</b>",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "2f9n9nzaDd",
+          "data": {
+            "items": [
+              "Component UI library",
+              "Custom reusable hooks",
+              "Open source cross platform super app"
+            ],
+            "style": "unordered"
+          },
+          "type": "list"
+        },
+        {
+          "id": "akvW6VaGgx",
+          "data": {
+            "text": "Features list",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "0PIDQ5GpCY",
+          "data": {
+            "items": [
+              {
+                "text": "Fetch to editor &amp; update",
+                "checked": true
+              },
+              {
+                "text": "Display invalid credentials message",
+                "checked": false
+              },
+              {
+                "text": "Add undo/redo feature in editor&nbsp;<a href=\"https://redux.js.org/usage/implementing-undo-history\">Implementing Undo History | Redux</a>",
+                "checked": false
+              },
+              {
+                "text": "Order of tasks can be changed using react beautiful dnd",
+                "checked": false
+              },
+              {
+                "text": "change checklist color to violet",
+                "checked": true
+              },
+              {
+                "text": "Cookie remove refresh show login as null",
+                "checked": false
+              },
+              {
+                "text": "&nbsp;Rich text editor",
+                "checked": true
+              },
+              {
+                "text": "Attach files(pdf,csv,doc,ppt,xlsx), images(jpeg), links, audio(mp3), video",
+                "checked": false
+              },
+              {
+                "text": "Sync",
+                "checked": false
+              },
+              {
+                "text": "Offline support =&gt;&nbsp;Offline DB =&gt; WatermelonDB or PouchDB or RXDB =&gt; “Your data should be stored locally first and synced remotely second”",
+                "checked": false
+              },
+              {
+                "text": "Search tags",
+                "checked": false
+              },
+              {
+                "text": "Sharing&nbsp;",
+                "checked": false
+              },
+              {
+                "text": "Password lock for task",
+                "checked": false
+              },
+              {
+                "text": "Integration",
+                "checked": false
+              },
+              {
+                "text": "History revision",
+                "checked": false
+              },
+              {
+                "text": "Reminder notification",
+                "checked": false
+              },
+              {
+                "text": "Import &amp; Export",
+                "checked": false
+              },
+              {
+                "text": "Dark mode",
+                "checked": false
+              },
+              {
+                "text": "Trash",
+                "checked": false
+              },
+              {
+                "text": "Read only mode",
+                "checked": true
+              }
+            ]
+          },
+          "type": "checklist"
+        },
+        {
+          "id": "hRtspmF6U3",
+          "data": {
+            "items": [
+              {
+                "text": "Word of the day+Weather+Stock market widgets",
+                "checked": true
+              },
+              {
+                "text": "Fetch words/quotes from supabase",
+                "checked": true
+              },
+              {
+                "text": "onclick fetch next word or quote",
+                "checked": true
+              },
+              {
+                "text": "during fetch show Loading... text",
+                "checked": false
+              },
+              {
+                "text": "migrate shop section api to supabase api",
+                "checked": true
+              },
+              {
+                "text": "How to upload and extract JSON data into rows in a Postgres database.",
+                "checked": false
+              },
+              {
+                "text": "Redux topic two examples-counter and products",
+                "checked": true
+              },
+              {
+                "text": "Change ProductContext for state management to using context for theme manager/dark theme",
+                "checked": true
+              },
+              {
+                "text": "Refactor Authentication system",
+                "checked": true
+              },
+              {
+                "text": "debounce and throttle",
+                "checked": false
+              },
+              {
+                "text": "Add ability to add audio messages",
+                "checked": false
+              },
+              {
+                "text": "Collaborative editing and drawing",
+                "checked": false
+              },
+              {
+                "text": "Spell check & Suggestion",
+                "checked": false
+              },
+              {
+                "text": "comment and mentions",
+                "checked": false
+              },
+              {
+                "text": "Voice to text/Text to speech",
+                "checked": false
+              },
+              {
+                "text": "image recogination",
+                "checked": false
+              },
+              {
+                "text": "pin tasks",
+                "checked": false
+              }
+            ]
+          },
+          "type": "checklist"
+        },
+        {
+          "id": "kM1yuxJjba",
+          "data": {
+            "text": "New custom components",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "7p5XSpJRdW",
+          "data": {
+            "items": [
+              {
+                "text": "FloatButton",
+                "checked": false
+              },
+              {
+                "text": "Tree",
+                "checked": true
+              },
+              {
+                "text": "Calender",
+                "checked": false
+              },
+              {
+                "text": "Tab",
+                "checked": true
+              },
+              {
+                "text": "Segmented",
+                "checked": true
+              },
+              {
+                "text": "Tooltip",
+                "checked": true
+              },
+              {
+                "text": "Drawer",
+                "checked": false
+              },
+              {
+                "text": "Skeleton",
+                "checked": false
+              },
+              {
+                "text": "LinkPreview",
+                "checked": true
+              },
+              {
+                "text": "Accordian",
+                "checked": false
+              },
+              {
+                "text": "Carousel,Ticker and Slideshow framer components&nbsp;&nbsp;",
+                "checked": false
+              },
+              {
+                "text": "Bookmark importer with duplicate remover",
+                "checked": false
+              },
+              {
+                "text": "Add single image / multiple image gallery airbnb style (upload,url)",
+                "checked": false
+              }
+            ]
+          },
+          "type": "checklist"
+        },
+        {
+          "id": "b6Q_nIJ99v",
+          "data": {
+            "text": "<b>InteractiveImage</b> - use to display image component"
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "OK0Y0JpQ9A",
+          "data": {
+            "items": [
+              "Click image =&gt; zoom in",
+              "Load failed =&gt; display fallback image",
+              "Image loading =&gt; show blur effect",
+              "Multiple image preview =&gt; left or right click",
+              "Add controls to image download, rotateLeft, rotateRight, flipX, flipY, zoomIn, zoomOut"
+            ],
+            "style": "unordered"
+          },
+          "type": "list"
+        },
+        {
+          "id": "DAzK-68TnM",
+          "data": {
+            "text": "New custom hooks",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "8XfEzndOD5",
+          "data": {
+            "items": [
+              {
+                "text": "react-toastify - Toast notification component motivate/useSnackbar",
+                "checked": false
+              },
+              {
+                "text": "useFetch to makek api calls",
+                "checked": false
+              },
+              {
+                "text": "using naviagtor offine and navigator connection Web api to check the online /offline status of the network using custom hook",
+                "checked": false
+              },
+              {
+                "text": "CRUD+upload custom hook",
+                "checked": false
+              }
+            ]
+          },
+          "type": "checklist"
+        },
+        {
+          "id": "oUSvQFYTFy",
+          "data": {},
+          "type": "delimiter"
+        },
+        {
+          "id": "torlUZa5ML",
+          "data": {
+            "file": {
+              "url": "http://localhost:3003/public/images/notes/pancake.jpeg"
+            },
+            "caption": "Pancake with Sliced Strawberry",
+            "stretched": false,
+            "withBorder": false,
+            "withBackground": false
+          },
+          "type": "image"
+        }
+      ],
+      "version": "2.28.2"
+    },
+    "user_id": "82cd4598-e76f-4e29-898a-83990bbad037"
+  },
+  {
+    "id": 656,
+    "created_at": "2024-01-14 12:19:01.778123+00",
+    "title": "App dev ideas",
+    "description": "generate a cute 3d yellow bulb with sparks around and gradient background without text thinking hard for new ideas",
+    "imageUrl": "http://localhost:3003/public/images/notes/idea.jfif",
+    "long_desc": {
+      "time": 1705235003670,
+      "blocks": [
+        {
+          "id": "KZdlNtUcJp",
+          "data": {
+            "text": "🥑 Scribe",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "EUha2V-OJN",
+          "data": {
+            "text": "✅Turn any process into a step-by-step guide, instantly"
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "Px632WF_00",
+          "data": {
+            "text": "🥑 Bookmark sync extension",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "On5mxkn4dN",
+          "data": {
+            "text": "✅Sync data from Firefox using extension✅Remove duplicates"
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "vj7HgUhucz",
+          "data": {
+            "text": "🥑 Loom",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "Y6vtHews1f",
+          "data": {
+            "text": "✅Easily record and share video messages with your teammates to supercharge productivity"
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "N2fDLVhkp1",
+          "data": {
+            "items": [
+              "Record video with screen and face",
+              "Upload to storage",
+              "Get link to share"
+            ],
+            "style": "ordered"
+          },
+          "type": "list"
+        },
+        {
+          "id": "safZ5D8zDF",
+          "data": {
+            "text": "🥑 Whiteboard/Figma/Miro",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "IQz7nRftcW",
+          "data": {
+            "text": "✅Canvas✅Multiplayer"
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "UIWnl7ec5V",
+          "data": {
+            "text": "🥑 Website builder",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "j3syLmKHFE",
+          "data": {
+            "text": "✅ Fast Smooth View transitions✅ Template marketplace"
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "rBq6NZ2WnL",
+          "data": {
+            "items": [
+              "Ecommerce/Shop(AR/VR,3D models)",
+              "Social",
+              "Blog(auto scroll and screen reader)"
+            ],
+            "style": "unordered"
+          },
+          "type": "list"
+        },
+        {
+          "id": "fapbPg9pTd",
+          "data": {
+            "text": "🥑 Low code platform",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "u-rSgPqZTu",
+          "data": {
+            "text": "✅Automation"
+          },
+          "type": "paragraph"
+        },
+        {
+          "id": "QR4sxWWXtn",
+          "data": {
+            "text": "🥑Stalker AI",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "k0YmluC_y9",
+          "data": {
+            "text": "🥑AI GF&nbsp;",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "Hr95Ox2d1c",
+          "data": {
+            "text": "🥑Web3 based newsite",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "zfeQi73R8M",
+          "data": {
+            "text": "🧀Hangman",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "UEhybq_PLJ",
+          "data": {
+            "text": "🐍Snake",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "QAlZARNKRA",
+          "data": {
+            "text": "🚅Typing speed test",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "FaANMlLmkA",
+          "data": {
+            "text": "🧠Memory game",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "mVVQdKxGHv",
+          "data": {
+            "text": "🥝Quiz app&nbsp;",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "uvDtUKHU4U",
+          "data": {
+            "text": "🍀Hospital Management System",
+            "level": 1
+          },
+          "type": "header"
+        },
+        {
+          "id": "7PU8-Toyz7",
+          "data": {
+            "text": "🔗Link Shortener",
+            "level": 1
+          },
+          "type": "header"
+        }
+      ],
+      "version": "2.28.2"
+    },
+    "user_id": "82cd4598-e76f-4e29-898a-83990bbad037"
+  }
+]
