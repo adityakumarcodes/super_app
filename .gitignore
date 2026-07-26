@@ -3,7 +3,6 @@ dist
 node_modules
 build
 generated
-migrations
 
 # Logs
 logs

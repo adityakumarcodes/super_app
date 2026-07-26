@@ -9,7 +9,7 @@ const RootLayout = () => {
 
   return (
     <>
-      <div className="relative font-popppins font-light flex min-h-screen">
+      <div className="relative font-poppins font-light flex min-h-screen">
         <aside className={`hidden md:flex flex-col bg-gray-50 p-1.5 rounded-md transition-all duration-200 sticky top-0 self-start h-screen ${collapsed ? 'w-12' : 'w-50'}`}>
           <Sidebar collapsed={collapsed} onToggle={() => setCollapsed((value) => !value)} />
         </aside>

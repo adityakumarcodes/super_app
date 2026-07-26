@@ -10,7 +10,9 @@ interface HoverTextProps {
 const HoverText: React.FC<HoverTextProps> = ({ children, msg, dir }) => {
     return <Tooltip.Provider delayDuration={0}     >
         <Tooltip.Root>
-            <Tooltip.Trigger >
+            <Tooltip.Trigger asChild>
+                {/* <button> cannot be a descendant of <button></button> */}
+                {/* Radix UI components support asChild, which tells them not to render their own <button> and instead use your element. */}
                 {children}
             </Tooltip.Trigger >
             <Tooltip.Portal>

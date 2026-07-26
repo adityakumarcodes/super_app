@@ -5,6 +5,32 @@
 
 
 @theme {
-  --font-popppins: "Poppins", sans-serif;
+  --font-poppins: "Poppins", sans-serif;
   --font-bodoni: "Bodoni Moda", serif;
+}
+
+@layer base {
+  h1 {
+    @apply text-6xl font-bodoni;
+  }
+
+  h2 {
+    @apply text-5xl font-bodoni;
+  }
+
+  h3 {
+    @apply text-4xl font-bodoni;
+  }
+
+  h4 {
+    @apply text-3xl;
+  }
+
+  h5 {
+    @apply text-2xl;
+  }
+
+  h6 {
+    @apply text-xl;
+  }
 }
