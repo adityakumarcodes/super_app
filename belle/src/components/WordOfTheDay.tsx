@@ -48,7 +48,7 @@ const WordOfTheDay = () => {
             <h1 style={{ fontFamily: "Dancing Script" }} className="text-6xl m-2.5">
                 {currentWord?.word}
             </h1>
-            <h6 className="text-xl">{currentWord?.meaning}</h6>
+            <h6 className="text-xl text-balance">{currentWord?.meaning}</h6>
             <div className="mt-10" />
         </div>
     );

@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, useLocation } from '@tanstack/react-router';
-import NoteList from '../components/NoteList';
+import NotesList from '../components/NotesList';
 
 export const Route = createFileRoute('/notes')({
   component: RouteComponent,
@@ -17,7 +17,7 @@ function RouteComponent() {
       <div className="text-center my-8">
         <h1 className="font-bodoni text-6xl">Notes</h1>
       </div>
-      <NoteList />
+      <NotesList />
     </div>
   );
 }

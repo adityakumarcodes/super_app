@@ -275,7 +275,7 @@
     "created_at": "2023-11-08 06:36:20.465257+00",
     "title": "",
     "description": "A cute, happy, 3d candy corn character on an orange background chibi style",
-    "imageUrl": "http://localhost:3003/public/images/notes/corn3.jfif",
+    "imageUrl": "http://localhost:3003/public/images/notes/corn3.jpg",
     "long_desc": {
       "time": 1701368244004,
       "blocks": [
@@ -283,7 +283,7 @@
           "id": "toslUZa7ML",
           "data": {
             "file": {
-              "url": "http://localhost:3003/public/images/notes/corn1.jfif"
+              "url": "http://localhost:3003/public/images/notes/corn1.jpg"
             },
             "caption": "Running",
             "stretched": false,

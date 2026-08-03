@@ -2,7 +2,7 @@ import type { ToolConfig } from "@editorjs/editorjs";
 
 import Header from "@editorjs/header";
 import EditorjsList from "@editorjs/list";
-// import ImageTool from '@editorjs/image';
+import ImageTool from '@editorjs/image';
 import Delimiter from '@editorjs/delimiter';
 
 export const EDITOR_JS_TOOLS: ToolConfig = {
@@ -23,6 +23,10 @@ export const EDITOR_JS_TOOLS: ToolConfig = {
     config: {
       defaultStyle: 'unordered'
     }
+  },
+
+  image: {
+    class: ImageTool,
   },
 
 

@@ -10,23 +10,33 @@
       "blocks": [
         {
           "id": "S6WtJfJv7Z",
+          "type": "list",
           "data": {
+            "style": "checklist",
             "items": [
               {
-                "text": "It is a block-styled editor",
-                "checked": false
+                "content": "It is a block-styled editor",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Clean output data",
-                "checked": true
+                "content": "Clean output data",
+                "meta": {
+                  "checked": true
+                },
+                "items": []
               },
               {
-                "text": "Simple and powerful API",
-                "checked": true
+                "content": "Simple and powerful API",
+                "meta": {
+                  "checked": true
+                },
+                "items": []
               }
             ]
-          },
-          "type": "checklist"
+          }
         }
       ],
       "version": "2.28.2"
@@ -38,7 +48,7 @@
     "created_at": "2023-09-15 14:57:06.016422+00",
     "title": "Things learned during dev",
     "description": "",
-    "imageUrl": "http://localhost:3003/public/images/notes/red-background.jpg",
+    "imageUrl": "/assets/images/notes/red-background.jpg",
     "long_desc": {
       "time": 1703790654188,
       "blocks": [
@@ -275,7 +285,7 @@
     "created_at": "2023-11-08 06:36:20.465257+00",
     "title": "",
     "description": "A cute, happy, 3d candy corn character on an orange background chibi style",
-    "imageUrl": "http://localhost:3003/public/images/notes/corn3.jfif",
+    "imageUrl": "/assets/images/notes/corn3.jpg",
     "long_desc": {
       "time": 1701368244004,
       "blocks": [
@@ -283,7 +293,7 @@
           "id": "toslUZa7ML",
           "data": {
             "file": {
-              "url": "http://localhost:3003/public/images/notes/corn1.jfif"
+              "url": "/assets/images/notes/corn1.jpg"
             },
             "caption": "Running",
             "stretched": false,
@@ -296,7 +306,7 @@
           "id": "tadlUZa7ML",
           "data": {
             "file": {
-              "url": "http://localhost:3003/public/images/notes/corn2.jfif"
+              "url": "/assets/images/notes/corn2.jpg"
             },
             "caption": "Big bro",
             "stretched": false,
@@ -315,7 +325,7 @@
     "created_at": "2023-11-08 16:36:14.768199+00",
     "title": "",
     "description": "generate cute,happy, 3d cat chasing a woolen ball",
-    "imageUrl": "http://localhost:3003/public/images/notes/cat1.jfif",
+    "imageUrl": "/assets/images/notes/cat1.jpg",
     "long_desc": {
       "time": 1701368244004,
       "blocks": [
@@ -323,7 +333,7 @@
           "id": "torlUZa7ML",
           "data": {
             "file": {
-              "url": "http://localhost:3003/public/images/notes/cat3.jfif"
+              "url": "/assets/images/notes/cat3.jpg"
             },
             "caption": "Cat image",
             "stretched": false,
@@ -336,7 +346,7 @@
           "id": "torlUZd7ML",
           "data": {
             "file": {
-              "url": "http://localhost:3003/public/images/notes/cat2.jfif"
+              "url": "/assets/images/notes/cat2.jpg"
             },
             "caption": "generate cute,happy, 3d cat chasing a woolen ball",
             "stretched": false,
@@ -355,14 +365,14 @@
     "created_at": "2023-12-03 15:17:18.249183+00",
     "title": "Bugs",
     "description": "generate a 3d cute bug waiting happily to be resolved in a gradient background without text with red back and shining eyes",
-    "imageUrl": "http://localhost:3003/public/images/notes/bug.jfif",
+    "imageUrl": "/assets/images/notes/bug.jpg",
     "long_desc": {
       "time": 1707910370455,
       "blocks": [
         {
           "id": "1FVw80I-3N",
           "data": {
-            "text": "<b>Goals of ALOHA</b>",
+            "text": "Goals of ALOHA",
             "level": 1
           },
           "type": "header"
@@ -389,167 +399,280 @@
         },
         {
           "id": "0PIDQ5GpCY",
+          "type": "list",
           "data": {
+            "style": "checklist",
             "items": [
               {
-                "text": "Fetch to editor &amp; update",
-                "checked": true
+                "content": "Fetch to editor &amp; update",
+                "meta": {
+                  "checked": true
+                },
+                "items": []
               },
               {
-                "text": "Display invalid credentials message",
-                "checked": false
+                "content": "Display invalid credentials message",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Add undo/redo feature in editor&nbsp;<a href=\"https://redux.js.org/usage/implementing-undo-history\">Implementing Undo History | Redux</a>",
-                "checked": false
+                "content": "Add undo/redo feature in editor&nbsp;<a href=\"https://redux.js.org/usage/implementing-undo-history\">Implementing Undo History | Redux</a>",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Order of tasks can be changed using react beautiful dnd",
-                "checked": false
+                "content": "Order of tasks can be changed using react beautiful dnd",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "change checklist color to violet",
-                "checked": true
+                "content": "change checklist color to violet",
+                "meta": {
+                  "checked": true
+                },
+                "items": []
               },
               {
-                "text": "Cookie remove refresh show login as null",
-                "checked": false
+                "content": "Cookie remove refresh show login as null",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "&nbsp;Rich text editor",
-                "checked": true
+                "content": "&nbsp;Rich text editor",
+                "meta": {
+                  "checked": true
+                },
+                "items": []
               },
               {
-                "text": "Attach files(pdf,csv,doc,ppt,xlsx), images(jpeg), links, audio(mp3), video",
-                "checked": false
+                "content": "Attach files(pdf,csv,doc,ppt,xlsx), images(jpeg), links, audio(mp3), video",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Sync",
-                "checked": false
+                "content": "Sync",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Offline support =&gt;&nbsp;Offline DB =&gt; WatermelonDB or PouchDB or RXDB =&gt; “Your data should be stored locally first and synced remotely second”",
-                "checked": false
+                "content": "Offline support =&gt;&nbsp;Offline DB =&gt; WatermelonDB or PouchDB or RXDB =&gt; “Your data should be stored locally first and synced remotely second”",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Search tags",
-                "checked": false
+                "content": "Search tags",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Sharing&nbsp;",
-                "checked": false
+                "content": "Sharing&nbsp;",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Password lock for task",
-                "checked": false
+                "content": "Password lock for task",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Integration",
-                "checked": false
+                "content": "Integration",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "History revision",
-                "checked": false
+                "content": "History revision",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Reminder notification",
-                "checked": false
+                "content": "Reminder notification",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Import &amp; Export",
-                "checked": false
+                "content": "Import &amp; Export",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Dark mode",
-                "checked": false
+                "content": "Dark mode",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Trash",
-                "checked": false
+                "content": "Trash",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Read only mode",
-                "checked": true
+                "content": "Read only mode",
+                "meta": {
+                  "checked": true
+                },
+                "items": []
               }
             ]
-          },
-          "type": "checklist"
+          }
         },
         {
           "id": "hRtspmF6U3",
+          "type": "list",
           "data": {
+            "style": "checklist",
             "items": [
               {
-                "text": "Word of the day+Weather+Stock market widgets",
-                "checked": true
+                "content": "Word of the day+Weather+Stock market widgets",
+                "meta": {
+                  "checked": true
+                },
+                "items": []
               },
               {
-                "text": "Fetch words/quotes from supabase",
-                "checked": true
+                "content": "Fetch words/quotes from supabase",
+                "meta": {
+                  "checked": true
+                },
+                "items": []
               },
               {
-                "text": "onclick fetch next word or quote",
-                "checked": true
+                "content": "onclick fetch next word or quote",
+                "meta": {
+                  "checked": true
+                },
+                "items": []
               },
               {
-                "text": "during fetch show Loading... text",
-                "checked": false
+                "content": "during fetch show Loading... text",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "migrate shop section api to supabase api",
-                "checked": true
+                "content": "migrate shop section api to supabase api",
+                "meta": {
+                  "checked": true
+                },
+                "items": []
               },
               {
-                "text": "How to upload and extract JSON data into rows in a Postgres database.",
-                "checked": false
+                "content": "How to upload and extract JSON data into rows in a Postgres database.",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Redux topic two examples-counter and products",
-                "checked": true
+                "content": "Redux topic two examples-counter and products",
+                "meta": {
+                  "checked": true
+                },
+                "items": []
               },
               {
-                "text": "Change ProductContext for state management to using context for theme manager/dark theme",
-                "checked": true
+                "content": "Change ProductContext for state management to using context for theme manager/dark theme",
+                "meta": {
+                  "checked": true
+                },
+                "items": []
               },
               {
-                "text": "Refactor Authentication system",
-                "checked": true
+                "content": "Refactor Authentication system",
+                "meta": {
+                  "checked": true
+                },
+                "items": []
               },
               {
-                "text": "debounce and throttle",
-                "checked": false
+                "content": "debounce and throttle",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Add ability to add audio messages",
-                "checked": false
+                "content": "Add ability to add audio messages",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Collaborative editing and drawing",
-                "checked": false
+                "content": "Collaborative editing and drawing",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Spell check & Suggestion",
-                "checked": false
+                "content": "Spell check & Suggestion",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "comment and mentions",
-                "checked": false
+                "content": "comment and mentions",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Voice to text/Text to speech",
-                "checked": false
+                "content": "Voice to text/Text to speech",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "image recogination",
-                "checked": false
+                "content": "image recogination",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "pin tasks",
-                "checked": false
+                "content": "pin tasks",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               }
             ]
-          },
-          "type": "checklist"
+          }
         },
         {
           "id": "kM1yuxJjba",
@@ -561,63 +684,103 @@
         },
         {
           "id": "7p5XSpJRdW",
+          "type": "list",
           "data": {
+            "style": "checklist",
             "items": [
               {
-                "text": "FloatButton",
-                "checked": false
+                "content": "FloatButton",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Tree",
-                "checked": true
+                "content": "Tree",
+                "meta": {
+                  "checked": true
+                },
+                "items": []
               },
               {
-                "text": "Calender",
-                "checked": false
+                "content": "Calender",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Tab",
-                "checked": true
+                "content": "Tab",
+                "meta": {
+                  "checked": true
+                },
+                "items": []
               },
               {
-                "text": "Segmented",
-                "checked": true
+                "content": "Segmented",
+                "meta": {
+                  "checked": true
+                },
+                "items": []
               },
               {
-                "text": "Tooltip",
-                "checked": true
+                "content": "Tooltip",
+                "meta": {
+                  "checked": true
+                },
+                "items": []
               },
               {
-                "text": "Drawer",
-                "checked": false
+                "content": "Drawer",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Skeleton",
-                "checked": false
+                "content": "Skeleton",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "LinkPreview",
-                "checked": true
+                "content": "LinkPreview",
+                "meta": {
+                  "checked": true
+                },
+                "items": []
               },
               {
-                "text": "Accordian",
-                "checked": false
+                "content": "Accordian",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Carousel,Ticker and Slideshow framer components&nbsp;&nbsp;",
-                "checked": false
+                "content": "Carousel,Ticker and Slideshow framer components&nbsp;&nbsp;",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Bookmark importer with duplicate remover",
-                "checked": false
+                "content": "Bookmark importer with duplicate remover",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "Add single image / multiple image gallery airbnb style (upload,url)",
-                "checked": false
+                "content": "Add single image / multiple image gallery airbnb style (upload,url)",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               }
             ]
-          },
-          "type": "checklist"
+          }
         },
         {
           "id": "b6Q_nIJ99v",
@@ -650,27 +813,40 @@
         },
         {
           "id": "8XfEzndOD5",
+          "type": "list",
           "data": {
+            "style": "checklist",
             "items": [
               {
-                "text": "react-toastify - Toast notification component motivate/useSnackbar",
-                "checked": false
+                "content": "react-toastify - Toast notification component motivate/useSnackbar",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "useFetch to makek api calls",
-                "checked": false
+                "content": "useFetch to makek api calls",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "using naviagtor offine and navigator connection Web api to check the online /offline status of the network using custom hook",
-                "checked": false
+                "content": "using naviagtor offine and navigator connection Web api to check the online /offline status of the network using custom hook",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               },
               {
-                "text": "CRUD+upload custom hook",
-                "checked": false
+                "content": "CRUD+upload custom hook",
+                "meta": {
+                  "checked": false
+                },
+                "items": []
               }
             ]
-          },
-          "type": "checklist"
+          }
         },
         {
           "id": "oUSvQFYTFy",
@@ -681,7 +857,7 @@
           "id": "torlUZa5ML",
           "data": {
             "file": {
-              "url": "http://localhost:3003/public/images/notes/pancake.jpeg"
+              "url": "/assets/images/notes/pancake.jpeg"
             },
             "caption": "Pancake with Sliced Strawberry",
             "stretched": false,
@@ -700,7 +876,7 @@
     "created_at": "2024-01-14 12:19:01.778123+00",
     "title": "App dev ideas",
     "description": "generate a cute 3d yellow bulb with sparks around and gradient background without text thinking hard for new ideas",
-    "imageUrl": "http://localhost:3003/public/images/notes/idea.jfif",
+    "imageUrl": "/assets/images/notes/idea.jpg",
     "long_desc": {
       "time": 1705235003670,
       "blocks": [

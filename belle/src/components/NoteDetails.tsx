@@ -1,28 +1,73 @@
-import EditorJS from '@editorjs/editorjs';
+import EditorJS, { type OutputData } from '@editorjs/editorjs';
+import { useEffect, useMemo } from 'react';
 import { EDITOR_JS_TOOLS } from '../constants/editorConfig';
 
-const INITIAL_DATA = {
-    time: 1701368244004,
-    blocks: [
-        {
-            "type": "header",
-            "data": {
-                "text": "Why Telegram is the best messenger",
-                "level": 1
-            }
-        },
-    ],
-    version: "2.31.6",
-};
+interface NoteDetailsProps {
+    data: OutputData;
+    imageUrl?: string;
+}
 
-const NoteDetails = () => {
-    const editor = new EditorJS({
-        holder: "editorjs",
-        tools: EDITOR_JS_TOOLS,
-        data: INITIAL_DATA
-    });
+const NoteDetails = ({ data, imageUrl }: NoteDetailsProps) => {
+    const images = import.meta.glob(
+        '../assets/images/notes/*.{jpg,jpeg,jfif,png}',
+        { eager: true, import: 'default' },
+    ) as Record<string, string>;
+
+    const noteImage = imageUrl
+        ? images[`../assets/images/notes/${imageUrl.split('/').pop()}`] ?? imageUrl
+        : undefined;
+
+    const renderData = useMemo<OutputData>(() => ({
+        ...data,
+        blocks: data.blocks.map((block) => {
+            if (block.type !== 'image') {
+                return block;
+            }
+
+            const imageData = block.data as { file?: { url?: string } };
+            const imageName = imageData.file?.url?.split('/').pop();
+            const localImage = imageName
+                ? images[`../assets/images/notes/${imageName}`]
+                : undefined;
+
+            return localImage
+                ? {
+                    ...block,
+                    data: {
+                        ...imageData,
+                        file: { ...imageData.file, url: localImage },
+                    },
+                }
+                : block;
+        }),
+    }), [data]);
+
+    useEffect(() => {
+        const editor = new EditorJS({
+            holder: 'editorjs',
+            tools: EDITOR_JS_TOOLS,
+            data: renderData,
+            // readOnly: true,
+        });
+
+        return () => {
+            if (typeof editor.destroy === 'function') {
+                editor.destroy();
+            } else {
+                document.getElementById('editorjs')?.replaceChildren();
+            }
+        };
+    }, [renderData]);
+
     return (
         <div className="p-2 text-left">
+            {noteImage ? (
+                <img
+                    src={noteImage}
+                    alt="Note image"
+                    className="mb-4 w-1/3 object-cover rounded-xl"
+                />
+            ) : null}
             <div id='editorjs' />
         </div>
     )
