@@ -74,3 +74,11 @@ model Verification {
   @@index([identifier])
   @@map("verification")
 }
+
+model WordOfTheDay {
+  id      Int    @id
+  word    String
+  meaning String
+
+  @@map("word_of_the_day")
+}
