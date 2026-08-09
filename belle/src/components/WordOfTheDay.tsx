@@ -15,7 +15,8 @@ const WordOfTheDay = () => {
 
     useEffect(() => {
         const loadWords = async () => {
-            const response = await fetch("http://localhost:3000/word-of-the-day");
+            const port = import.meta.env.VITE_BACKEND_PORT!;
+            const response = await fetch(`http://localhost:${port}/api/word-of-the-day`, { credentials: "include" });
             if (!response.ok) {
                 throw new Error(`Failed to fetch words: ${response.status} ${response.statusText}`);
             }

@@ -1,11 +1,11 @@
 import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
+import { AllowAnonymous } from "@thallesp/nestjs-better-auth";
 import { WotdService } from "./wotd.service";
 
+@AllowAnonymous()
 @Controller("word-of-the-day")
 export class WotdController {
-    constructor(
-        private readonly wordOfTheDayService: WotdService,
-    ) { }
+    constructor(private readonly wordOfTheDayService: WotdService) { }
 
     @Get()
     findAll() {
