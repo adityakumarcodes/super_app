@@ -1,6 +1,13 @@
 import { Link } from "@tanstack/react-router";
-import notes from "../../assets/data/notes.json";
 import { useState } from "react";
+import useFetchQuery from '../utils/useFetchQuery'
+
+type Note = {
+    id: number | string
+    title?: string
+    description?: string
+    imageUrl?: string
+}
 type NotesCategory = 'All' | 'Technology' | 'Startup' | 'Lifestyle';
 const images = import.meta.glob(
     "../assets/images/notes/*.{jpg,jpeg,jfif,png}",
@@ -12,7 +19,10 @@ const images = import.meta.glob(
 
 export default function NotesList() {
     const [menu, setMenu] = useState<NotesCategory>('All');
+    const BASE = (import.meta.env.VITE_API_BASE as string) || 'http://localhost:3000/api'
+    const { data: pages = [], isLoading } = useFetchQuery<Note[]>({ queryKey: ['notes'], queryLink: `${BASE}/notes` })
 
+    if (isLoading) return <div className="p-8">Loading...</div>;
 
     return (<>
         <div className="flex flex-wrap justify-center gap-6 my-10">
@@ -27,7 +37,7 @@ export default function NotesList() {
             ))}
         </div>
         <div className="grid gap-2 p-2 grid-cols-4">
-            {notes.map((note) => {
+            {pages.map((note: Note) => {
                 const imageName = note.imageUrl?.split('/').pop();
                 const localImage = imageName
                     ? images[`../assets/images/notes/${imageName}`]
@@ -42,7 +52,7 @@ export default function NotesList() {
                         key={note.id}
                         to="/notes/$noteId"
                         params={{ noteId: String(note.id) }}
-                        search={{ title: note.title, description: note.description }}
+                        search={{ title: note.title }}
                         className="m-2 cursor-pointer border-2">
                         {image ? (
                             <img

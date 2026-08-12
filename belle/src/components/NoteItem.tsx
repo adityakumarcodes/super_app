@@ -19,7 +19,7 @@ const NoteItem = (props: NoteItemProps) => {
                     <Link
                         to="/notes/$noteId"
                         params={{ noteId: String(props.id) }}
-                        search={{ title: props.title, description: props.description }}
+                        search={{ title: props.title }}
                     >
                         <img
                             src={props.image}
@@ -33,7 +33,7 @@ const NoteItem = (props: NoteItemProps) => {
                     <Link
                         to="/notes/$noteId"
                         params={{ noteId: String(props.id) }}
-                        search={{ title: props.title, description: props.description }}
+                        search={{ title: props.title }}
                     >
                         <p className="inline-block mb-2 px-2 py-1 bg-orange-200 text-sm rounded-full">{props.category}</p>
                         <h5 className="mb-2 text-lg font-medium tracking-tight text-gray-900">{props.title}</h5>

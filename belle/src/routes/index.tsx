@@ -10,7 +10,7 @@ function Index() {
   return (
     <div>
       <WordOfTheDay />
-      < About />
+      <About />
     </div >
   )
 }

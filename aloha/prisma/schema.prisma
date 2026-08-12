@@ -14,15 +14,16 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
+  id            String      @id @default(cuid())
+  email         String      @unique
   name          String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  emailVerified Boolean   @default(false)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  emailVerified Boolean     @default(false)
   image         String?
   sessions      Session[]
   accounts      Account[]
+  notesPages    NotesPage[]
 
   @@map("user")
 }
@@ -81,4 +82,41 @@ model WordOfTheDay {
   meaning String
 
   @@map("word_of_the_day")
+}
+
+model NotesPage {
+  id            Int          @id @default(autoincrement())
+  userId        String
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String?
+  description   String?
+  imageUrl      String?
+  editorVersion String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  blocks        NotesBlock[]
+
+  @@index([userId])
+  @@map("notes_page")
+}
+
+model NotesBlock {
+  id            Int          @id @default(autoincrement())
+  noteId        Int
+  note          NotesPage    @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  parentBlockId Int?
+  parentBlock   NotesBlock?  @relation("BlockChildren", fields: [parentBlockId], references: [id], onDelete: Cascade)
+  children      NotesBlock[] @relation("BlockChildren")
+  blockKey      String? // preserve the editor block id
+  type          String
+  order         Int          @default(0)
+  data          Json
+  text          String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@unique([noteId, blockKey])
+  @@index([noteId])
+  @@index([noteId, parentBlockId])
+  @@map("notes_block")
 }

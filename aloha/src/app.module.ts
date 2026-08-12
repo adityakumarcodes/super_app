@@ -4,6 +4,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from "@nestjs/config";
 import { WotdModule } from './wotd/wotd.module';
 import { AuthModule } from './auth/auth.module';
+import { NotesModule } from './notes/notes.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
     PrismaModule,
     WotdModule,
+    NotesModule,
   ],
   controllers: [AppController],
 })

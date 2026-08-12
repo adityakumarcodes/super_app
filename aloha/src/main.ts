@@ -8,7 +8,12 @@ async function bootstrap() {
     credentials: true,
   });
   app.setGlobalPrefix('api');
-  await app.listen(process.env.BACKEND_PORT!);
+  const port = Number(process.env.BACKEND_PORT!);
+  console.log(`Starting backend on http://localhost:${port}...`);
+
+  await app.listen(port);
+
+  console.log(`Backend running on http://localhost:${port}`);
 }
 
 bootstrap();
