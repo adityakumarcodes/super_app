@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { CalendarDays, MapPin, Paperclip, Users } from 'lucide-react'
+import { CalendarDays, MapPin, Paperclip, Search, Users } from 'lucide-react'
 import ChatDetails from '../components/ChatDetails'
 import ChatList from '../components/ChatList'
 
@@ -52,7 +52,7 @@ const messages: Message[] = [
   { role: 'assistant', content: 'Hi there! Ready to refine the new chat UI?' },
   { role: 'user', content: 'Yes, show me how the layout looks with sample content.' },
   { role: 'assistant', content: 'Here is a clean two-column layout with chat list and conversation details.' },
-  { role: 'user', content: 'Perfect — that’s exactly what I need.' },
+  { role: 'user', content: 'Perfect — that\'s exactly what I need.' },
 ]
 
 export const Route = createFileRoute('/chat')({
@@ -64,9 +64,9 @@ function RouteComponent() {
   const [selectedChatId, setSelectedChatId] = useState<number>(chats[0].id)
   const actions = [
     { key: 'schedule', label: 'Schedule meeting', Icon: CalendarDays },
-    { key: 'file', label: 'Send file', Icon: Paperclip },
     { key: 'location', label: 'Share location', Icon: MapPin },
     { key: 'group', label: 'Create group', Icon: Users },
+    { key: 'search', label: 'Search', Icon: Search },
   ]
   const selectedChat = chats.find((c) => c.id === selectedChatId) ?? chats[0]
 
@@ -86,3 +86,4 @@ function RouteComponent() {
     </div>
   )
 }
+

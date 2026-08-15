@@ -14,7 +14,7 @@ function RouteComponent() {
     </div>
     <div>
       <div className="flex flex-wrap justify-center gap-6 my-10">
-        {(['Electronics', 'Grocery', 'Gifts & Flowers', 'Beauty', 'Women\'s Fashion', 'Men\'s Fashion', 'Baby', 'Brands'] as const).map((item) => (
+        {(['Electronics', 'Grocery', 'Gifts & Flowers', 'Beauty', 'Fashion', 'Baby', 'Brands'] as const).map((item) => (
           <button
             key={item}
             onClick={() => setMenu(item)}

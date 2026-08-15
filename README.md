@@ -16,6 +16,9 @@
 		- VITE_FRONTEND_PORT=5173
 		- VITE_BACKEND_PORT=3000
 
+## TODO
+ Darkmode
+ Fully functional notes section
 
 ## Run the project
 

@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import useFetchQuery from '../utils/useFetchQuery'
+import Spinner from "./Spinner";
 
 type Note = {
     id: number | string
@@ -22,7 +23,7 @@ export default function NotesList() {
     const BASE = (import.meta.env.VITE_API_BASE as string) || 'http://localhost:3000/api'
     const { data: pages = [], isLoading } = useFetchQuery<Note[]>({ queryKey: ['notes'], queryLink: `${BASE}/notes` })
 
-    if (isLoading) return <div className="p-8">Loading...</div>;
+    if (isLoading) return <Spinner />;
 
     return (<>
         <div className="flex flex-wrap justify-center gap-6 my-10">
@@ -59,6 +60,8 @@ export default function NotesList() {
                                 src={image}
                                 alt={note.title || `Note ${note.id}`}
                                 loading="lazy"
+                                className="w-full aspect-square object-cover"
+                            // fix for img jumping is give img size 
                             />
                         ) : (
                             <div className="p-4">

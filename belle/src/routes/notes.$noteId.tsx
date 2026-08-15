@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import NoteDetails from '../components/NoteDetails'
 import useFetchQuery from '../utils/useFetchQuery'
+import Spinner from '../components/Spinner'
 
 type NoteBlock = {
   id: number | string
@@ -30,7 +31,7 @@ function RouteComponent() {
   const BASE = (import.meta.env.VITE_API_BASE as string) || 'http://localhost:3000/api'
   const { data: note, isLoading } = useFetchQuery<Note>({ queryKey: ['note', noteId], queryLink: `${BASE}/notes/${noteId}`, queryOptions: { enabled: !!noteId } })
 
-  if (isLoading) return <div className='p-8'>Loading...</div>
+  if (isLoading) return <Spinner />
 
   if (!note) {
     return <div className='p-8'>Note not found.</div>
