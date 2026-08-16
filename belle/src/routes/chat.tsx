@@ -21,7 +21,7 @@ const chats: ChatItem[] = [
   {
     id: 1,
     title: 'Design studio brainstorm',
-    preview: 'Let’s shape the homepage with a softer palette.',
+    preview: 'Let\'s shape the homepage with a softer palette.',
     time: '09:12 AM',
     unread: 3,
   },
@@ -47,6 +47,14 @@ const chats: ChatItem[] = [
     unread: 0,
   },
 ]
+
+type Action = {
+  key: string
+  label: string
+  Icon: React.ElementType
+  iconPosition?: 'leading' | 'trailing'
+}
+
 
 const messages: Message[] = [
   { role: 'assistant', content: 'Hi there! Ready to refine the new chat UI?' },

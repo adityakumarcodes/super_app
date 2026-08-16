@@ -11,7 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ChatRouteImport } from './routes/chat'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as NotesRouteImport } from './routes/notes'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SocialRouteImport } from './routes/social'
 import { Route as NotesNoteIdRouteImport } from './routes/notes.$noteId'
@@ -26,9 +29,24 @@ const ChatRoute = ChatRouteImport.update({
   path: '/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NotesRoute = NotesRouteImport.update({
   id: '/notes',
   path: '/notes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShopRoute = ShopRouteImport.update({
@@ -50,7 +68,10 @@ const NotesNoteIdRoute = NotesNoteIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
+  '/login': typeof LoginRoute
   '/notes': typeof NotesRouteWithChildren
+  '/register': typeof RegisterRoute
+  '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/social': typeof SocialRoute
   '/notes/$noteId': typeof NotesNoteIdRoute
@@ -58,7 +79,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
+  '/login': typeof LoginRoute
   '/notes': typeof NotesRouteWithChildren
+  '/register': typeof RegisterRoute
+  '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/social': typeof SocialRoute
   '/notes/$noteId': typeof NotesNoteIdRoute
@@ -67,21 +91,45 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
+  '/login': typeof LoginRoute
   '/notes': typeof NotesRouteWithChildren
+  '/register': typeof RegisterRoute
+  '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/social': typeof SocialRoute
   '/notes/$noteId': typeof NotesNoteIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/chat' | '/notes' | '/shop' | '/social' | '/notes/$noteId'
+  fullPaths:
+    | '/'
+    | '/chat'
+    | '/login'
+    | '/notes'
+    | '/register'
+    | '/settings'
+    | '/shop'
+    | '/social'
+    | '/notes/$noteId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/chat' | '/notes' | '/shop' | '/social' | '/notes/$noteId'
+  to:
+    | '/'
+    | '/chat'
+    | '/login'
+    | '/notes'
+    | '/register'
+    | '/settings'
+    | '/shop'
+    | '/social'
+    | '/notes/$noteId'
   id:
     | '__root__'
     | '/'
     | '/chat'
+    | '/login'
     | '/notes'
+    | '/register'
+    | '/settings'
     | '/shop'
     | '/social'
     | '/notes/$noteId'
@@ -90,7 +138,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ChatRoute: typeof ChatRoute
+  LoginRoute: typeof LoginRoute
   NotesRoute: typeof NotesRouteWithChildren
+  RegisterRoute: typeof RegisterRoute
+  SettingsRoute: typeof SettingsRoute
   ShopRoute: typeof ShopRoute
   SocialRoute: typeof SocialRoute
 }
@@ -111,11 +162,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/notes': {
       id: '/notes'
       path: '/notes'
       fullPath: '/notes'
       preLoaderRoute: typeof NotesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shop': {
@@ -155,7 +227,10 @@ const NotesRouteWithChildren = NotesRoute._addFileChildren(NotesRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChatRoute: ChatRoute,
+  LoginRoute: LoginRoute,
   NotesRoute: NotesRouteWithChildren,
+  RegisterRoute: RegisterRoute,
+  SettingsRoute: SettingsRoute,
   ShopRoute: ShopRoute,
   SocialRoute: SocialRoute,
 }

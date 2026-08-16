@@ -5,8 +5,11 @@ import { PrismaService } from "../prisma/prisma.service";
 export class NotesService {
     constructor(private readonly prisma: PrismaService) { }
 
-    async findAllPages() {
+    async findAllPages(userId: string) {
         return this.prisma.notesPage.findMany({
+            where: {
+                userId,
+            },
             orderBy: { updatedAt: "desc" },
             select: {
                 id: true,
@@ -21,9 +24,12 @@ export class NotesService {
         });
     }
 
-    async findPageWithBlocks(id: number) {
-        return this.prisma.notesPage.findUnique({
-            where: { id },
+    async findPageWithBlocks(id: number, userId: string,) {
+        return this.prisma.notesPage.findFirst({
+            where: {
+                id,
+                userId,
+            },
             include: {
                 blocks: {
                     orderBy: { order: "asc" },
@@ -32,9 +38,14 @@ export class NotesService {
         });
     }
 
-    async findBlocksByPage(id: number) {
+    async findBlocksByPage(id: number, userId: string,) {
         return this.prisma.notesBlock.findMany({
-            where: { noteId: id },
+            where: {
+                noteId: id,
+                note: {
+                    userId,
+                },
+            },
             orderBy: { order: "asc" },
         });
     }

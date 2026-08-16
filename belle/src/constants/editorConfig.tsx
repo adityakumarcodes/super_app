@@ -4,6 +4,7 @@ import Header from "@editorjs/header";
 import EditorjsList from "@editorjs/list";
 import ImageTool from '@editorjs/image';
 import Delimiter from '@editorjs/delimiter';
+import MyCallout from "../components/MyCallout";
 
 export const EDITOR_JS_TOOLS: ToolConfig = {
   header: {
@@ -16,7 +17,10 @@ export const EDITOR_JS_TOOLS: ToolConfig = {
       defaultLevel: 1
     },
   },
-
+  callout: {
+    class: MyCallout,
+    inlineToolbar: true,
+  },
   list: {
     class: EditorjsList,
     inlineToolbar: true,

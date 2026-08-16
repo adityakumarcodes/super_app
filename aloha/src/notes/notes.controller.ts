@@ -1,24 +1,27 @@
 import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
 import { NotesService } from "./notes.service";
-import { AllowAnonymous } from "@thallesp/nestjs-better-auth";
+import {
+    Session,
+    type UserSession,
+} from '@thallesp/nestjs-better-auth';
 
-@AllowAnonymous()
+
 @Controller("notes")
 export class NotesController {
     constructor(private readonly notesService: NotesService) { }
 
     @Get()
-    getPages() {
-        return this.notesService.findAllPages();
+    getPages(@Session() session: UserSession) {
+        return this.notesService.findAllPages(session.user.id);
     }
 
     @Get(":id")
-    getPage(@Param("id", ParseIntPipe) id: number) {
-        return this.notesService.findPageWithBlocks(id);
+    getPage(@Param("id", ParseIntPipe) id: number, @Session() session: UserSession,) {
+        return this.notesService.findPageWithBlocks(id, session.user.id);
     }
 
     @Get(":id/blocks")
-    getPageBlocks(@Param("id", ParseIntPipe) id: number) {
-        return this.notesService.findBlocksByPage(id);
+    getPageBlocks(@Param("id", ParseIntPipe) id: number, @Session() session: UserSession,) {
+        return this.notesService.findBlocksByPage(id, session.user.id);
     }
 }

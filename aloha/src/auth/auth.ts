@@ -10,7 +10,7 @@ export function createAuth(prisma: PrismaClient) {
         emailAndPassword: {
             enabled: true,
         },
-        trustedOrigins: ['http://localhost:' + process.env.BACKEND_PORT!],
+        trustedOrigins: ['http://localhost:' + process.env.FRONTEND_PORT!],
     });
 }
 

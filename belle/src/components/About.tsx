@@ -11,7 +11,7 @@ const About = () => {
             <ul className="space-y-3 list-disc pl-5">
                 {stackItems.map((item) => (
                     <li key={item.label} className="p-2">
-                        <span className="text-slate-900">{item.label}:</span>{' '}
+                        <span className="text-slate-900 font-medium">{item.label}:</span>{' '}
                         <span className="text-slate-700">{item.value}</span>
                     </li>
                 ))}
