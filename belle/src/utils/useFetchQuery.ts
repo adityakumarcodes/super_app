@@ -1,5 +1,4 @@
 import { useQuery, type QueryKey, type UseQueryOptions } from '@tanstack/react-query'
-import axios from 'axios'
 
 type Params<TData> = {
     queryKey: QueryKey
@@ -15,12 +14,17 @@ export default function useFetchQuery<TData = unknown>({
     return useQuery<TData>({
         queryKey,
         queryFn: async ({ signal }) => {
-            const res = await axios.get<TData>(queryLink, {
+            const res = await fetch(queryLink, {
                 signal,
-                withCredentials: true,
+                credentials: 'include', // This is equivalent to axios' withCredentials: true
             });
 
-            return res.data;
+            if (!res.ok) {
+                // fetch() does not throw on HTTP errors, so we need to check for them manually.
+                throw new Error(`Network response was not ok: ${res.statusText}`);
+            }
+
+            return res.json();
         },
         ...queryOptions,
     });

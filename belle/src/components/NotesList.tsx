@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import useFetchQuery from '../utils/useFetchQuery'
 import Spinner from "./Spinner";
 
@@ -9,6 +9,8 @@ type Note = {
     description?: string
     imageUrl?: string
 }
+
+
 type NotesCategory = 'All' | 'Technology' | 'Startup' | 'Lifestyle';
 const images = import.meta.glob(
     "../assets/images/notes/*.{jpg,jpeg,jfif,png}",
@@ -17,6 +19,21 @@ const images = import.meta.glob(
         import: "default",
     },
 ) as Record<string, string>;
+
+const useNoteImage = (note: Note) => {
+    return useMemo(() => {
+        if (!note.imageUrl) return undefined;
+
+        // Handle remote images not hosted locally
+        if (!note.imageUrl.includes('localhost')) {
+            return note.imageUrl;
+        }
+
+        // Handle local images
+        const imageName = note.imageUrl.split('/').pop();
+        return imageName ? images[`../assets/images/notes/${imageName}`] : undefined;
+    }, [note.imageUrl]);
+};
 
 export default function NotesList() {
     const [menu, setMenu] = useState<NotesCategory>('All');
@@ -39,21 +56,13 @@ export default function NotesList() {
         </div>
         <div className="grid gap-2 p-2 grid-cols-4">
             {pages.map((note: Note) => {
-                const imageName = note.imageUrl?.split('/').pop();
-                const localImage = imageName
-                    ? images[`../assets/images/notes/${imageName}`]
-                    : undefined;
-                const remoteImage = note.imageUrl && !note.imageUrl.includes('localhost')
-                    ? note.imageUrl
-                    : undefined;
-                const image = localImage ?? remoteImage;
+                const image = useNoteImage(note);
 
                 return (
                     <Link
                         key={note.id}
                         to="/notes/$noteId"
                         params={{ noteId: String(note.id) }}
-                        search={{ title: note.title }}
                         className="m-2 cursor-pointer border-2">
                         {image ? (
                             <img

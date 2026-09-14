@@ -4,7 +4,6 @@ import {
     BookOpen,
     House,
     Plus,
-    Trash2,
     ChevronDown,
     Bolt,
     Pyramid,
@@ -116,10 +115,10 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
 
             <div className="mt-auto pb-4">
                 <hr className="my-2 border-t-2 border-gray-300" />
-                <a href="/settings" className="flex items-start gap-1.5 rounded-md p-1.5 group hover:bg-gray-200 cursor-pointer">
+                <Link href="/settings" className="flex items-start gap-1.5 rounded-md p-1.5 group hover:bg-gray-200 cursor-pointer">
                     {maybeTooltip(<Bolt strokeWidth={1.25} />, 'Settings', 'right')}
                     {!collapsed && <p>Settings</p>}
-                </a>
+                </Link>
                 {maybeTooltip(
                     <button onClick={toggleFullscreen} className="p-2">
                         {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}

@@ -21,9 +21,6 @@ type Note = {
 
 export const Route = createFileRoute('/notes/$noteId')({
   component: RouteComponent,
-  validateSearch: (search: Record<string, unknown>) => ({
-    title: typeof search.title === 'string' ? search.title : undefined,
-  }),
 })
 
 function RouteComponent() {
@@ -66,13 +63,7 @@ function RouteComponent() {
               <img
                 src={note.imageUrl}
                 alt={note.title || "Note cover"}
-                className="
-        h-75 w-full object-cover
-        transition-transform duration-700 ease-out
-        group-hover:scale-105
-        md:h-112.5
-      "
-              />
+                className="h-75 w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 md:h-112.5" />
             </div>
           )}
         </header>

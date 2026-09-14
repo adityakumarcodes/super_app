@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { authClient } from '../utils/auth-client';
 
 const Register = () => {
@@ -8,6 +8,7 @@ const Register = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleRegister = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -28,7 +29,7 @@ const Register = () => {
             return;
         }
 
-        window.location.href = '/';
+        navigate({ to: '/' });
     };
 
     return (
@@ -64,7 +65,7 @@ const Register = () => {
                                 }
                                 placeholder="Your name"
                                 required
-                                className="mt-2 w-full rounded-lg border-2 border-black bg-white px-3 py-2.5 text-sm outline-none transition focus:bg-orange-50"
+                                className="mt-2 w-full rounded-lg border-2 border-black px-3 py-2.5 text-sm outline-none transition focus:bg-orange-50"
                             />
                         </div>
 
@@ -85,7 +86,7 @@ const Register = () => {
                                 }
                                 placeholder="you@example.com"
                                 required
-                                className="mt-2 w-full rounded-lg border-2 border-black bg-white px-3 py-2.5 text-sm outline-none transition focus:bg-orange-50"
+                                className="mt-2 w-full rounded-lg border-2 border-black bg-white px-3 py-2.5 text-sm outline-none transition"
                             />
                         </div>
 
@@ -107,7 +108,7 @@ const Register = () => {
                                 placeholder="••••••••"
                                 required
                                 minLength={8}
-                                className="mt-2 w-full rounded-lg border-2 border-black bg-white px-3 py-2.5 text-sm outline-none transition focus:bg-orange-50"
+                                className="mt-2 w-full rounded-lg border-2 border-black bg-white px-3 py-2.5 text-sm outline-none transition"
                             />
 
                             <p className="mt-1.5 text-xs text-slate-400">

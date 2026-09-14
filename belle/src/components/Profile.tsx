@@ -1,12 +1,32 @@
+import type { ReactNode } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { authClient } from '../utils/auth-client';
 import Spinner from './Spinner';
 
+interface ProfileRowProps {
+    label: string;
+    value: ReactNode;
+    children?: ReactNode;
+    isLast?: boolean;
+}
+
+const ProfileRow = ({ label, value, children, isLast = false }: ProfileRowProps) => (
+    <div className={`flex items-center justify-between gap-6 p-5 ${isLast ? '' : 'border-b'}`}>
+        <div>
+            <p className="text-sm font-medium text-slate-900">{label}</p>
+            <p className="mt-1 text-sm text-slate-500">{value}</p>
+        </div>
+        {children}
+    </div>
+);
+
 const Profile = () => {
     const { data: session, isPending } = authClient.useSession();
+    const navigate = useNavigate();
 
     const handleLogout = async () => {
         await authClient.signOut();
-        window.location.href = '/login';
+        navigate({ to: '/login' });
     };
 
     if (isPending) {
@@ -27,46 +47,9 @@ const Profile = () => {
 
     return (
         <div className="m-6 rounded-2xl border-2 border-black bg-white">
-
-
-            {/* Name */}
-            <div className="flex items-center justify-between gap-6 border-b p-5">
-                <div>
-                    <p className="text-sm font-medium text-slate-900">
-                        Name
-                    </p>
-
-                    <p className="mt-1 text-sm text-slate-500">
-                        {user.name || 'No name set'}
-                    </p>
-                </div>
-            </div>
-
-            {/* Email */}
-            <div className="flex items-center justify-between gap-6 border-b p-5">
-                <div>
-                    <p className="text-sm font-medium text-slate-900">
-                        Email
-                    </p>
-
-                    <p className="mt-1 text-sm text-slate-500">
-                        {user.email}
-                    </p>
-                </div>
-            </div>
-
-            {/* Logout */}
-            <div className="flex items-center justify-between gap-6 p-5">
-                <div>
-                    <p className="text-sm font-medium text-slate-900">
-                        Sign out
-                    </p>
-
-                    <p className="mt-1 text-sm text-slate-500">
-                        Sign out of your Bellee account.
-                    </p>
-                </div>
-
+            <ProfileRow label="Name" value={user.name || 'No name set'} />
+            <ProfileRow label="Email" value={user.email} />
+            <ProfileRow label="Sign out" value="Sign out of your account." isLast>
                 <button
                     type="button"
                     onClick={handleLogout}
@@ -74,7 +57,7 @@ const Profile = () => {
                 >
                     Logout
                 </button>
-            </div>
+            </ProfileRow>
         </div>
     );
 };
