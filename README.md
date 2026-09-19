@@ -18,7 +18,9 @@
 
 ## TODO
  Darkmode
- Fully functional notes section
+ Notes update functionality
+ Why authenticated user can see the login register routes
+ Update backend dependency
 
 ## Run the project
 

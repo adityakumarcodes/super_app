@@ -12,6 +12,7 @@ import {
     Maximize,
     Minimize,
     MessageCircleMore,
+    Wallet,
 } from 'lucide-react';
 import HoverText from './HoverText';
 import Tree from './Tree';
@@ -54,9 +55,10 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
         { type: 'link', label: 'Notes', icon: BookOpen, link: '/notes' },
         { type: 'link', label: 'Chat', icon: MessageCircleMore, link: '/chat' },
         { type: 'link', label: 'Shop', icon: Store, link: '/shop' },
+        { type: 'link', label: 'Wallet', icon: Wallet, link: '/wallet' },
         { type: 'link', label: 'Social', icon: Pyramid, link: '/social' },
-
         // { type: 'accordion', label: 'Notebook', icon: BookOpen },
+
     ];
 
     const maybeTooltip = (children: React.ReactNode, msg: string, dir: 'top' | 'bottom' | 'right' | 'left') =>
@@ -104,7 +106,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
                                 )}
                             </div>
                         ) : (
-                            <Link to={item.link} className="flex items-start gap-1.5 group hover:bg-gray-200 rounded-md p-1.5 cursor-pointer">
+                            <Link activeProps={{ className: 'bg-gray-200' }} to={item.link} className="flex items-start gap-1.5 group hover:bg-gray-200 rounded-md p-1.5 cursor-pointer">
                                 {maybeTooltip(<item.icon strokeWidth={1.25} />, item.label, 'right')}
                                 {!collapsed && <p>{item.label}</p>}
                             </Link>
@@ -115,7 +117,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
 
             <div className="mt-auto pb-4">
                 <hr className="my-2 border-t-2 border-gray-300" />
-                <Link href="/settings" className="flex items-start gap-1.5 rounded-md p-1.5 group hover:bg-gray-200 cursor-pointer">
+                <Link to="/settings" className="flex items-start gap-1.5 rounded-md p-1.5 group hover:bg-gray-200 cursor-pointer">
                     {maybeTooltip(<Bolt strokeWidth={1.25} />, 'Settings', 'right')}
                     {!collapsed && <p>Settings</p>}
                 </Link>
@@ -127,7 +129,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
                     'right',
                 )}
             </div>
-        </div>
+        </div >
     );
 };
 

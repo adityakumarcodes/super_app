@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { CalendarDays, MapPin, Paperclip, Search, Users } from 'lucide-react'
+import { CalendarDays, MapPin, Search, Users, Video } from 'lucide-react'
 import ChatDetails from '../components/ChatDetails'
 import ChatList from '../components/ChatList'
 
@@ -48,13 +48,6 @@ const chats: ChatItem[] = [
   },
 ]
 
-type Action = {
-  key: string
-  label: string
-  Icon: React.ElementType
-  iconPosition?: 'leading' | 'trailing'
-}
-
 
 const messages: Message[] = [
   { role: 'assistant', content: 'Hi there! Ready to refine the new chat UI?' },
@@ -71,7 +64,8 @@ function RouteComponent() {
   const [menu, setMenu] = useState('Schedule meeting')
   const [selectedChatId, setSelectedChatId] = useState<number>(chats[0].id)
   const actions = [
-    { key: 'schedule', label: 'Schedule meeting', Icon: CalendarDays },
+    { key: 'schedule', label: 'Schedule meeting', Icon: Video },
+    { key: 'schedule', label: 'Calendar', Icon: CalendarDays },
     { key: 'location', label: 'Share location', Icon: MapPin },
     { key: 'group', label: 'Create group', Icon: Users },
     { key: 'search', label: 'Search', Icon: Search },

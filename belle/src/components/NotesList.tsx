@@ -11,7 +11,6 @@ type Note = {
 }
 
 
-type NotesCategory = 'All' | 'Technology' | 'Startup' | 'Lifestyle';
 const images = import.meta.glob(
     "../assets/images/notes/*.{jpg,jpeg,jfif,png}",
     {
@@ -36,7 +35,7 @@ const useNoteImage = (note: Note) => {
 };
 
 export default function NotesList() {
-    const [menu, setMenu] = useState<NotesCategory>('All');
+    const [menu, setMenu] = useState<String>('All');
     const BASE = (import.meta.env.VITE_API_BASE as string) || 'http://localhost:3000/api'
     const { data: pages = [], isLoading } = useFetchQuery<Note[]>({ queryKey: ['notes'], queryLink: `${BASE}/notes` })
 
@@ -44,7 +43,7 @@ export default function NotesList() {
 
     return (<>
         <div className="flex flex-wrap justify-center gap-6 my-10">
-            {(['All', 'Technology', 'Startup', 'Lifestyle'] as const).map((item) => (
+            {(['All', 'Technology', 'Startup', 'Lifestyle', 'Scanner'] as const).map((item) => (
                 <button
                     key={item}
                     onClick={() => setMenu(item)}

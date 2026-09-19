@@ -18,6 +18,7 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SocialRouteImport } from './routes/social'
 import { Route as NotesNoteIdRouteImport } from './routes/notes.$noteId'
+import { Route as ShopCategoryRouteImport } from './routes/shop.$category'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -64,6 +65,11 @@ const NotesNoteIdRoute = NotesNoteIdRouteImport.update({
   path: '/$noteId',
   getParentRoute: () => NotesRoute,
 } as any)
+const ShopCategoryRoute = ShopCategoryRouteImport.update({
+  id: '/$category',
+  path: '/$category',
+  getParentRoute: () => ShopRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -72,9 +78,10 @@ export interface FileRoutesByFullPath {
   '/notes': typeof NotesRouteWithChildren
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRoute
-  '/shop': typeof ShopRoute
+  '/shop': typeof ShopRouteWithChildren
   '/social': typeof SocialRoute
   '/notes/$noteId': typeof NotesNoteIdRoute
+  '/shop/$category': typeof ShopCategoryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -83,9 +90,10 @@ export interface FileRoutesByTo {
   '/notes': typeof NotesRouteWithChildren
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRoute
-  '/shop': typeof ShopRoute
+  '/shop': typeof ShopRouteWithChildren
   '/social': typeof SocialRoute
   '/notes/$noteId': typeof NotesNoteIdRoute
+  '/shop/$category': typeof ShopCategoryRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -95,9 +103,10 @@ export interface FileRoutesById {
   '/notes': typeof NotesRouteWithChildren
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRoute
-  '/shop': typeof ShopRoute
+  '/shop': typeof ShopRouteWithChildren
   '/social': typeof SocialRoute
   '/notes/$noteId': typeof NotesNoteIdRoute
+  '/shop/$category': typeof ShopCategoryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/shop'
     | '/social'
     | '/notes/$noteId'
+    | '/shop/$category'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/shop'
     | '/social'
     | '/notes/$noteId'
+    | '/shop/$category'
   id:
     | '__root__'
     | '/'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/shop'
     | '/social'
     | '/notes/$noteId'
+    | '/shop/$category'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -142,7 +154,7 @@ export interface RootRouteChildren {
   NotesRoute: typeof NotesRouteWithChildren
   RegisterRoute: typeof RegisterRoute
   SettingsRoute: typeof SettingsRoute
-  ShopRoute: typeof ShopRoute
+  ShopRoute: typeof ShopRouteWithChildren
   SocialRoute: typeof SocialRoute
 }
 
@@ -211,6 +223,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotesNoteIdRouteImport
       parentRoute: typeof NotesRoute
     }
+    '/shop/$category': {
+      id: '/shop/$category'
+      path: '/$category'
+      fullPath: '/shop/$category'
+      preLoaderRoute: typeof ShopCategoryRouteImport
+      parentRoute: typeof ShopRoute
+    }
   }
 }
 
@@ -224,6 +243,16 @@ const NotesRouteChildren: NotesRouteChildren = {
 
 const NotesRouteWithChildren = NotesRoute._addFileChildren(NotesRouteChildren)
 
+interface ShopRouteChildren {
+  ShopCategoryRoute: typeof ShopCategoryRoute
+}
+
+const ShopRouteChildren: ShopRouteChildren = {
+  ShopCategoryRoute: ShopCategoryRoute,
+}
+
+const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChatRoute: ChatRoute,
@@ -231,7 +260,7 @@ const rootRouteChildren: RootRouteChildren = {
   NotesRoute: NotesRouteWithChildren,
   RegisterRoute: RegisterRoute,
   SettingsRoute: SettingsRoute,
-  ShopRoute: ShopRoute,
+  ShopRoute: ShopRouteWithChildren,
   SocialRoute: SocialRoute,
 }
 export const routeTree = rootRouteImport
