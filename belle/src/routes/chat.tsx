@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { CalendarDays, MapPin, Search, Users, Video } from 'lucide-react'
+import { CalendarDaysIcon, MapPin, Paperclip, Search, Users, Video } from 'lucide-react'
 import ChatDetails from '../components/ChatDetails'
 import ChatList from '../components/ChatList'
 
@@ -65,10 +65,10 @@ function RouteComponent() {
   const [selectedChatId, setSelectedChatId] = useState<number>(chats[0].id)
   const actions = [
     { key: 'schedule', label: 'Schedule meeting', Icon: Video },
-    { key: 'schedule', label: 'Calendar', Icon: CalendarDays },
+    { key: 'calndar', label: 'Calendar', Icon: CalendarDaysIcon },
+    { key: 'send_file', label: 'Send file', Icon: Paperclip },
     { key: 'location', label: 'Share location', Icon: MapPin },
     { key: 'group', label: 'Create group', Icon: Users },
-    { key: 'search', label: 'Search', Icon: Search },
   ]
   const selectedChat = chats.find((c) => c.id === selectedChatId) ?? chats[0]
 

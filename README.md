@@ -17,10 +17,12 @@
 		- VITE_BACKEND_PORT=3000
 
 ## TODO
- Darkmode
- Notes update functionality
- Why authenticated user can see the login register routes
- Update backend dependency
+
+- Darkmode
+- Notes update functionality
+- Why authenticated user can see the login register routes
+- Update backend dependency
+- Integrate milo
 
 ## Run the project
 
@@ -51,6 +53,15 @@ Below are a few UI screenshots from the Belle frontend.
 ### Chat
 ![Chat screenshot](screenshots/chat.png)
 
+### Calendar
+![Chat screenshot](screenshots/calendar.png)
+
 ### Shop
 ![Shop screenshot](screenshots/shop.png)
 
+![Shop screenshot](screenshots/details.png)
+
+![Shop screenshot](screenshots/cart.png)
+
+### Social
+![Chat screenshot](screenshots/social.png)

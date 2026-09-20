@@ -35,7 +35,7 @@ type WeatherResponse = {
     };
 };
 
-const weatherApiKey = import.meta.env.VITE_WEATHER_API_KEY || 'db187b4e2bfe4d31a6c90817261909';
+const weatherApiKey = import.meta.env.VITE_WEATHER_API_KEY;
 
 type WeatherWidgetProps = {
     place: string;
@@ -55,7 +55,7 @@ export default function WeatherWidget({ place }: WeatherWidgetProps) {
             return response.json() as Promise<WeatherResponse>;
         },
         staleTime: 10 * 60 * 1000,
-        enabled: Boolean(weatherQuery),
+        enabled: Boolean(weatherQuery && weatherApiKey),
     });
 
     return (

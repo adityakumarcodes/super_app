@@ -1,0 +1,22 @@
+{
+  "name": "super_app",
+  "version": "1.0.0",
+  "description": "- **Aloha** (backend) \t- NestJS application with PrismaORM and PostgresDB \t- Authentication via `better-auth` + `@thallesp/nestjs-better-auth` \t- `.env` loaded via `@nestjs/config` \t\t- DATABASE_URL=? \t\t- BETTER_AUTH_SECRET=? \t\t- BETTER_AUTH_URL=http://localhost:3000 \t\t- BACKEND_PORT=3000 \t\t- FRONTEND_PORT=5173",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"cd aloha && npm run start:dev\" \"cd belle && npm run dev\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adityakumarcodes/super_app.git"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/adityakumarcodes/super_app/issues"
+  },
+  "homepage": "https://github.com/adityakumarcodes/super_app#readme",
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  }
+}
