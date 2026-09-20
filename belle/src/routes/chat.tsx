@@ -73,8 +73,8 @@ function RouteComponent() {
   const selectedChat = chats.find((c) => c.id === selectedChatId) ?? chats[0]
 
   return (
-    <div className="h-screen w-full bg-slate-50">
-      <div className="flex h-full w-full bg-white">
+    <div className="h-screen w-full bg-[#f6f4f1]">
+      <div className="flex h-full w-full surface-body">
         <ChatList
           chats={chats}
           selectedChatId={selectedChatId}

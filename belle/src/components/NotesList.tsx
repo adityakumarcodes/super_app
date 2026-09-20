@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import useFetchQuery from '../utils/useFetchQuery'
+import NotesActionFab from './NotesActionFab';
 import Spinner from "./Spinner";
 
 type Note = {
@@ -47,7 +48,7 @@ export default function NotesList() {
                 <button
                     key={item}
                     onClick={() => setMenu(item)}
-                    className={menu === item ? 'bg-orange-200 py-2 px-4 rounded-full border-2' : 'border-2 py-2 px-4 rounded-full'}
+                    className={menu === item ? 'theme-accent-bg py-2 px-4 rounded-full border-2' : 'border-2 py-2 px-4 rounded-full'}
                 >
                     {item}
                 </button>
@@ -85,6 +86,9 @@ export default function NotesList() {
                     </Link>
                 );
             })}
-        </div></>
+        </div>
+
+        <NotesActionFab />
+    </>
     );
 }

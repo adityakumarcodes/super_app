@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Outlet, useMatches } from '@tanstack/react-router';
 import ProductList from '../components/ProductList';
 
 export const Route = createFileRoute('/shop/$category')({
@@ -7,6 +7,10 @@ export const Route = createFileRoute('/shop/$category')({
 
 function CategoryPage() {
     const { category } = Route.useParams();
+    const matches = useMatches();
+    const isProductDetailRoute = matches.some((match) => match.routeId === '/shop/$category/$productId');
+
+    if (isProductDetailRoute) return <Outlet />;
 
     if (category === 'grocery') return <ProductList />;
 

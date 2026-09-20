@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Outlet, useLocation, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react';
 import { Baby, Carrot, Monitor, Plane, Rose, Shirt, Sparkles, Tags, Utensils } from 'lucide-react';
 
@@ -8,6 +8,7 @@ export const Route = createFileRoute('/shop')({
 
 function RouteComponent() {
   const [menu, setMenu] = useState<string | null>(null);
+  const location = useLocation();
   const navigate = useNavigate();
   const categories = [
     { label: 'Electronics', icon: Monitor },
@@ -27,6 +28,8 @@ function RouteComponent() {
     navigate({ to: '/shop/$category', params: { category } });
   };
 
+  if (location.pathname.split('/').length > 3) return <Outlet />;
+
   return <div className="p-4">
     <div className="text-center my-8">
       <h1 className="font-bodoni text-6xl">Shop</h1>
@@ -37,7 +40,7 @@ function RouteComponent() {
           <button
             key={label}
             onClick={() => selectCategory(label)}
-            className={menu === label ? 'flex items-center gap-2 bg-orange-200 py-2 px-4 rounded-full border-2' : 'flex items-center gap-2 border-2 py-2 px-4 rounded-full'}
+            className={menu === label ? 'flex items-center gap-2 theme-accent-bg py-2 px-4 rounded-full border-2' : 'flex items-center gap-2 border-2 py-2 px-4 rounded-full'}
           >
             <Icon strokeWidth={1.5} />
             {label}

@@ -1,11 +1,10 @@
-import type { API, BlockTool, BlockToolConstructorOptions } from '@editorjs/editorjs';
+import type { BlockTool, BlockToolConstructorOptions } from '@editorjs/editorjs';
 
 type CalloutData = {
     text: string;
 };
 
 export default class MyCallout implements BlockTool {
-    private api: API;
     private data: CalloutData;
     private wrapper: HTMLDivElement | null = null;
 
@@ -20,7 +19,7 @@ export default class MyCallout implements BlockTool {
         data,
         api,
     }: BlockToolConstructorOptions<CalloutData>) {
-        this.api = api;
+        void api;
         this.data = data ?? {
             text: '',
         };
@@ -30,7 +29,7 @@ export default class MyCallout implements BlockTool {
         this.wrapper = document.createElement('div');
 
         this.wrapper.className =
-            'my-callout flex gap-3 rounded-lg bg-orange-50 p-4 border-2 ';
+            'my-callout flex gap-3 rounded-lg theme-accent-soft p-4 border-2 ';
 
         const icon = document.createElement('div');
 
@@ -48,12 +47,8 @@ export default class MyCallout implements BlockTool {
         this.wrapper.appendChild(icon);
         this.wrapper.appendChild(content);
 
-        this.contentElement = content;
-
         return this.wrapper;
     }
-
-    private contentElement: HTMLDivElement | null = null;
 
     save(block: HTMLElement): CalloutData {
         const content = block.querySelector(

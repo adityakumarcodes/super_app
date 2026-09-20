@@ -12,9 +12,10 @@ import {
     Maximize,
     Minimize,
     MessageCircleMore,
-    Wallet,
+    CalendarDays
 } from 'lucide-react';
 import HoverText from './HoverText';
+import SidebarNavItem from './SidebarNavItem';
 import Tree from './Tree';
 
 type BaseMenuItem = {
@@ -54,8 +55,8 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
         { type: 'link', label: 'Home', icon: House, link: '/' },
         { type: 'link', label: 'Notes', icon: BookOpen, link: '/notes' },
         { type: 'link', label: 'Chat', icon: MessageCircleMore, link: '/chat' },
+        { type: 'link', label: 'Calendar', icon: CalendarDays, link: '/calendar' },
         { type: 'link', label: 'Shop', icon: Store, link: '/shop' },
-        { type: 'link', label: 'Wallet', icon: Wallet, link: '/wallet' },
         { type: 'link', label: 'Social', icon: Pyramid, link: '/social' },
         // { type: 'accordion', label: 'Notebook', icon: BookOpen },
 
@@ -106,10 +107,12 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
                                 )}
                             </div>
                         ) : (
-                            <Link activeProps={{ className: 'bg-gray-200' }} to={item.link} className="flex items-start gap-1.5 group hover:bg-gray-200 rounded-md p-1.5 cursor-pointer">
-                                {maybeTooltip(<item.icon strokeWidth={1.25} />, item.label, 'right')}
-                                {!collapsed && <p>{item.label}</p>}
-                            </Link>
+                            <SidebarNavItem
+                                icon={item.icon}
+                                label={item.label}
+                                to={item.link as '/' | '/notes' | '/chat' | '/calendar' | '/shop' | '/social'}
+                                collapsed={collapsed}
+                            />
                         )}
                     </div>
                 ))}

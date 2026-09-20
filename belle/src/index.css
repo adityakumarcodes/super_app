@@ -9,6 +9,91 @@
   --font-bodoni: "Bodoni Moda", serif;
 }
 
+:root {
+  --theme-accent: #f0d5a6;
+  --surface-body: #f8f4f1;
+  --surface-card: #f3efe9;
+  --surface-raised: #ffffff;
+  --surface-muted: #eee9e3;
+  --border-subtle: #d8d0c7;
+  --border-strong: #2f2d2d;
+  --text-primary: #1f1d1b;
+  --text-secondary: #6a625d;
+  --radius-card: 18px;
+  --radius-control: 999px;
+}
+
+body {
+  background-color: var(--surface-body);
+}
+
+.surface-body {
+  background-color: var(--surface-body) !important;
+}
+
+.surface-card {
+  background-color: var(--surface-card) !important;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-card);
+}
+
+.hover-surface-card:hover {
+  background-color: var(--surface-card) !important;
+}
+
+.surface-raised {
+  background-color: var(--surface-raised) !important;
+  border: 1px solid var(--border-subtle);
+}
+
+.surface-muted {
+  background-color: var(--surface-muted) !important;
+}
+
+.border-subtle {
+  border-color: var(--border-subtle) !important;
+}
+
+.border-strong {
+  border-color: var(--border-strong) !important;
+}
+
+.text-primary {
+  color: var(--text-primary) !important;
+}
+
+.text-secondary {
+  color: var(--text-secondary) !important;
+}
+
+.control-pill {
+  border-radius: var(--radius-control);
+}
+
+.divider {
+  border-color: var(--border-subtle) !important;
+}
+
+.theme-accent-bg {
+  background-color: var(--theme-accent) !important;
+}
+
+.theme-accent-soft {
+  background-color: color-mix(in srgb, var(--theme-accent) 55%, white) !important;
+}
+
+.theme-accent-hover:hover {
+  background-color: var(--theme-accent) !important;
+}
+
+.theme-accent-focus:focus {
+  background-color: color-mix(in srgb, var(--theme-accent) 18%, white) !important;
+}
+
+.theme-accent-control {
+  accent-color: var(--theme-accent) !important;
+}
+
 @layer base {
   h1 {
     @apply text-6xl font-bodoni;

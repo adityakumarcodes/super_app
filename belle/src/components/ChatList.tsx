@@ -32,7 +32,7 @@ export default function ChatList({
     onSelectChat,
 }: ChatListProps) {
     return (
-        <div className="flex-3 h-full border-r border-black p-4">
+        <div className="flex-3 h-full border-r border-[#2d2a2a] surface-body p-4">
             <div className="mb-6 flex items-center justify-between">
                 <h1 className="mt-2">Chats</h1>
             </div>
@@ -43,8 +43,8 @@ export default function ChatList({
                         onClick={() => onMenuChange(label)}
                         className={
                             menu === label
-                                ? 'inline-flex items-center gap-2 bg-orange-200 border-2 py-2 px-4 rounded-full'
-                                : 'inline-flex items-center gap-2 border-2 py-2 px-4 rounded-full'
+                                ? 'inline-flex items-center gap-2 theme-accent-bg border py-2 px-4 rounded-full'
+                                : 'inline-flex items-center gap-2 border py-2 px-4 rounded-full'
                         }
                     >
                         <Icon strokeWidth={1.25} />
@@ -60,7 +60,7 @@ export default function ChatList({
                         role="button"
                         tabIndex={0}
                         onClick={() => onSelectChat(chat.id)}
-                        className={`${chat.id === selectedChatId ? 'p-4 bg-slate-200 border-2 border-black rounded-lg' : 'p-4 hover:bg-slate-100'} transition-colors`}
+                        className={`${chat.id === selectedChatId ? 'p-4 theme-accent-bg border border-[#2d2a2a] rounded-lg' : 'p-4 hover-surface-card'} transition-colors`}
                     >
                         <div className="flex items-start justify-between gap-4">
                             <div>

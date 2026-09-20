@@ -65,7 +65,7 @@ const Register = () => {
                                 }
                                 placeholder="Your name"
                                 required
-                                className="mt-2 w-full rounded-lg border-2 border-black px-3 py-2.5 text-sm outline-none transition focus:bg-orange-50"
+                                className="mt-2 w-full rounded-lg border-2 border-black px-3 py-2.5 text-sm outline-none transition theme-accent-focus"
                             />
                         </div>
 
@@ -125,7 +125,7 @@ const Register = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full rounded-lg border-2 border-black bg-orange-400 px-4 py-2.5 text-sm font-semibold text-black transition hover:bg-orange-300 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="w-full rounded-lg border-2 border-black theme-accent-bg px-4 py-2.5 text-sm font-semibold text-black transition theme-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             {loading
                                 ? 'Creating account...'

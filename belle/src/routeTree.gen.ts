@@ -10,6 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CalendarRouteImport } from './routes/calendar'
+import { Route as CartRouteImport } from './routes/cart'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as NotesRouteImport } from './routes/notes'
@@ -19,10 +21,21 @@ import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SocialRouteImport } from './routes/social'
 import { Route as NotesNoteIdRouteImport } from './routes/notes.$noteId'
 import { Route as ShopCategoryRouteImport } from './routes/shop.$category'
+import { Route as ShopCategoryProductIdRouteImport } from './routes/shop.$category.$productId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CalendarRoute = CalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CartRoute = CartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChatRoute = ChatRouteImport.update({
@@ -70,9 +83,16 @@ const ShopCategoryRoute = ShopCategoryRouteImport.update({
   path: '/$category',
   getParentRoute: () => ShopRoute,
 } as any)
+const ShopCategoryProductIdRoute = ShopCategoryProductIdRouteImport.update({
+  id: '/$productId',
+  path: '/$productId',
+  getParentRoute: () => ShopCategoryRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/calendar': typeof CalendarRoute
+  '/cart': typeof CartRoute
   '/chat': typeof ChatRoute
   '/login': typeof LoginRoute
   '/notes': typeof NotesRouteWithChildren
@@ -81,10 +101,13 @@ export interface FileRoutesByFullPath {
   '/shop': typeof ShopRouteWithChildren
   '/social': typeof SocialRoute
   '/notes/$noteId': typeof NotesNoteIdRoute
-  '/shop/$category': typeof ShopCategoryRoute
+  '/shop/$category': typeof ShopCategoryRouteWithChildren
+  '/shop/$category/$productId': typeof ShopCategoryProductIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/calendar': typeof CalendarRoute
+  '/cart': typeof CartRoute
   '/chat': typeof ChatRoute
   '/login': typeof LoginRoute
   '/notes': typeof NotesRouteWithChildren
@@ -93,11 +116,14 @@ export interface FileRoutesByTo {
   '/shop': typeof ShopRouteWithChildren
   '/social': typeof SocialRoute
   '/notes/$noteId': typeof NotesNoteIdRoute
-  '/shop/$category': typeof ShopCategoryRoute
+  '/shop/$category': typeof ShopCategoryRouteWithChildren
+  '/shop/$category/$productId': typeof ShopCategoryProductIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/calendar': typeof CalendarRoute
+  '/cart': typeof CartRoute
   '/chat': typeof ChatRoute
   '/login': typeof LoginRoute
   '/notes': typeof NotesRouteWithChildren
@@ -106,12 +132,15 @@ export interface FileRoutesById {
   '/shop': typeof ShopRouteWithChildren
   '/social': typeof SocialRoute
   '/notes/$noteId': typeof NotesNoteIdRoute
-  '/shop/$category': typeof ShopCategoryRoute
+  '/shop/$category': typeof ShopCategoryRouteWithChildren
+  '/shop/$category/$productId': typeof ShopCategoryProductIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/calendar'
+    | '/cart'
     | '/chat'
     | '/login'
     | '/notes'
@@ -121,9 +150,12 @@ export interface FileRouteTypes {
     | '/social'
     | '/notes/$noteId'
     | '/shop/$category'
+    | '/shop/$category/$productId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/calendar'
+    | '/cart'
     | '/chat'
     | '/login'
     | '/notes'
@@ -133,9 +165,12 @@ export interface FileRouteTypes {
     | '/social'
     | '/notes/$noteId'
     | '/shop/$category'
+    | '/shop/$category/$productId'
   id:
     | '__root__'
     | '/'
+    | '/calendar'
+    | '/cart'
     | '/chat'
     | '/login'
     | '/notes'
@@ -145,10 +180,13 @@ export interface FileRouteTypes {
     | '/social'
     | '/notes/$noteId'
     | '/shop/$category'
+    | '/shop/$category/$productId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CalendarRoute: typeof CalendarRoute
+  CartRoute: typeof CartRoute
   ChatRoute: typeof ChatRoute
   LoginRoute: typeof LoginRoute
   NotesRoute: typeof NotesRouteWithChildren
@@ -165,6 +203,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calendar': {
+      id: '/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof CalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cart': {
+      id: '/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CartRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chat': {
@@ -230,6 +282,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopCategoryRouteImport
       parentRoute: typeof ShopRoute
     }
+    '/shop/$category/$productId': {
+      id: '/shop/$category/$productId'
+      path: '/$productId'
+      fullPath: '/shop/$category/$productId'
+      preLoaderRoute: typeof ShopCategoryProductIdRouteImport
+      parentRoute: typeof ShopCategoryRoute
+    }
   }
 }
 
@@ -243,18 +302,32 @@ const NotesRouteChildren: NotesRouteChildren = {
 
 const NotesRouteWithChildren = NotesRoute._addFileChildren(NotesRouteChildren)
 
+interface ShopCategoryRouteChildren {
+  ShopCategoryProductIdRoute: typeof ShopCategoryProductIdRoute
+}
+
+const ShopCategoryRouteChildren: ShopCategoryRouteChildren = {
+  ShopCategoryProductIdRoute: ShopCategoryProductIdRoute,
+}
+
+const ShopCategoryRouteWithChildren = ShopCategoryRoute._addFileChildren(
+  ShopCategoryRouteChildren,
+)
+
 interface ShopRouteChildren {
-  ShopCategoryRoute: typeof ShopCategoryRoute
+  ShopCategoryRoute: typeof ShopCategoryRouteWithChildren
 }
 
 const ShopRouteChildren: ShopRouteChildren = {
-  ShopCategoryRoute: ShopCategoryRoute,
+  ShopCategoryRoute: ShopCategoryRouteWithChildren,
 }
 
 const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CalendarRoute: CalendarRoute,
+  CartRoute: CartRoute,
   ChatRoute: ChatRoute,
   LoginRoute: LoginRoute,
   NotesRoute: NotesRouteWithChildren,

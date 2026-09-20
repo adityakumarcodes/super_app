@@ -18,8 +18,8 @@ type ChatDetailsProps = {
 
 export default function ChatDetails({ selectedChat, messages }: ChatDetailsProps) {
     return (
-        <div className="flex-7 h-full">
-            <div className="mb-6 flex items-center justify-between border-b-2">
+        <div className="flex-7 h-full surface-body">
+            <div className="mb-6 flex items-center justify-between border-b">
                 <h4 className="mt-2 p-4">{selectedChat.title}</h4>
             </div>
 
@@ -27,9 +27,9 @@ export default function ChatDetails({ selectedChat, messages }: ChatDetailsProps
                 {messages.map((message, index) => (
                     <div
                         key={index}
-                        className={`w-fit max-w-[80%] rounded-4xl border-2 px-5 py-3 text-base leading-6 transition-all duration-200 ${message.role === 'user'
-                            ? 'ml-auto border-2 bg-orange-200 text-slate-900'
-                            : 'border-2 bg-slate-100 text-slate-900'
+                        className={`w-fit max-w-[80%] rounded-4xl border px-5 py-3 text-base leading-6 transition-all duration-200 ${message.role === 'user'
+                            ? 'ml-auto theme-accent-bg text-slate-900'
+                            : 'surface-card text-slate-900'
                             }`}
                     >
                         {message.content}
