@@ -1,4 +1,4 @@
-import { Droplets, Thermometer, Wind } from 'lucide-react';
+import { CloudSun, Droplets, MapPin, Thermometer, Wind } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import Spinner from './Spinner';
 
@@ -59,10 +59,11 @@ export default function WeatherWidget({ place }: WeatherWidgetProps) {
     });
 
     return (
-        <section className="mx-2 rounded-3xl border-2 border-black/10 bg-white p-5 font-poppins shadow-sm sm:p-6">
-            {isLoading && <div className="flex min-h-40 items-center justify-center"><Spinner /></div>}
-            {isError && <p className="rounded-2xl bg-red-50 p-4 text-center text-sm text-red-600">Weather is unavailable right now.</p>}
-            {data && <div className="grid min-h-64 grid-cols-3">
+        <section className="surface-card mx-auto max-w-5xl p-4 sm:p-6">
+            {isLoading && <div className="flex min-h-52 items-center justify-center"><Spinner /></div>}
+            {!weatherApiKey && <div className="theme-accent-soft rounded-2xl border border-strong p-5 text-center text-sm">Add <code>VITE_WEATHER_API_KEY</code> to show the local forecast.</div>}
+            {isError && <p className="rounded-2xl border border-red-200 bg-red-50 p-4 text-center text-sm text-red-700">Weather is unavailable right now.</p>}
+            {data && <div className="grid gap-3 md:grid-cols-3">
                 {data.forecast.forecastday.slice(0, 3).map((day, index) => {
                     const isToday = index === 0;
                     const temperature = isToday ? data.current.temp_c : day.day.avgtemp_c;
@@ -71,22 +72,23 @@ export default function WeatherWidget({ place }: WeatherWidgetProps) {
                     const condition = isToday ? data.current.condition : day.day.condition;
 
                     return (
-                        <div className={`flex min-w-0 self-stretch flex-col px-4 first:pl-0 last:pr-0 ${index > 0 ? 'border-l-2 border-black/10' : ''}`} key={day.date}>
-                            <p className="text-center text-sm font-medium text-black sm:text-base">{['Today', 'Tomorrow', 'Next day'][index]}</p>
-                            <div className="my-4 flex items-center justify-center gap-2">
-                                <img className="h-14 w-14 sm:h-16 sm:w-16" src={`https:${condition.icon}`} alt={condition.text} />
-                                <p className="font-bodoni text-3xl font-bold sm:text-4xl">{Math.round(temperature)}°C</p>
+                        <article className={`rounded-2xl border p-4 ${isToday ? 'theme-accent-soft border-strong' : 'surface-raised border-subtle'}`} key={day.date}>
+                            <p className="text-sm font-medium text-secondary">{['Today', 'Tomorrow', 'Next day'][index]}</p>
+                            <div className="my-4 flex items-center gap-3">
+                                <img className="h-14 w-14" src={`https:${condition.icon}`} alt={condition.text} />
+                                <div><p className="font-bodoni text-4xl leading-none">{Math.round(temperature)}°C</p><p className="mt-1 text-sm text-secondary">{condition.text}</p></div>
                             </div>
-                            <p className="min-h-7 text-center text-xs text-gray-500 sm:text-sm">{condition.text}</p>
-                            <div className="mt-auto space-y-3 border-t border-black/10 pt-4 text-xs text-gray-500 sm:text-sm">
-                                <p className="flex items-center justify-between gap-2"><span className="flex items-center gap-1.5"><Thermometer size={15} />High / Low</span><strong className="font-medium text-black">{Math.round(day.day.maxtemp_c)}° / {Math.round(day.day.mintemp_c)}°</strong></p>
-                                <p className="flex items-center justify-between gap-2"><span className="flex items-center gap-1.5"><Droplets size={15} />Humidity</span><strong className="font-medium text-black">{Math.round(humidity)}%</strong></p>
-                                <p className="flex items-center justify-between gap-2"><span className="flex items-center gap-1.5"><Wind size={15} />Wind</span><strong className="font-medium text-black">{Math.round(wind)} km/h</strong></p>
+                            <div className="space-y-2 border-t border-subtle pt-3 text-xs text-secondary">
+                                <p className="flex items-center justify-between gap-2"><span className="flex items-center gap-1.5"><Thermometer size={15} />High / Low</span><strong className="font-medium text-primary">{Math.round(day.day.maxtemp_c)}° / {Math.round(day.day.mintemp_c)}°</strong></p>
+                                <p className="flex items-center justify-between gap-2"><span className="flex items-center gap-1.5"><Droplets size={15} />Humidity</span><strong className="font-medium text-primary">{Math.round(humidity)}%</strong></p>
+                                <p className="flex items-center justify-between gap-2"><span className="flex items-center gap-1.5"><Wind size={15} />Wind</span><strong className="font-medium text-primary">{Math.round(wind)} km/h</strong></p>
                             </div>
-                        </div>
+                        </article>
                     );
                 })}
             </div>}
         </section>
     );
 }
+
+

@@ -1,7 +1,14 @@
-import { ImagePlus, Mic, Plus, QrCode, X } from 'lucide-react'
+
+
+import { FilePlus2, ImagePlus, Mic, Plus, QrCode, X } from 'lucide-react'
 import { useRef, useState } from 'react'
 
-export default function NotesActionFab() {
+type NotesActionFabProps = {
+    onNewNote: () => void
+    onNotice: (message: string) => void
+}
+
+export default function NotesActionFab({ onNewNote, onNotice }: NotesActionFabProps) {
     const [actionsOpen, setActionsOpen] = useState(false)
     const imageInputRef = useRef<HTMLInputElement>(null)
     const qrInputRef = useRef<HTMLInputElement>(null)
@@ -16,7 +23,15 @@ export default function NotesActionFab() {
                     <div className="surface-card mb-2 flex items-center gap-2 p-2 shadow-lg">
                         <button
                             type="button"
-                            onClick={() => setActionsOpen(false)}
+                            onClick={() => { setActionsOpen(false); onNewNote() }}
+                            className="control-pill flex items-center gap-2 border border-strong px-4 py-2.5 text-base hover-surface-card"
+                        >
+                            <FilePlus2 size={19} />
+                            New note
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => onNotice('Audio notes will be available when recording is connected to the API.')}
                             className="control-pill flex items-center gap-2 border border-strong px-4 py-2.5 text-base hover-surface-card"
                         >
                             <Mic size={19} />
@@ -24,7 +39,7 @@ export default function NotesActionFab() {
                         </button>
                         <button
                             type="button"
-                            onClick={() => qrInputRef.current?.click()}
+                            onClick={() => { qrInputRef.current?.click(); onNotice('Choose a QR image to prepare it for a future scan.') }}
                             className="control-pill flex items-center gap-2 border border-strong px-4 py-2.5 text-base hover-surface-card"
                         >
                             <QrCode size={19} />
@@ -32,7 +47,7 @@ export default function NotesActionFab() {
                         </button>
                         <button
                             type="button"
-                            onClick={() => imageInputRef.current?.click()}
+                            onClick={() => { imageInputRef.current?.click(); onNotice('Choose an image to attach when uploads are connected to the API.') }}
                             className="control-pill flex items-center gap-2 border border-strong px-4 py-2.5 text-base hover-surface-card"
                         >
                             <ImagePlus size={19} />
@@ -53,3 +68,8 @@ export default function NotesActionFab() {
         </>
     )
 }
+
+
+
+
+
