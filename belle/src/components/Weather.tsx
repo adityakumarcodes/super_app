@@ -72,7 +72,7 @@ export default function WeatherWidget({ place }: WeatherWidgetProps) {
                     const condition = isToday ? data.current.condition : day.day.condition;
 
                     return (
-                        <article className={`rounded-2xl border p-4 ${isToday ? 'theme-accent-soft border-strong' : 'surface-raised border-subtle'}`} key={day.date}>
+                        <article className="rounded-2xl border p-4 surface-raised border-subtle" key={day.date}>
                             <p className="text-sm font-medium text-secondary">{['Today', 'Tomorrow', 'Next day'][index]}</p>
                             <div className="my-4 flex items-center gap-3">
                                 <img className="h-14 w-14" src={`https:${condition.icon}`} alt={condition.text} />

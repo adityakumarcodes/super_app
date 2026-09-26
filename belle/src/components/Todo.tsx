@@ -39,7 +39,7 @@ export default function Todo() {
 
     return (
         <section id="home-todos" className="surface-card mx-auto mt-5 max-w-5xl p-4 sm:p-6">
-            <header className="flex items-center justify-between gap-4 border-b border-subtle pb-4">
+            {/* <header className="flex items-center justify-between gap-4 border-b border-subtle pb-4">
                 <div className="flex items-center gap-3">
                     <span className="theme-accent-soft flex h-10 w-10 items-center justify-center rounded-full border border-strong"><ListTodo size={20} /></span>
                     <div>
@@ -48,10 +48,10 @@ export default function Todo() {
                     </div>
                 </div>
                 <span className="control-pill border border-subtle px-3 py-1 text-sm text-secondary">{completed}/{todos.length} done</span>
-            </header>
+            </header> */}
 
             <form onSubmit={(event) => { event.preventDefault(); addTodo() }} className="mt-4 flex gap-2">
-                <input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Add a task" aria-label="New task" className="surface-raised min-w-0 flex-1 rounded-xl px-3 py-2.5 outline-none focus:border-[var(--theme-accent)]" />
+                <input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={`Add a task | ${completed}/${todos.length} done`} aria-label="New task" className="surface-raised min-w-0 flex-1 rounded-xl px-3 py-2.5 outline-none focus:border-[var(--theme-accent)]" />
                 <button type="submit" className="theme-accent-bg control-pill inline-flex shrink-0 items-center gap-2 border border-strong px-4 py-2.5 font-medium"><Plus size={18} />Add</button>
             </form>
 
