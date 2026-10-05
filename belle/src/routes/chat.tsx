@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { CalendarDaysIcon, MapPin, Paperclip, Search, Users, Video } from 'lucide-react'
+import { CalendarDaysIcon, MapPin, Paperclip, Users, Video } from 'lucide-react'
 import ChatDetails from '../components/ChatDetails'
 import ChatList from '../components/ChatList'
 

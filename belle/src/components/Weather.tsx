@@ -1,4 +1,4 @@
-import { CloudSun, Droplets, MapPin, Thermometer, Wind } from 'lucide-react';
+import { Droplets, Thermometer, Wind } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import Spinner from './Spinner';
 
@@ -63,7 +63,7 @@ export default function WeatherWidget({ place }: WeatherWidgetProps) {
             {isLoading && <div className="flex min-h-52 items-center justify-center"><Spinner /></div>}
             {!weatherApiKey && <div className="theme-accent-soft rounded-2xl border border-strong p-5 text-center text-sm">Add <code>VITE_WEATHER_API_KEY</code> to show the local forecast.</div>}
             {isError && <p className="rounded-2xl border border-red-200 bg-red-50 p-4 text-center text-sm text-red-700">Weather is unavailable right now.</p>}
-            {data && <div className="grid gap-3 md:grid-cols-3">
+            {data && <div className="grid gap-3 md:grid-rows-3">
                 {data.forecast.forecastday.slice(0, 3).map((day, index) => {
                     const isToday = index === 0;
                     const temperature = isToday ? data.current.temp_c : day.day.avgtemp_c;
