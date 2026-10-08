@@ -19,7 +19,7 @@ class TaskProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _tasks = await TaskService().fetchActiveTasks();
+      // _tasks = await TaskService().fetchActiveTasks();
     } catch (e) {
       _error = e.toString();
     } finally {

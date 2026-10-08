@@ -145,6 +145,7 @@ const Appearance = () => {
           className="h-5 w-5 theme-accent-control"
         />
       </div>
+      
     </div>
   );
 };

@@ -1,4 +1,3 @@
-import 'package:any_link_preview/any_link_preview.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -238,27 +237,6 @@ class RecursiveListWidget extends StatelessWidget {
 //   }
 // }
 
-class LinkPreviewWidget extends StatelessWidget {
-  final String url;
-
-  const LinkPreviewWidget({super.key, required this.url});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: AnyLinkPreview(
-        link: url,
-        displayDirection: UIDirection.uiDirectionVertical,
-        titleStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        bodyStyle: const TextStyle(fontSize: 14),
-        errorBody: 'Could not load preview',
-        errorTitle: 'Invalid link',
-        errorWidget: const Icon(Icons.error),
-      ),
-    );
-  }
-}
 
 class UIBuilder extends StatelessWidget {
   final Map<String, dynamic> json;
@@ -310,8 +288,6 @@ class UIBuilder extends StatelessWidget {
         );
       // case 'embed':
       //   return YTPreviewWidget(url: data['source'] ?? '');
-      case 'linkTool':
-        return LinkPreviewWidget(url: data['link'] ?? '');
       default:
         return const SizedBox.shrink();
     }

@@ -16,6 +16,9 @@
 		- VITE_FRONTEND_PORT=5173
 		- VITE_BACKEND_PORT=3000
 
+- **Milo** (mobile)
+	- Flutter framework
+
 ## TODO
 
 - Darkmode
@@ -26,7 +29,7 @@
 - Prisma upgrade
 - Authentication and Authorization. 
 - Admin can control the user visible mini-apps. 
-- Email OTP login. 
+- ✅Email OTP login. 
 - Replace screenshot with figma url
 - Adaptive widgets
 
@@ -36,19 +39,17 @@ https://github.com/itsmbaqer/mini-programs-guidelines
 
 ## Run the project
 
-Start backend (from repo root):
+Start frontend & backend (from repo root):
 
 ```bash
-cd aloha && npm run start:dev
+pnpm web
 ```
 
-Start frontend:
+Start mobile:
 
 ```bash
-cd belle && npm run dev
+adb connect <ip> && flutter run
 ```
-
-After starting both, open the frontend (default): `http://localhost:5173`.
 
 ## Screenshots
 

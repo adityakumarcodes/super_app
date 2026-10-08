@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+// import 'package:supabase_flutter/supabase_flutter.dart';
 
 class WordProvider extends ChangeNotifier {
   List _words = [];
@@ -18,11 +18,11 @@ class WordProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await Supabase.instance.client
-          .from('words')
-          .select()
-          .order('id', ascending: true);
-      _words = response;
+      // final response = await Supabase.instance.client
+      //     .from('words')
+      //     .select()
+      //     .order('id', ascending: true);
+      // _words = response;
     } catch (e) {
       _error = e.toString();
     } finally {
