@@ -59,7 +59,7 @@ function CartPage() {
           ))}
         </div>
 
-        <SurfaceCard className="w-[340px] p-5">
+        <SurfaceCard className="w-85 p-5">
           <h2 className="mb-5 text-[1.7rem] font-medium text-[#1f1d1b]">Order Summary</h2>
 
           <div className="space-y-3 text-[1.05rem]">

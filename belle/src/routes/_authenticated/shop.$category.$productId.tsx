@@ -45,7 +45,7 @@ function ProductDetailsPage() {
             <img
               src={product.image}
               alt={product.name}
-              className="h-[430px] w-full rounded-[16px] object-cover"
+              className="h-107.5 w-full rounded-2xl object-cover"
             />
           </div>
 
@@ -53,7 +53,7 @@ function ProductDetailsPage() {
             {gallery.map((image, index) => (
               <div
                 key={`${image}-${index}`}
-                className={`h-20 w-20 overflow-hidden rounded-[12px] border ${index === 0 ? 'border-[#2f2d2d] bg-white' : 'border-[#c9c3bd]'
+                className={`h-20 w-20 overflow-hidden rounded-xl border ${index === 0 ? 'border-[#2f2d2d] bg-white' : 'border-[#c9c3bd]'
                   }`}
               >
                 <img src={image} alt={`${product.name} thumbnail ${index + 1}`} className="h-full w-full object-cover" />
@@ -62,7 +62,7 @@ function ProductDetailsPage() {
           </div>
         </div>
 
-        <div className="w-[420px]">
+        <div className="w-105">
           <span className="inline-block rounded-full border border-[#2f2d2d] theme-accent-bg px-3 py-1 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-[#2f2d2d]">
             Organic fresh
           </span>

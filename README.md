@@ -20,10 +20,19 @@
 
 - Darkmode
 - Notes update functionality
-- Why authenticated user can see the login register routes
+- ✅Why authenticated user can see the login register routes
 - Update backend dependency
 - Integrate milo
 - Prisma upgrade
+- Authentication and Authorization. 
+- Admin can control the user visible mini-apps. 
+- Email OTP login. 
+- Replace screenshot with figma url
+- Adaptive widgets
+
+https://medium.com/@balajibal/super-apps-the-operating-system-of-everyday-life-38706471a94b
+https://github.com/itsmbaqer/mini-programs-guidelines
+ 
 
 ## Run the project
 

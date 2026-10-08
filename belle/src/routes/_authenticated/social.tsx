@@ -34,8 +34,8 @@ const posts = [
 function RouteComponent() {
   return (
 
-    <div className="mx-auto flex max-w-[1440px] gap-8">
-      <aside className="w-[260px] rounded-r-[24px] border-r border-[#d7d1c8] bg-[#f3f0ed] p-6 pl-5">
+    <div className="mx-auto flex max-w-360 gap-8">
+      <aside className="w-65 rounded-r-3xl border-r border-[#d7d1c8] bg-[#f3f0ed] p-6 pl-5">
         <div className="mb-10 flex items-center gap-3">
           <h2 className="text-[2.2rem] leading-none text-[#1f1f1f]">Social</h2>
         </div>
@@ -79,7 +79,7 @@ function RouteComponent() {
         </div>
       </aside>
 
-      <main className="flex-1 max-w-[760px]">
+      <main className="flex-1 max-w-190">
         <div className="rounded-[26px] border border-[#2a2928] bg-[#f9f5f1] p-5 shadow-[0_0_0_1px_rgba(0,0,0,0.05)]">
           <div className="flex items-center gap-3 rounded-[22px] border border-[#2a2928] bg-[#f9f5f1] p-3">
             <div className="h-9 w-9 rounded-full theme-accent-soft" />
@@ -125,7 +125,7 @@ function RouteComponent() {
 
               {post.image && (
                 <div
-                  className="mb-4 h-[420px] overflow-hidden rounded-[18px] bg-cover bg-center"
+                  className="mb-4 h-105 overflow-hidden rounded-[18px] bg-cover bg-center"
                   style={{ backgroundImage: `url(${post.image})` }}
                 />
               )}
@@ -145,7 +145,7 @@ function RouteComponent() {
         </div>
       </main>
 
-      <aside className="w-[300px] pt-3">
+      <aside className="w-75 pt-3">
         <div className="mb-8 rounded-[22px] border border-[#2a2928] bg-[#f9f5f1] p-4">
           <div className="mb-4 text-right text-[0.72rem] font-medium uppercase tracking-[0.18em] text-[#625d5a]">
             Members online
@@ -166,7 +166,7 @@ function RouteComponent() {
           </div>
           <div className="overflow-hidden rounded-[18px] bg-[#ddd4cb]">
             <div
-              className="h-[180px] w-full bg-cover bg-center"
+              className="h-45 w-full bg-cover bg-center"
               style={{
                 backgroundImage:
                   'url("https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=80")',
