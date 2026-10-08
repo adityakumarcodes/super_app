@@ -23,6 +23,7 @@
 - Why authenticated user can see the login register routes
 - Update backend dependency
 - Integrate milo
+- Prisma upgrade
 
 ## Run the project
 

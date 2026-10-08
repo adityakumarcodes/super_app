@@ -17,6 +17,7 @@
     "@editorjs/list": "^2.0.9",
     "@tailwindcss/vite": "^4.3.2",
     "@tanstack/react-query": "^5.101.2",
+    "@tanstack/react-router": "^1.170.41",
     "@tanstack/react-router-devtools": "^1.167.0",
     "better-auth": "^1.6.29",
     "lucide-react": "^1.25.0",
