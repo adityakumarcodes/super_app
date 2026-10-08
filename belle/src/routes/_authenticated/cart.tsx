@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { ShoppingCart, Trash2 } from 'lucide-react';
-import QuantityStepper from '../components/QuantityStepper';
-import SurfaceCard from '../components/SurfaceCard';
-import { useCart } from '../components/CartContext';
+import QuantityStepper from '../../components/QuantityStepper';
+import SurfaceCard from '../../components/SurfaceCard';
+import { useCart } from '../../components/CartContext';
 
-export const Route = createFileRoute('/cart')({
+export const Route = createFileRoute('/_authenticated/cart')({
   component: CartPage,
 });
 

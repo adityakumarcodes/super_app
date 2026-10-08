@@ -1,13 +1,13 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { ArrowLeft, Pencil, Trash2, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import NoteDetails from '../components/NoteDetails'
-import NoteComposerModal from '../components/NoteCompose'
-import useFetchQuery from '../utils/useFetchQuery'
-import Spinner from '../components/Spinner'
-import { deleteLocalNote, getDrafts, getOverride, saveNote, type Note } from '../utils/noteDrafts'
+import NoteDetails from '../../components/NoteDetails'
+import NoteComposerModal from '../../components/NoteCompose'
+import useFetchQuery from '../../utils/useFetchQuery'
+import Spinner from '../../components/Spinner'
+import { deleteLocalNote, getDrafts, getOverride, saveNote, type Note } from '../../utils/noteDrafts'
 
-export const Route = createFileRoute('/notes/$noteId')({
+export const Route = createFileRoute('/_authenticated/notes/$noteId')({
   component: RouteComponent,
 })
 

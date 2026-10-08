@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, useLocation } from '@tanstack/react-router';
-import NotesList from '../components/NotesList';
+import NotesList from '../../components/NotesList';
 
-export const Route = createFileRoute('/notes')({
+export const Route = createFileRoute('/_authenticated/notes')({
   component: RouteComponent,
 });
 

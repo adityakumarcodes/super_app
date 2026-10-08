@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight, Plus, Trash2, X } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
 
-export const Route = createFileRoute('/calendar')({ component: RouteComponent })
+export const Route = createFileRoute('/_authenticated/calendar')({ component: RouteComponent })
 
 type CalendarView = 'Month' | 'Week' | 'Day'
 type CalendarCategory = 'Personal' | 'Work sync' | 'Health & Wellness' | 'Baking & Groceries'

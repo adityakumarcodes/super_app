@@ -10,47 +10,32 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as CalendarRouteImport } from './routes/calendar'
-import { Route as CartRouteImport } from './routes/cart'
-import { Route as ChatRouteImport } from './routes/chat'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as NotesRouteImport } from './routes/notes'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as ShopRouteImport } from './routes/shop'
-import { Route as SocialRouteImport } from './routes/social'
-import { Route as NotesNoteIdRouteImport } from './routes/notes.$noteId'
-import { Route as ShopCategoryRouteImport } from './routes/shop.$category'
-import { Route as ShopCategoryProductIdRouteImport } from './routes/shop.$category.$productId'
+import { Route as AuthenticatedCalendarRouteImport } from './routes/_authenticated/calendar'
+import { Route as AuthenticatedCartRouteImport } from './routes/_authenticated/cart'
+import { Route as AuthenticatedChatRouteImport } from './routes/_authenticated/chat'
+import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/notes'
+import { Route as AuthenticatedShopRouteImport } from './routes/_authenticated/shop'
+import { Route as AuthenticatedSocialRouteImport } from './routes/_authenticated/social'
+import { Route as AuthenticatedNotesNoteIdRouteImport } from './routes/_authenticated/notes.$noteId'
+import { Route as AuthenticatedShopCategoryRouteImport } from './routes/_authenticated/shop.$category'
+import { Route as AuthenticatedShopCategoryProductIdRouteImport } from './routes/_authenticated/shop.$category.$productId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CalendarRoute = CalendarRouteImport.update({
-  id: '/calendar',
-  path: '/calendar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CartRoute = CartRouteImport.update({
-  id: '/cart',
-  path: '/cart',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ChatRoute = ChatRouteImport.update({
-  id: '/chat',
-  path: '/chat',
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotesRoute = NotesRouteImport.update({
-  id: '/notes',
-  path: '/notes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RegisterRoute = RegisterRouteImport.update({
@@ -63,89 +48,113 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ShopRoute = ShopRouteImport.update({
+const AuthenticatedCalendarRoute = AuthenticatedCalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedCartRoute = AuthenticatedCartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedChatRoute = AuthenticatedChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedNotesRoute = AuthenticatedNotesRouteImport.update({
+  id: '/notes',
+  path: '/notes',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedShopRoute = AuthenticatedShopRouteImport.update({
   id: '/shop',
   path: '/shop',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
-const SocialRoute = SocialRouteImport.update({
+const AuthenticatedSocialRoute = AuthenticatedSocialRouteImport.update({
   id: '/social',
   path: '/social',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
-const NotesNoteIdRoute = NotesNoteIdRouteImport.update({
-  id: '/$noteId',
-  path: '/$noteId',
-  getParentRoute: () => NotesRoute,
-} as any)
-const ShopCategoryRoute = ShopCategoryRouteImport.update({
-  id: '/$category',
-  path: '/$category',
-  getParentRoute: () => ShopRoute,
-} as any)
-const ShopCategoryProductIdRoute = ShopCategoryProductIdRouteImport.update({
-  id: '/$productId',
-  path: '/$productId',
-  getParentRoute: () => ShopCategoryRoute,
-} as any)
+const AuthenticatedNotesNoteIdRoute =
+  AuthenticatedNotesNoteIdRouteImport.update({
+    id: '/$noteId',
+    path: '/$noteId',
+    getParentRoute: () => AuthenticatedNotesRoute,
+  } as any)
+const AuthenticatedShopCategoryRoute =
+  AuthenticatedShopCategoryRouteImport.update({
+    id: '/$category',
+    path: '/$category',
+    getParentRoute: () => AuthenticatedShopRoute,
+  } as any)
+const AuthenticatedShopCategoryProductIdRoute =
+  AuthenticatedShopCategoryProductIdRouteImport.update({
+    id: '/$productId',
+    path: '/$productId',
+    getParentRoute: () => AuthenticatedShopCategoryRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/calendar': typeof CalendarRoute
-  '/cart': typeof CartRoute
-  '/chat': typeof ChatRoute
   '/login': typeof LoginRoute
-  '/notes': typeof NotesRouteWithChildren
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRoute
-  '/shop': typeof ShopRouteWithChildren
-  '/social': typeof SocialRoute
-  '/notes/$noteId': typeof NotesNoteIdRoute
-  '/shop/$category': typeof ShopCategoryRouteWithChildren
-  '/shop/$category/$productId': typeof ShopCategoryProductIdRoute
+  '/calendar': typeof AuthenticatedCalendarRoute
+  '/cart': typeof AuthenticatedCartRoute
+  '/chat': typeof AuthenticatedChatRoute
+  '/notes': typeof AuthenticatedNotesRouteWithChildren
+  '/shop': typeof AuthenticatedShopRouteWithChildren
+  '/social': typeof AuthenticatedSocialRoute
+  '/notes/$noteId': typeof AuthenticatedNotesNoteIdRoute
+  '/shop/$category': typeof AuthenticatedShopCategoryRouteWithChildren
+  '/shop/$category/$productId': typeof AuthenticatedShopCategoryProductIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/calendar': typeof CalendarRoute
-  '/cart': typeof CartRoute
-  '/chat': typeof ChatRoute
   '/login': typeof LoginRoute
-  '/notes': typeof NotesRouteWithChildren
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRoute
-  '/shop': typeof ShopRouteWithChildren
-  '/social': typeof SocialRoute
-  '/notes/$noteId': typeof NotesNoteIdRoute
-  '/shop/$category': typeof ShopCategoryRouteWithChildren
-  '/shop/$category/$productId': typeof ShopCategoryProductIdRoute
+  '/calendar': typeof AuthenticatedCalendarRoute
+  '/cart': typeof AuthenticatedCartRoute
+  '/chat': typeof AuthenticatedChatRoute
+  '/notes': typeof AuthenticatedNotesRouteWithChildren
+  '/shop': typeof AuthenticatedShopRouteWithChildren
+  '/social': typeof AuthenticatedSocialRoute
+  '/notes/$noteId': typeof AuthenticatedNotesNoteIdRoute
+  '/shop/$category': typeof AuthenticatedShopCategoryRouteWithChildren
+  '/shop/$category/$productId': typeof AuthenticatedShopCategoryProductIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/calendar': typeof CalendarRoute
-  '/cart': typeof CartRoute
-  '/chat': typeof ChatRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
-  '/notes': typeof NotesRouteWithChildren
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRoute
-  '/shop': typeof ShopRouteWithChildren
-  '/social': typeof SocialRoute
-  '/notes/$noteId': typeof NotesNoteIdRoute
-  '/shop/$category': typeof ShopCategoryRouteWithChildren
-  '/shop/$category/$productId': typeof ShopCategoryProductIdRoute
+  '/_authenticated/calendar': typeof AuthenticatedCalendarRoute
+  '/_authenticated/cart': typeof AuthenticatedCartRoute
+  '/_authenticated/chat': typeof AuthenticatedChatRoute
+  '/_authenticated/notes': typeof AuthenticatedNotesRouteWithChildren
+  '/_authenticated/shop': typeof AuthenticatedShopRouteWithChildren
+  '/_authenticated/social': typeof AuthenticatedSocialRoute
+  '/_authenticated/notes/$noteId': typeof AuthenticatedNotesNoteIdRoute
+  '/_authenticated/shop/$category': typeof AuthenticatedShopCategoryRouteWithChildren
+  '/_authenticated/shop/$category/$productId': typeof AuthenticatedShopCategoryProductIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/login'
+    | '/register'
+    | '/settings'
     | '/calendar'
     | '/cart'
     | '/chat'
-    | '/login'
     | '/notes'
-    | '/register'
-    | '/settings'
     | '/shop'
     | '/social'
     | '/notes/$noteId'
@@ -154,13 +163,13 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/login'
+    | '/register'
+    | '/settings'
     | '/calendar'
     | '/cart'
     | '/chat'
-    | '/login'
     | '/notes'
-    | '/register'
-    | '/settings'
     | '/shop'
     | '/social'
     | '/notes/$noteId'
@@ -169,31 +178,27 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/calendar'
-    | '/cart'
-    | '/chat'
+    | '/_authenticated'
     | '/login'
-    | '/notes'
     | '/register'
     | '/settings'
-    | '/shop'
-    | '/social'
-    | '/notes/$noteId'
-    | '/shop/$category'
-    | '/shop/$category/$productId'
+    | '/_authenticated/calendar'
+    | '/_authenticated/cart'
+    | '/_authenticated/chat'
+    | '/_authenticated/notes'
+    | '/_authenticated/shop'
+    | '/_authenticated/social'
+    | '/_authenticated/notes/$noteId'
+    | '/_authenticated/shop/$category'
+    | '/_authenticated/shop/$category/$productId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CalendarRoute: typeof CalendarRoute
-  CartRoute: typeof CartRoute
-  ChatRoute: typeof ChatRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LoginRoute: typeof LoginRoute
-  NotesRoute: typeof NotesRouteWithChildren
   RegisterRoute: typeof RegisterRoute
   SettingsRoute: typeof SettingsRoute
-  ShopRoute: typeof ShopRouteWithChildren
-  SocialRoute: typeof SocialRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -205,25 +210,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/calendar': {
-      id: '/calendar'
-      path: '/calendar'
-      fullPath: '/calendar'
-      preLoaderRoute: typeof CalendarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cart': {
-      id: '/cart'
-      path: '/cart'
-      fullPath: '/cart'
-      preLoaderRoute: typeof CartRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/chat': {
-      id: '/chat'
-      path: '/chat'
-      fullPath: '/chat'
-      preLoaderRoute: typeof ChatRouteImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -231,13 +222,6 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notes': {
-      id: '/notes'
-      path: '/notes'
-      fullPath: '/notes'
-      preLoaderRoute: typeof NotesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/register': {
@@ -254,87 +238,137 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/shop': {
-      id: '/shop'
+    '/_authenticated/calendar': {
+      id: '/_authenticated/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof AuthenticatedCalendarRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/cart': {
+      id: '/_authenticated/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof AuthenticatedCartRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/chat': {
+      id: '/_authenticated/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof AuthenticatedChatRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/notes': {
+      id: '/_authenticated/notes'
+      path: '/notes'
+      fullPath: '/notes'
+      preLoaderRoute: typeof AuthenticatedNotesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/shop': {
+      id: '/_authenticated/shop'
       path: '/shop'
       fullPath: '/shop'
-      preLoaderRoute: typeof ShopRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedShopRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/social': {
-      id: '/social'
+    '/_authenticated/social': {
+      id: '/_authenticated/social'
       path: '/social'
       fullPath: '/social'
-      preLoaderRoute: typeof SocialRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedSocialRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/notes/$noteId': {
-      id: '/notes/$noteId'
+    '/_authenticated/notes/$noteId': {
+      id: '/_authenticated/notes/$noteId'
       path: '/$noteId'
       fullPath: '/notes/$noteId'
-      preLoaderRoute: typeof NotesNoteIdRouteImport
-      parentRoute: typeof NotesRoute
+      preLoaderRoute: typeof AuthenticatedNotesNoteIdRouteImport
+      parentRoute: typeof AuthenticatedNotesRoute
     }
-    '/shop/$category': {
-      id: '/shop/$category'
+    '/_authenticated/shop/$category': {
+      id: '/_authenticated/shop/$category'
       path: '/$category'
       fullPath: '/shop/$category'
-      preLoaderRoute: typeof ShopCategoryRouteImport
-      parentRoute: typeof ShopRoute
+      preLoaderRoute: typeof AuthenticatedShopCategoryRouteImport
+      parentRoute: typeof AuthenticatedShopRoute
     }
-    '/shop/$category/$productId': {
-      id: '/shop/$category/$productId'
+    '/_authenticated/shop/$category/$productId': {
+      id: '/_authenticated/shop/$category/$productId'
       path: '/$productId'
       fullPath: '/shop/$category/$productId'
-      preLoaderRoute: typeof ShopCategoryProductIdRouteImport
-      parentRoute: typeof ShopCategoryRoute
+      preLoaderRoute: typeof AuthenticatedShopCategoryProductIdRouteImport
+      parentRoute: typeof AuthenticatedShopCategoryRoute
     }
   }
 }
 
-interface NotesRouteChildren {
-  NotesNoteIdRoute: typeof NotesNoteIdRoute
+interface AuthenticatedNotesRouteChildren {
+  AuthenticatedNotesNoteIdRoute: typeof AuthenticatedNotesNoteIdRoute
 }
 
-const NotesRouteChildren: NotesRouteChildren = {
-  NotesNoteIdRoute: NotesNoteIdRoute,
+const AuthenticatedNotesRouteChildren: AuthenticatedNotesRouteChildren = {
+  AuthenticatedNotesNoteIdRoute: AuthenticatedNotesNoteIdRoute,
 }
 
-const NotesRouteWithChildren = NotesRoute._addFileChildren(NotesRouteChildren)
+const AuthenticatedNotesRouteWithChildren =
+  AuthenticatedNotesRoute._addFileChildren(AuthenticatedNotesRouteChildren)
 
-interface ShopCategoryRouteChildren {
-  ShopCategoryProductIdRoute: typeof ShopCategoryProductIdRoute
+interface AuthenticatedShopCategoryRouteChildren {
+  AuthenticatedShopCategoryProductIdRoute: typeof AuthenticatedShopCategoryProductIdRoute
 }
 
-const ShopCategoryRouteChildren: ShopCategoryRouteChildren = {
-  ShopCategoryProductIdRoute: ShopCategoryProductIdRoute,
+const AuthenticatedShopCategoryRouteChildren: AuthenticatedShopCategoryRouteChildren =
+  {
+    AuthenticatedShopCategoryProductIdRoute:
+      AuthenticatedShopCategoryProductIdRoute,
+  }
+
+const AuthenticatedShopCategoryRouteWithChildren =
+  AuthenticatedShopCategoryRoute._addFileChildren(
+    AuthenticatedShopCategoryRouteChildren,
+  )
+
+interface AuthenticatedShopRouteChildren {
+  AuthenticatedShopCategoryRoute: typeof AuthenticatedShopCategoryRouteWithChildren
 }
 
-const ShopCategoryRouteWithChildren = ShopCategoryRoute._addFileChildren(
-  ShopCategoryRouteChildren,
+const AuthenticatedShopRouteChildren: AuthenticatedShopRouteChildren = {
+  AuthenticatedShopCategoryRoute: AuthenticatedShopCategoryRouteWithChildren,
+}
+
+const AuthenticatedShopRouteWithChildren =
+  AuthenticatedShopRoute._addFileChildren(AuthenticatedShopRouteChildren)
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedCalendarRoute: typeof AuthenticatedCalendarRoute
+  AuthenticatedCartRoute: typeof AuthenticatedCartRoute
+  AuthenticatedChatRoute: typeof AuthenticatedChatRoute
+  AuthenticatedNotesRoute: typeof AuthenticatedNotesRouteWithChildren
+  AuthenticatedShopRoute: typeof AuthenticatedShopRouteWithChildren
+  AuthenticatedSocialRoute: typeof AuthenticatedSocialRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedCalendarRoute: AuthenticatedCalendarRoute,
+  AuthenticatedCartRoute: AuthenticatedCartRoute,
+  AuthenticatedChatRoute: AuthenticatedChatRoute,
+  AuthenticatedNotesRoute: AuthenticatedNotesRouteWithChildren,
+  AuthenticatedShopRoute: AuthenticatedShopRouteWithChildren,
+  AuthenticatedSocialRoute: AuthenticatedSocialRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
 )
-
-interface ShopRouteChildren {
-  ShopCategoryRoute: typeof ShopCategoryRouteWithChildren
-}
-
-const ShopRouteChildren: ShopRouteChildren = {
-  ShopCategoryRoute: ShopCategoryRouteWithChildren,
-}
-
-const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CalendarRoute: CalendarRoute,
-  CartRoute: CartRoute,
-  ChatRoute: ChatRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
-  NotesRoute: NotesRouteWithChildren,
   RegisterRoute: RegisterRoute,
   SettingsRoute: SettingsRoute,
-  ShopRoute: ShopRouteWithChildren,
-  SocialRoute: SocialRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,11 +1,11 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ShieldCheck, ShoppingCart, Star } from 'lucide-react';
 import { useState } from 'react';
-import products from '../../assets/data/shops.json';
-import QuantityStepper from '../components/QuantityStepper';
-import { useCart } from '../components/CartContext';
+import products from '../../../assets/data/shops.json';
+import QuantityStepper from '../../components/QuantityStepper';
+import { useCart } from '../../components/CartContext';
 
-export const Route = createFileRoute('/shop/$category/$productId')({
+export const Route = createFileRoute('/_authenticated/shop/$category/$productId')({
   component: ProductDetailsPage,
 });
 

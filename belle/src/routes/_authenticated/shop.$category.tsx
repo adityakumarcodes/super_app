@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, useMatches } from '@tanstack/react-router';
-import ProductList from '../components/ProductList';
+import ProductList from '../../components/ProductList';
 
-export const Route = createFileRoute('/shop/$category')({
+export const Route = createFileRoute('/_authenticated/shop/$category')({
     component: CategoryPage,
 });
 

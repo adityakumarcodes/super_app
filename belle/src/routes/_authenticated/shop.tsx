@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, useLocation, useNavigate } from '@tanstack/rea
 import { useState } from 'react';
 import { Baby, Carrot, Monitor, Plane, Rose, Shirt, Sparkles, Tags, Utensils } from 'lucide-react';
 
-export const Route = createFileRoute('/shop')({
+export const Route = createFileRoute('/_authenticated/shop')({
   component: RouteComponent,
 })
 

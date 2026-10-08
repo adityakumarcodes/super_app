@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { BookText, Camera, Heart, MessageCircle, Plus, Search, Sparkles, Utensils } from 'lucide-react'
 
-export const Route = createFileRoute('/social')({
+export const Route = createFileRoute('/_authenticated/social')({
   component: RouteComponent,
 })
 

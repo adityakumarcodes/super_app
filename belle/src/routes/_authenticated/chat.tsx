@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { CalendarDaysIcon, MapPin, Paperclip, Users, Video } from 'lucide-react'
-import ChatDetails from '../components/ChatDetails'
-import ChatList from '../components/ChatList'
+import ChatDetails from '../../components/ChatDetails'
+import ChatList from '../../components/ChatList'
 
 type ChatItem = {
   id: number
@@ -56,7 +56,7 @@ const messages: Message[] = [
   { role: 'user', content: 'Perfect — that\'s exactly what I need.' },
 ]
 
-export const Route = createFileRoute('/chat')({
+export const Route = createFileRoute('/_authenticated/chat')({
   component: RouteComponent,
 })
 
