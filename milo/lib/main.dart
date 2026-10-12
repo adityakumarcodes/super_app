@@ -23,11 +23,6 @@ import 'package:milo/providers/word_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // await Supabase.initialize(
-  //   url: 'https://afchbjopvwwocaqtwgxo.supabase.co',
-  //   anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmY2hiam9wdnd3b2NhcXR3Z3hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM1OTUwNTksImV4cCI6MjA0OTE3MTA1OX0.XJsAYSp6chxfhi61kpGc8v9wz2B3ppCF7NcqhBDUwVA',
-  // );q
   runApp(
     MultiProvider(
       providers: [
@@ -77,7 +72,7 @@ final _router = GoRouter(
     GoRoute(path: '/social', builder: (context, state) => SocialPage()),
     GoRoute(path: '/shop', builder: (context, state) => ShopPage()),
     GoRoute(path: '/settings', builder: (context, state) => SettingsPage()),
-    GoRoute(path: '/calendar', builder: (context, state) => CalendarPage()),
+    // GoRoute(path: '/schedule', builder: (context, state) => CalendarPage()),
   ],
 );
 

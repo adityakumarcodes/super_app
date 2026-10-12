@@ -1,5 +1,4 @@
 // import 'package:supabase_flutter/supabase_flutter.dart';
-import '../models/task.dart';
 
 class TaskService {
   // Future<List<Task>> fetchActiveTasks() async {

@@ -33,16 +33,6 @@ const List<CategoryItem> categoriesList = [
     text: 'Chat',
     route: '/chat',
   ),
-  CategoryItem(
-    icon: LucideIcons.calendar,
-    text: 'Calendar',
-    route: '/calendar',
-  ),
-  // CategoryItem(
-  //   icon: LucideIcons.calculator,
-  //   text: 'Calculator',
-  //   route: '/calculator',
-  // ),
   CategoryItem(icon: LucideIcons.store, text: 'Shop', route: '/shop'),
   CategoryItem(icon: LucideIcons.pyramid, text: 'Social', route: '/social'),
 
@@ -94,6 +84,54 @@ class _MyHomePageState extends State<MyHomePage> {
       //   icon: const Icon(LucideIcons.search),
       //   label: const Text('Search'),
       // ),
+      bottomNavigationBar: const AppBottomNavigation(),
+    );
+  }
+}
+
+const List<CategoryItem> bottomNavList = [
+  CategoryItem(
+    icon: LucideIcons.bookOpen,
+    text: 'Notebook',
+    route: '/notebook',
+  ),
+  CategoryItem(
+    icon: LucideIcons.messageCircleMore,
+    text: 'Chat',
+    route: '/chat',
+  ),
+  CategoryItem(icon: LucideIcons.home, text: 'Home', route: '/'),
+  CategoryItem(icon: LucideIcons.store, text: 'Shop', route: '/shop'),
+  CategoryItem(icon: LucideIcons.pyramid, text: 'Social', route: '/social'),
+];
+
+class AppBottomNavigation extends StatelessWidget {
+  const AppBottomNavigation({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final location = GoRouterState.of(context).uri.path;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final currentIndex = bottomNavList.indexWhere(
+      (item) => location.startsWith(item.route),
+    );
+
+    return Container(
+      decoration: const BoxDecoration(
+        border: Border(top: BorderSide(color: Colors.black, width: 2)),
+      ),
+      child: NavigationBar(
+        selectedIndex: currentIndex < 0 ? 2 : currentIndex,
+        onDestinationSelected: (index) =>
+            context.go(bottomNavList[index].route),
+        backgroundColor: colorScheme.surface,
+        elevation: 4,
+        indicatorColor: colorScheme.primaryContainer,
+        destinations: bottomNavList.map((item) {
+          return NavigationDestination(icon: Icon(item.icon), label: item.text);
+        }).toList(),
+      ),
     );
   }
 }

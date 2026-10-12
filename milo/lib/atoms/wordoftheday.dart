@@ -15,27 +15,20 @@ class _WordOfTheDayState extends State<WordOfTheDay> {
   int currentWordIndex = 0;
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<WordProvider>().fetchWords();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Consumer<WordProvider>(
       builder: (context, wordProvider, child) {
         final data = wordProvider.words;
-        final isLoading = wordProvider.isLoading;
-        final error = wordProvider.error;
 
         return Padding(
           padding: const EdgeInsets.only(top: 30),
           child: GestureDetector(
-            onTap: () => setState(
-              () => currentWordIndex = (currentWordIndex + 1) % data.length,
-            ),
+            onTap: data.isEmpty
+                ? null
+                : () => setState(
+                    () =>
+                        currentWordIndex = (currentWordIndex + 1) % data.length,
+                  ),
             child: Container(
               margin: const EdgeInsets.all(8),
               padding: const EdgeInsets.all(6),
@@ -55,11 +48,7 @@ class _WordOfTheDayState extends State<WordOfTheDay> {
                 ),
               ),
               child: Center(
-                child: isLoading
-                    ? const CircularProgressIndicator.adaptive()
-                    : error != null
-                    ? Text('Error: $error')
-                    : data.isEmpty
+                child: data.isEmpty
                     ? const Text('No words available')
                     : Column(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -67,7 +56,7 @@ class _WordOfTheDayState extends State<WordOfTheDay> {
                         children: [
                           const SizedBox(height: 30),
                           Text(
-                            data[currentWordIndex]['word'],
+                            data[currentWordIndex]['word']!,
                             textAlign: TextAlign.center,
                             style: GoogleFonts.dancingScript(
                               fontSize: 40,
@@ -76,7 +65,7 @@ class _WordOfTheDayState extends State<WordOfTheDay> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            data[currentWordIndex]['meaning'],
+                            data[currentWordIndex]['meaning']!,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 18,
