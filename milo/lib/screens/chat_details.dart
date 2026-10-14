@@ -120,6 +120,25 @@ class _ChatDetailsState extends State<ChatDetails> {
     );
   }
 
+  void _showProfilePhoto(ChatUsers user) {
+    final heroTag = 'chat-profile-${user.imageURL}';
+    Navigator.of(context).push(
+      PageRouteBuilder<void>(
+        opaque: false,
+        barrierColor: Colors.black,
+        transitionDuration: const Duration(milliseconds: 300),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            ProfilePhotoViewer(
+              imageURL: user.imageURL,
+              name: user.name,
+              heroTag: heroTag,
+            ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final friendProvider = context.watch<FriendProvider>();
@@ -138,9 +157,23 @@ class _ChatDetailsState extends State<ChatDetails> {
             Stack(
               clipBehavior: Clip.none,
               children: [
-                CircleAvatar(
-                  backgroundImage: AssetImage(selectedUser.imageURL),
-                  radius: 20,
+                Semantics(
+                  button: true,
+                  label: 'View ${selectedUser.name} profile photo',
+                  child: GestureDetector(
+                    onTap: () => _showProfilePhoto(selectedUser),
+                    child: Hero(
+                      tag: 'chat-profile-${selectedUser.imageURL}',
+                      child: ClipOval(
+                        child: Image.asset(
+                          selectedUser.imageURL,
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
                 if (isOnline)
                   Positioned(
@@ -422,6 +455,45 @@ class ChatMessageBubble extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ProfilePhotoViewer extends StatelessWidget {
+  final String imageURL;
+  final String name;
+  final String heroTag;
+
+  const ProfilePhotoViewer({
+    super.key,
+    required this.imageURL,
+    required this.name,
+    required this.heroTag,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.white,
+        title: Text(name),
+      ),
+      body: GestureDetector(
+        onTap: () => Navigator.of(context).pop(),
+        child: Center(
+          child: Hero(
+            tag: heroTag,
+            child: Image.asset(
+              imageURL,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) =>
+                  const Icon(Icons.person, size: 120, color: Colors.white),
+            ),
+          ),
+        ),
       ),
     );
   }

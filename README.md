@@ -25,7 +25,7 @@
 - Notes update functionality
 - ✅Why authenticated user can see the login register routes
 - Update backend dependency
-- Integrate milo
+- ✅Integrate milo
 - Prisma upgrade
 - Authentication and Authorization. 
 - Admin can control the user visible mini-apps. 

@@ -52,7 +52,7 @@ class _NotebookPageState extends State<NotebookPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notebook'),
+        title: const Text('Notes'),
         centerTitle: true,
         elevation: 2,
         shape: Border(bottom: BorderSide(color: Colors.black, width: 2)),

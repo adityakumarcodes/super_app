@@ -1,13 +1,13 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:milo/screens/add_task.dart';
-import 'package:milo/screens/calender.dart';
 import 'package:milo/screens/chat.dart';
 import 'package:milo/screens/chat_details.dart';
 import 'package:milo/atoms/constants.dart';
 import 'package:milo/atoms/folder_list.dart';
 import 'package:milo/screens/home.dart';
 import 'package:milo/screens/calculator.dart';
+import 'package:milo/screens/calender.dart';
 import 'package:milo/screens/notebook.dart';
 import 'package:milo/screens/settings.dart';
 import 'package:milo/screens/shop.dart';
@@ -18,6 +18,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 // import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:milo/providers/task_provider.dart';
+import 'package:milo/providers/navigation_provider.dart';
 import 'package:milo/providers/theme_provider.dart';
 import 'package:milo/providers/word_provider.dart';
 
@@ -27,6 +28,7 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => FriendProvider()),
+        ChangeNotifierProvider(create: (_) => NavigationProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => WordProvider()),
         ChangeNotifierProvider(create: (_) => TaskProvider()),
@@ -39,8 +41,30 @@ Future<void> main() async {
 final _router = GoRouter(
   initialLocation: '/',
   routes: [
-    GoRoute(path: '/', builder: (context, state) => MyHomePage()),
-    GoRoute(path: '/notebook', builder: (context, state) => NotebookPage()),
+    ShellRoute(
+      builder: (context, state, child) {
+        final showNavbar =
+            context.watch<NavigationProvider>().view == NavigationView.navbar;
+
+        return Scaffold(
+          body: child,
+          bottomNavigationBar: showNavbar ? const AppBottomNavigation() : null,
+        );
+      },
+      routes: [
+        GoRoute(path: '/', builder: (context, state) => const MyHomePage()),
+        GoRoute(
+          path: '/notebook',
+          builder: (context, state) => const NotebookPage(),
+        ),
+        GoRoute(path: '/chat', builder: (context, state) => const ChatPage()),
+        GoRoute(path: '/shop', builder: (context, state) => const ShopPage()),
+        GoRoute(
+          path: '/social',
+          builder: (context, state) => const SocialPage(),
+        ),
+      ],
+    ),
     GoRoute(
       path: '/notebook/folder/:name',
       builder: (context, state) {
@@ -52,7 +76,6 @@ final _router = GoRouter(
       path: '/notebook/addTask',
       builder: (context, state) => AddTaskScreen(),
     ),
-    GoRoute(path: '/chat', builder: (context, state) => ChatPage()),
     GoRoute(
       path: '/chat/details',
       builder: (context, state) => ChatDetails(
@@ -69,8 +92,10 @@ final _router = GoRouter(
       path: '/calculator',
       builder: (context, state) => const CalculatorPage(),
     ),
-    GoRoute(path: '/social', builder: (context, state) => SocialPage()),
-    GoRoute(path: '/shop', builder: (context, state) => ShopPage()),
+    GoRoute(
+      path: '/calendar',
+      builder: (context, state) => const CalendarPage(),
+    ),
     GoRoute(path: '/settings', builder: (context, state) => SettingsPage()),
     // GoRoute(path: '/schedule', builder: (context, state) => CalendarPage()),
   ],

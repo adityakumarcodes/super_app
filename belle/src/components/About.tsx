@@ -1,6 +1,7 @@
 const stackItems = [
     { label: 'Frontend', value: 'Vite + TanStack Router' },
     { label: 'Backend', value: 'NestJS + PrismaORM(https://www.youtube.com/watch?v=skQXoZ8chxk)' },
+    { label: 'Mobile', value: 'Flutter' },
     { label: 'Database', value: 'Prisma Postgres' },
     { label: 'Authentication', value: 'BetterAuth(https://github.com/thallesp/nestjs-better-auth)' },
 ];

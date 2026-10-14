@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:milo/providers/navigation_provider.dart';
 import 'package:milo/providers/theme_provider.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -17,6 +18,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentThemeColor = context.watch<ThemeProvider>().themeColor;
+    final navigationView = context.watch<NavigationProvider>().view;
     final colorScheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
 
@@ -24,17 +26,11 @@ class SettingsPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Settings'),
         centerTitle: false,
-        shape: const Border(
-          bottom: BorderSide(color: Colors.black, width: 2),
-        ),
+        shape: const Border(bottom: BorderSide(color: Colors.black, width: 2)),
       ),
       body: ListView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         children: [
-          // Profile
           _settingsTile(
             context: context,
             icon: Icons.person_outline,
@@ -47,17 +43,12 @@ class SettingsPage extends StatelessWidget {
 
           // Appearance
           Theme(
-            data: theme.copyWith(
-              dividerColor: Colors.transparent,
-            ),
+            data: theme.copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
-              leading: Icon(
-                Icons.palette_outlined,
-                color: colorScheme.primary,
-              ),
+              leading: Icon(Icons.palette_outlined, color: colorScheme.primary),
               title: const Text('Appearance'),
               subtitle: Text(
-                'Theme & Accent color',
+                'Theme, accent color & navigation',
                 style: theme.textTheme.bodySmall,
               ),
               shape: RoundedRectangleBorder(
@@ -66,14 +57,11 @@ class SettingsPage extends StatelessWidget {
               collapsedShape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
-              backgroundColor:
-                  colorScheme.surfaceContainerHighest.withValues(
+              backgroundColor: colorScheme.surfaceContainerHighest.withValues(
                 alpha: 0.3,
               ),
-              collapsedBackgroundColor:
-                  colorScheme.surfaceContainerHighest.withValues(
-                alpha: 0.2,
-              ),
+              collapsedBackgroundColor: colorScheme.surfaceContainerHighest
+                  .withValues(alpha: 0.2),
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(
@@ -94,18 +82,14 @@ class SettingsPage extends StatelessWidget {
                         spacing: 12,
                         runSpacing: 12,
                         children: accentColors.map((color) {
-                          final isSelected =
-                              currentThemeColor == color;
+                          final isSelected = currentThemeColor == color;
 
                           return GestureDetector(
                             onTap: () {
-                              context
-                                  .read<ThemeProvider>()
-                                  .themeColor = color;
+                              context.read<ThemeProvider>().themeColor = color;
                             },
                             child: AnimatedContainer(
-                              duration:
-                                  const Duration(milliseconds: 200),
+                              duration: const Duration(milliseconds: 200),
                               width: 44,
                               height: 44,
                               decoration: BoxDecoration(
@@ -122,17 +106,46 @@ class SettingsPage extends StatelessWidget {
                                   ? Icon(
                                       Icons.check,
                                       size: 20,
-                                      color:
-                                          color.computeLuminance() > 0.5
-                                              ? Colors.black
-                                              : Colors.white,
+                                      color: color.computeLuminance() > 0.5
+                                          ? Colors.black
+                                          : Colors.white,
                                     )
                                   : null,
                             ),
                           );
                         }).toList(),
                       ),
+                      const SizedBox(height: 24),
+                      Text(
+                        'Navigation view',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
                       const SizedBox(height: 16),
+                      SizedBox(
+                        width: double.infinity,
+                        child: SegmentedButton<NavigationView>(
+                          segments: const [
+                            ButtonSegment(
+                              value: NavigationView.navbar,
+                              icon: Icon(Icons.view_week_outlined),
+                              label: Text('Navbar'),
+                            ),
+                            ButtonSegment(
+                              value: NavigationView.gridView,
+                              icon: Icon(Icons.grid_view_outlined),
+                              label: Text('Grid'),
+                            ),
+                          ],
+                          selected: {navigationView},
+                          onSelectionChanged: (selection) {
+                            context.read<NavigationProvider>().view =
+                                selection.first;
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 8),
                     ],
                   ),
                 ),
@@ -166,28 +179,17 @@ class SettingsPage extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return ListTile(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      tileColor:
-          colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
-      leading: Icon(
-        icon,
-        color: colorScheme.primary,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      tileColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
+      leading: Icon(icon, color: colorScheme.primary),
       title: Text(title),
-      subtitle: Text(
-        subtitle,
-        style: Theme.of(context).textTheme.bodySmall,
-      ),
-      trailing: const Icon(Icons.chevron_right),
+      subtitle: Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
       onTap: onTap,
     );
   }
 
   // Built-in About dialog
   void _showAboutDialog(BuildContext context) {
-
     showAboutDialog(
       context: context,
       applicationName: 'Milo',
@@ -219,62 +221,56 @@ class SettingsPage extends StatelessWidget {
 
         return SafeArea(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 8, 24, 28),
+            padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Profile avatar
-                CircleAvatar(
-                  radius: 44,
-                  backgroundColor: colorScheme.primaryContainer,
-                  child: Icon(
-                    Icons.person,
-                    size: 48,
-                    color: colorScheme.onPrimaryContainer,
-                  ),
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 32,
+                      backgroundColor: colorScheme.primaryContainer,
+                      child: Icon(
+                        Icons.person_outline,
+                        size: 34,
+                        color: colorScheme.onPrimaryContainer,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name,
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-
-                const SizedBox(height: 16),
-
-                // Name
-                Text(
-                  name,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-
-                // Email
+                const SizedBox(height: 20),
+                Divider(color: colorScheme.outlineVariant),
                 ListTile(
+                  contentPadding: EdgeInsets.zero,
                   leading: Icon(
                     Icons.email_outlined,
                     color: colorScheme.primary,
                   ),
-                  title: const Text('Email'),
-                  subtitle: const Text(email),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  tileColor:
-                      colorScheme.surfaceContainerHighest.withValues(
-                    alpha: 0.3,
-                  ),
+                  title: Text(email, style: theme.textTheme.bodyLarge),
                   trailing: IconButton(
                     icon: const Icon(Icons.copy),
                     tooltip: 'Copy email',
                     onPressed: () async {
-                      await Clipboard.setData(
-                        const ClipboardData(text: email),
-                      );
+                      await Clipboard.setData(const ClipboardData(text: email));
 
                       if (!sheetContext.mounted) return;
 
-                      // Close the sheet first.
                       Navigator.pop(sheetContext);
 
-                      // Show confirmation on the parent page.
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Email copied to clipboard'),
@@ -296,9 +292,7 @@ class SettingsPage extends StatelessWidget {
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text(
-                            'Sign out is not connected yet.',
-                          ),
+                          content: Text('Sign out is not connected yet.'),
                         ),
                       );
                     },

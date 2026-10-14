@@ -94,57 +94,7 @@ const Appearance = () => {
         </div>
       </div>
 
-      {/* Notes View */}
-      <div className="flex items-center justify-between gap-6 border-b p-5">
-        <div>
-          <p className="font-medium">Notes view</p>
-          <p className="text-sm text-slate-500">
-            Choose how your notes are displayed.
-          </p>
-        </div>
-
-        <div className="flex rounded-lg border-2">
-          <button
-            type="button"
-            onClick={() => setNotesView('list')}
-            className={`rounded-md px-4 py-2 text-sm font-medium transition ${notesView === 'list'
-              ? 'theme-accent-bg text-black'
-              : 'text-slate-500 hover:bg-slate-100'
-              }`}
-          >
-            List
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setNotesView('tree')}
-            className={`rounded-md px-4 py-2 text-sm font-medium transition ${notesView === 'tree'
-              ? 'theme-accent-bg text-black'
-              : 'text-slate-500 hover:bg-slate-100'
-              }`}
-          >
-            Tree
-          </button>
-        </div>
-      </div>
-
-      {/* Compact mode */}
-      <div className="flex items-center justify-between gap-6 p-5">
-        <div>
-          <p className="font-medium">
-            Sidebar style
-          </p>
-
-          <p className="text-sm text-slate-500">
-            Reduce spacing throughout Bellee.
-          </p>
-        </div>
-
-        <input
-          type="checkbox"
-          className="h-5 w-5 theme-accent-control"
-        />
-      </div>
+      
       
     </div>
   );

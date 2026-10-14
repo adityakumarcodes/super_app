@@ -14,7 +14,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String _display = '0';
   String _expression = '';
 
-  void _onPressed(String text) async {
+  void _onPressed(String text) {
     setState(() {
       if (text == 'AC') {
         _display = '0';
@@ -42,14 +42,18 @@ class _CalculatorPageState extends State<CalculatorPage> {
               .replaceAll('×', '*')
               .replaceAll('%', '/100');
 
-          Parser p = Parser();
-          Expression exp = p.parse(mathExpr);
-          ContextModel cm = ContextModel();
+          final parser = ShuntingYardParser();
+          final expression = parser.parse(mathExpr);
+          final context = ContextModel();
 
-          double eval = exp.evaluate(EvaluationType.REAL, cm);
+          final result = RealEvaluator(context).evaluate(expression);
+          if (!result.isFinite) {
+            _display = 'Error';
+            return;
+          }
 
           // Format the result to remove trailing '.0' for whole numbers
-          _display = eval.toString();
+          _display = result.toString();
           if (_display.endsWith('.0')) {
             _display = _display.substring(0, _display.length - 2);
           }

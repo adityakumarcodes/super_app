@@ -3,6 +3,8 @@ import 'package:milo/atoms/wordoftheday.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:milo/providers/navigation_provider.dart';
+import 'package:provider/provider.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -23,11 +25,7 @@ class CategoryItem {
 }
 
 const List<CategoryItem> categoriesList = [
-  CategoryItem(
-    icon: LucideIcons.bookOpen,
-    text: 'Notebook',
-    route: '/notebook',
-  ),
+  CategoryItem(icon: LucideIcons.bookOpen, text: 'Notes', route: '/notebook'),
   CategoryItem(
     icon: LucideIcons.messageCircleMore,
     text: 'Chat',
@@ -36,8 +34,14 @@ const List<CategoryItem> categoriesList = [
   CategoryItem(icon: LucideIcons.store, text: 'Shop', route: '/shop'),
   CategoryItem(icon: LucideIcons.pyramid, text: 'Social', route: '/social'),
 
-  CategoryItem(icon: LucideIcons.bolt, text: 'Settings', route: '/settings'),
+  settingsCategory,
 ];
+
+const settingsCategory = CategoryItem(
+  icon: LucideIcons.bolt,
+  text: 'Settings',
+  route: '/settings',
+);
 
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -46,6 +50,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     // Access theme colors here to pass them down or rely on IconTile's internal theme access
     final colorScheme = Theme.of(context).colorScheme;
+    final navigationView = context.watch<NavigationProvider>().view;
+    final showSettingsFab = navigationView == NavigationView.navbar;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -55,46 +61,47 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           children: [
             const WordOfTheDay(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-              child: GridView.builder(
-                shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 3,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 10,
+            if (!showSettingsFab)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 10,
                 ),
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: categoriesList.length,
-                itemBuilder: (context, index) {
-                  final item = categoriesList[index];
-                  return IconTile(
-                    item: item,
-                    onTap: () => context.push(item.route),
-                  );
-                },
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 3,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 10,
+                  ),
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: categoriesList.length,
+                  itemBuilder: (context, index) {
+                    final item = categoriesList[index];
+                    return IconTile(
+                      item: item,
+                      onTap: () => context.push(item.route),
+                    );
+                  },
+                ),
               ),
-            ),
           ],
         ),
       ),
-      // floatingActionButton: FloatingActionButton.extended(
-      //   onPressed: () {},
-      //   icon: const Icon(LucideIcons.search),
-      //   label: const Text('Search'),
-      // ),
-      bottomNavigationBar: const AppBottomNavigation(),
+      floatingActionButton: showSettingsFab
+          ? FloatingActionButton(
+              onPressed: () => context.push(settingsCategory.route),
+              tooltip: 'Settings',
+              child: const Icon(LucideIcons.bolt),
+            )
+          : null,
     );
   }
 }
 
 const List<CategoryItem> bottomNavList = [
-  CategoryItem(
-    icon: LucideIcons.bookOpen,
-    text: 'Notebook',
-    route: '/notebook',
-  ),
+  CategoryItem(icon: LucideIcons.bookOpen, text: 'Notes', route: '/notebook'),
   CategoryItem(
     icon: LucideIcons.messageCircleMore,
     text: 'Chat',
@@ -114,7 +121,7 @@ class AppBottomNavigation extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     final currentIndex = bottomNavList.indexWhere(
-      (item) => location.startsWith(item.route),
+      (item) => location == item.route,
     );
 
     return Container(
@@ -123,11 +130,22 @@ class AppBottomNavigation extends StatelessWidget {
       ),
       child: NavigationBar(
         selectedIndex: currentIndex < 0 ? 2 : currentIndex,
-        onDestinationSelected: (index) =>
-            context.go(bottomNavList[index].route),
+        onDestinationSelected: (index) {
+          final route = bottomNavList[index].route;
+          if (location != route) context.push(route);
+        },
         backgroundColor: colorScheme.surface,
         elevation: 4,
         indicatorColor: colorScheme.primaryContainer,
+        labelTextStyle: WidgetStateProperty.resolveWith<TextStyle?>((states) {
+          final isSelected = states.contains(WidgetState.selected);
+          return TextStyle(
+            color: isSelected
+                ? colorScheme.primary
+                : colorScheme.onSurfaceVariant,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+          );
+        }),
         destinations: bottomNavList.map((item) {
           return NavigationDestination(icon: Icon(item.icon), label: item.text);
         }).toList(),

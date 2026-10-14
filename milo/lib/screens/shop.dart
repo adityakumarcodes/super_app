@@ -39,19 +39,16 @@ const List<ShopProduct> _products = [
     id: 1,
     name: 'Organic Heirloom Tomatoes',
     price: 120,
-    image:
-        'https://res.cloudinary.com/sivadass/image/upload/v1493620046/dummy-products/tomato.jpg',
+    image: 'https://res.cloudinary.com/sivadass/image/upload/v1493620046/dummy-products/tomato.jpg',
     category: 'Grocery',
     weight: '500g',
-    description:
-        'Juicy heirloom tomatoes with vibrant colors and rich flavor. Perfect for salads, pasta sauces, and everyday cooking.',
+    description: 'Juicy heirloom tomatoes with vibrant colors and rich flavor. Perfect for salads, pasta sauces, and everyday cooking.',
   ),
   ShopProduct(
     id: 2,
     name: 'Fresh Cauliflower',
     price: 60,
-    image:
-        'https://res.cloudinary.com/sivadass/image/upload/v1493620046/dummy-products/cauliflower.jpg',
+    image: 'https://res.cloudinary.com/sivadass/image/upload/v1493620046/dummy-products/cauliflower.jpg',
     category: 'Grocery',
     weight: '1 piece',
     description:
@@ -61,8 +58,7 @@ const List<ShopProduct> _products = [
     id: 3,
     name: 'Green Beans',
     price: 80,
-    image:
-        'https://res.cloudinary.com/sivadass/image/upload/v1493620046/dummy-products/beans.jpg',
+    image: 'https://res.cloudinary.com/sivadass/image/upload/v1493620046/dummy-products/beans.jpg',
     category: 'Grocery',
     weight: '500g',
     description: 'Crisp green beans selected for freshness and flavor.',
@@ -71,8 +67,7 @@ const List<ShopProduct> _products = [
     id: 4,
     name: 'Fresh Tomatoes',
     price: 45,
-    image:
-        'https://res.cloudinary.com/sivadass/image/upload/v1493620046/dummy-products/tomato.jpg',
+    image: 'https://res.cloudinary.com/sivadass/image/upload/v1493620046/dummy-products/tomato.jpg',
     category: 'Grocery',
     weight: '500g',
     description: 'Fresh everyday tomatoes for salads and home cooking.',
@@ -110,9 +105,6 @@ class _ShopPageState extends State<ShopPage> {
   String _searchQuery = '';
   final Set<int> _wishlist = {};
   final Map<int, int> _cart = {};
-
-  int get _cartCount =>
-      _cart.values.fold(0, (total, quantity) => total + quantity);
 
   List<ShopProduct> get _filteredProducts {
     final query = _searchQuery.trim().toLowerCase();
@@ -168,55 +160,61 @@ class _ShopPageState extends State<ShopPage> {
   }
 
   void _openProduct(ShopProduct product) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => ProductDetailsScreen(
-          product: product,
-          isWishlisted: _wishlist.contains(product.id),
-          onWishlistToggle: () => _toggleWishlist(product),
-          onAddToCart: _addToCart,
-        ),
-      ),
-    ).then((_) {
-      if (mounted) setState(() {});
-    });
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute<void>(
+            builder: (_) => ProductDetailsScreen(
+              product: product,
+              isWishlisted: _wishlist.contains(product.id),
+              onWishlistToggle: () => _toggleWishlist(product),
+              onAddToCart: _addToCart,
+            ),
+          ),
+        )
+        .then((_) {
+          if (mounted) setState(() {});
+        });
   }
 
   void _openWishlist() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => WishlistScreen(
-          products: _products
-              .where((product) => _wishlist.contains(product.id))
-              .toList(),
-          onProductTap: _openProduct,
-        ),
-      ),
-    ).then((_) {
-      if (mounted) setState(() {});
-    });
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute<void>(
+            builder: (_) => WishlistScreen(
+              products: _products
+                  .where((product) => _wishlist.contains(product.id))
+                  .toList(),
+              onProductTap: _openProduct,
+            ),
+          ),
+        )
+        .then((_) {
+          if (mounted) setState(() {});
+        });
   }
 
   void _openCart() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => CartScreen(
-          products: _products,
-          cart: Map<int, int>.from(_cart),
-          onQuantityChanged: (id, quantity) {
-            setState(() {
-              if (quantity <= 0) {
-                _cart.remove(id);
-              } else {
-                _cart[id] = quantity;
-              }
-            });
-          },
-        ),
-      ),
-    ).then((_) {
-      if (mounted) setState(() {});
-    });
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute<void>(
+            builder: (_) => CartScreen(
+              products: _products,
+              cart: Map<int, int>.from(_cart),
+              onQuantityChanged: (id, quantity) {
+                setState(() {
+                  if (quantity <= 0) {
+                    _cart.remove(id);
+                  } else {
+                    _cart[id] = quantity;
+                  }
+                });
+              },
+            ),
+          ),
+        )
+        .then((_) {
+          if (mounted) setState(() {});
+        });
   }
 
   @override
@@ -302,8 +300,7 @@ class _ShopPageState extends State<ShopPage> {
                         ? null
                         : IconButton(
                             tooltip: 'Clear search',
-                            onPressed: () =>
-                                setState(() => _searchQuery = ''),
+                            onPressed: () => setState(() => _searchQuery = ''),
                             icon: const Icon(
                               LucideIcons.x,
                               size: 17,
@@ -370,10 +367,7 @@ class _ShopPageState extends State<ShopPage> {
                             SizedBox(height: 10),
                             Text(
                               'Little finds. Better everyday.',
-                              style: TextStyle(
-                                color: _muted,
-                                fontSize: 12,
-                              ),
+                              style: TextStyle(color: _muted, fontSize: 12),
                             ),
                           ],
                         ),
@@ -424,8 +418,7 @@ class _ShopPageState extends State<ShopPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         scrollDirection: Axis.horizontal,
                         itemCount: _categories.length,
-                        separatorBuilder: (_, __) =>
-                            const SizedBox(width: 10),
+                        separatorBuilder: (_, _) => const SizedBox(width: 10),
                         itemBuilder: (context, index) {
                           final category = _categories[index];
                           return _CategoryItem(
@@ -462,10 +455,7 @@ class _ShopPageState extends State<ShopPage> {
                     ),
                     Text(
                       '${products.length} ${products.length == 1 ? 'item' : 'items'}',
-                      style: const TextStyle(
-                        color: _muted,
-                        fontSize: 12,
-                      ),
+                      style: const TextStyle(color: _muted, fontSize: 12),
                     ),
                   ],
                 ),
@@ -484,18 +474,15 @@ class _ShopPageState extends State<ShopPage> {
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
                 sliver: SliverGrid(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final product = products[index];
-                      return _ProductCard(
-                        product: product,
-                        isWishlisted: _wishlist.contains(product.id),
-                        onTap: () => _openProduct(product),
-                        onWishlistTap: () => _toggleWishlist(product),
-                      );
-                    },
-                    childCount: products.length,
-                  ),
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final product = products[index];
+                    return _ProductCard(
+                      product: product,
+                      isWishlisted: _wishlist.contains(product.id),
+                      onTap: () => _openProduct(product),
+                      onWishlistTap: () => _toggleWishlist(product),
+                    );
+                  }, childCount: products.length),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     mainAxisSpacing: 14,
@@ -528,38 +515,17 @@ class _CategoryItem extends StatelessWidget {
       button: true,
       selected: selected,
       label: category.name,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          curve: Curves.easeOut,
-          width: 76,
-          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
-          decoration: BoxDecoration(
-            color: selected ? _accent : Colors.white,
-            border: Border.all(color: selected ? _ink : _line),
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(category.icon, size: 20, color: _ink),
-              const SizedBox(height: 7),
-              Text(
-                category.name,
-                maxLines: 2,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: _ink,
-                  fontSize: 9.5,
-                  height: 1.15,
-                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
+      child: IconButton(
+        tooltip: category.name,
+        onPressed: onTap,
+        icon: Icon(category.icon, size: 28),
+        color: _ink,
+        style: IconButton.styleFrom(
+          fixedSize: const Size(56, 56),
+          backgroundColor: selected ? _accent : Colors.white,
+          side: const BorderSide(color: Colors.black, width: 1.5),
+          shape: const CircleBorder(),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
       ),
     );
@@ -837,11 +803,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ),
                         ),
                       ),
-                      const Icon(
-                        LucideIcons.star,
-                        color: _ink,
-                        size: 17,
-                      ),
+                      const Icon(LucideIcons.star, color: _ink, size: 17),
                       const SizedBox(width: 5),
                       Text(
                         product.rating.toStringAsFixed(1),
@@ -894,8 +856,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ),
                       _QuantityStepper(
                         quantity: _quantity,
-                        onChanged: (value) =>
-                            setState(() => _quantity = value),
+                        onChanged: (value) => setState(() => _quantity = value),
                       ),
                     ],
                   ),
@@ -909,11 +870,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     ),
                     child: const Row(
                       children: [
-                        Icon(
-                          LucideIcons.packageCheck,
-                          size: 21,
-                          color: _ink,
-                        ),
+                        Icon(LucideIcons.packageCheck, size: 21, color: _ink),
                         SizedBox(width: 12),
                         Expanded(
                           child: Column(
@@ -976,9 +933,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     child: OutlinedButton.icon(
                       onPressed: _toggleWishlist,
                       icon: Icon(
-                        _isWishlisted
-                            ? LucideIcons.heart
-                            : LucideIcons.heart,
+                        _isWishlisted ? LucideIcons.heart : LucideIcons.heart,
                         size: 18,
                       ),
                       label: Text(
@@ -1007,10 +962,7 @@ class _QuantityStepper extends StatelessWidget {
   final int quantity;
   final ValueChanged<int> onChanged;
 
-  const _QuantityStepper({
-    required this.quantity,
-    required this.onChanged,
-  });
+  const _QuantityStepper({required this.quantity, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -1063,9 +1015,8 @@ class _HeaderIconButton extends StatelessWidget {
   const _HeaderIconButton({
     required this.icon,
     required this.onTap,
-    this.badge = 0,
     this.isActive = false,
-  });
+  }) : badge = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -1184,21 +1135,14 @@ class _ProductImage extends StatelessWidget {
           child: SizedBox(
             width: 22,
             height: 22,
-            child: CircularProgressIndicator(
-              strokeWidth: 1.7,
-              color: _muted,
-            ),
+            child: CircularProgressIndicator(strokeWidth: 1.7, color: _muted),
           ),
         );
       },
-      errorBuilder: (_, __, ___) => Center(
+      errorBuilder: (_, _, _) => Center(
         child: Padding(
           padding: padding,
-          child: Icon(
-            LucideIcons.imageOff,
-            size: iconSize,
-            color: _muted,
-          ),
+          child: Icon(LucideIcons.imageOff, size: iconSize, color: _muted),
         ),
       ),
     );
@@ -1244,11 +1188,7 @@ class _EmptyState extends StatelessWidget {
           Text(
             message,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: _muted,
-              fontSize: 13,
-              height: 1.5,
-            ),
+            style: const TextStyle(color: _muted, fontSize: 13, height: 1.5),
           ),
         ],
       ),
@@ -1290,7 +1230,7 @@ class WishlistScreen extends StatelessWidget {
           : ListView.separated(
               padding: const EdgeInsets.all(20),
               itemCount: products.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              separatorBuilder: (_, _) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
                 final product = products[index];
                 return _ProductListTile(
@@ -1307,10 +1247,7 @@ class _ProductListTile extends StatelessWidget {
   final ShopProduct product;
   final VoidCallback onTap;
 
-  const _ProductListTile({
-    required this.product,
-    required this.onTap,
-  });
+  const _ProductListTile({required this.product, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -1440,7 +1377,7 @@ class _CartScreenState extends State<CartScreen> {
                   child: ListView.separated(
                     padding: const EdgeInsets.all(20),
                     itemCount: items.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    separatorBuilder: (_, _) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final product = items[index];
                       final quantity = _cart[product.id] ?? 0;
@@ -1500,8 +1437,7 @@ class _CartScreenState extends State<CartScreen> {
                             ),
                             IconButton(
                               tooltip: 'Remove item',
-                              onPressed: () =>
-                                  _changeQuantity(product.id, 0),
+                              onPressed: () => _changeQuantity(product.id, 0),
                               icon: const Icon(
                                 LucideIcons.trash2,
                                 size: 18,
@@ -1529,10 +1465,7 @@ class _CartScreenState extends State<CartScreen> {
                             const Expanded(
                               child: Text(
                                 'Subtotal',
-                                style: TextStyle(
-                                  color: _muted,
-                                  fontSize: 14,
-                                ),
+                                style: TextStyle(color: _muted, fontSize: 14),
                               ),
                             ),
                             Text(
