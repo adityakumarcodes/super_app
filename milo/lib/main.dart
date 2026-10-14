@@ -43,12 +43,14 @@ final _router = GoRouter(
   routes: [
     ShellRoute(
       builder: (context, state, child) {
-        final showNavbar =
+        final showNavigationBar =
             context.watch<NavigationProvider>().view == NavigationView.navbar;
 
         return Scaffold(
           body: child,
-          bottomNavigationBar: showNavbar ? const AppBottomNavigation() : null,
+          bottomNavigationBar: showNavigationBar
+              ? const AppBottomNavigation()
+              : null,
         );
       },
       routes: [

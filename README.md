@@ -51,6 +51,13 @@ Start mobile:
 adb connect <ip> && flutter run
 ```
 
+Optional: Build a production APK and install it with one command
+
+```bash
+flutter build apk --release &&
+adb install -r build/app/outputs/flutter-apk/app-release.apk
+```
+
 ## Screenshots
 
 Below are a few UI screenshots from the Belle frontend.

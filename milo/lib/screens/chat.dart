@@ -160,7 +160,7 @@ class ChatPage extends StatelessWidget {
 
 void _showComingSoon(BuildContext context, String feature) {
   ScaffoldMessenger.of(context)
-      .showSnackBar(SnackBar(content: Text('$feature is not connected yet.')));
+      .showSnackBar(SnackBar(content: Text('$feature will be available soon.')));
 }
 
 void _showProfilePreview(BuildContext context, ChatUsers user) {

@@ -18,7 +18,8 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentThemeColor = context.watch<ThemeProvider>().themeColor;
-    final navigationView = context.watch<NavigationProvider>().view;
+    final navigationProvider = context.watch<NavigationProvider>();
+    final navigationView = navigationProvider.view;
     final colorScheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
 
@@ -48,7 +49,7 @@ class SettingsPage extends StatelessWidget {
               leading: Icon(Icons.palette_outlined, color: colorScheme.primary),
               title: const Text('Appearance'),
               subtitle: Text(
-                'Theme, accent color & navigation',
+                'Theme, accent color, navigation menu & items',
                 style: theme.textTheme.bodySmall,
               ),
               shape: RoundedRectangleBorder(
@@ -117,7 +118,7 @@ class SettingsPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        'Navigation view',
+                        'Navigation menu',
                         style: theme.textTheme.titleSmall?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                         ),
@@ -144,6 +145,56 @@ class SettingsPage extends StatelessWidget {
                                 selection.first;
                           },
                         ),
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        'Navigation items',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Home and Notes are always available. Drag to reorder.',
+                        style: theme.textTheme.bodySmall,
+                      ),
+                      ReorderableListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        buildDefaultDragHandles: false,
+                        itemCount: navigationProvider.tabOrder.length,
+                        onReorderItem: navigationProvider.reorderTabs,
+                        itemBuilder: (context, index) {
+                          final tab = navigationProvider.tabOrder[index];
+                          return ListTile(
+                            key: ValueKey(tab),
+                            contentPadding: EdgeInsets.zero,
+                            leading: Icon(tab.icon),
+                            title: Text(tab.label),
+                            subtitle: tab.isRequired
+                                ? const Text('Required')
+                                : null,
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (!tab.isRequired)
+                                  Switch(
+                                    value: navigationProvider.isTabVisible(tab),
+                                    onChanged: (visible) => context
+                                        .read<NavigationProvider>()
+                                        .setTabVisible(tab, visible),
+                                  ),
+                                ReorderableDragStartListener(
+                                  index: index,
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(8),
+                                    child: Icon(Icons.drag_handle),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                       const SizedBox(height: 8),
                     ],
@@ -292,7 +343,7 @@ class SettingsPage extends StatelessWidget {
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Sign out is not connected yet.'),
+                          content: Text('Sign out will be available soon.'),
                         ),
                       );
                     },

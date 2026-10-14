@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+
 // import 'package:supabase_flutter/supabase_flutter.dart';
 
 class FolderList extends StatefulWidget {
@@ -41,28 +42,29 @@ class _FolderListState extends State<FolderList> {
   //       .like('category', widget.folderName.toLowerCase())
   //       .order('id');
   //   return List<Map<String, dynamic>>.from(response);
-    
-  // }
-Future<List<Map<String, dynamic>>> fetchTasks() async {
-  // Mock delay to simulate network latency
-  await Future.delayed(const Duration(milliseconds: 500));
 
-  // Placeholder data matching expected List<Map<String, dynamic>> return type
-  return [
-    {
-      'id': 1,
-      'title': 'Sample Task 1',
-      'category': widget.folderName.toLowerCase(),
-      'status_flag': 'active',
-    },
-    {
-      'id': 2,
-      'title': 'Sample Task 2',
-      'category': widget.folderName.toLowerCase(),
-      'status_flag': 'active',
-    },
-  ];
-}
+  // }
+  Future<List<Map<String, dynamic>>> fetchTasks() async {
+    // Mock delay to simulate network latency
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    // Placeholder data matching expected List<Map<String, dynamic>> return type
+    return [
+      {
+        'id': 1,
+        'title': 'Sample Task 1',
+        'category': widget.folderName.toLowerCase(),
+        'status_flag': 'active',
+      },
+      {
+        'id': 2,
+        'title': 'Sample Task 2',
+        'category': widget.folderName.toLowerCase(),
+        'status_flag': 'active',
+      },
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -256,8 +258,9 @@ Future<List<Map<String, dynamic>>> fetchTasks() async {
   }
 
   void _showFeatureComingSoon(BuildContext context, String feature) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text('$feature coming soon')));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('$feature will be available soon.')));
   }
 
   Future<void> _dialogBuilder(BuildContext context) {

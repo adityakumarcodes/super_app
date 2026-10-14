@@ -100,18 +100,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-const List<CategoryItem> bottomNavList = [
-  CategoryItem(icon: LucideIcons.bookOpen, text: 'Notes', route: '/notebook'),
-  CategoryItem(
-    icon: LucideIcons.messageCircleMore,
-    text: 'Chat',
-    route: '/chat',
-  ),
-  CategoryItem(icon: LucideIcons.home, text: 'Home', route: '/'),
-  CategoryItem(icon: LucideIcons.store, text: 'Shop', route: '/shop'),
-  CategoryItem(icon: LucideIcons.pyramid, text: 'Social', route: '/social'),
-];
-
 class AppBottomNavigation extends StatelessWidget {
   const AppBottomNavigation({super.key});
 
@@ -119,19 +107,20 @@ class AppBottomNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
     final colorScheme = Theme.of(context).colorScheme;
+    final tabs = context.watch<NavigationProvider>().visibleTabs;
 
-    final currentIndex = bottomNavList.indexWhere(
-      (item) => location == item.route,
-    );
+    final currentIndex = tabs.indexWhere((tab) => location == tab.route);
 
     return Container(
       decoration: const BoxDecoration(
         border: Border(top: BorderSide(color: Colors.black, width: 2)),
       ),
       child: NavigationBar(
-        selectedIndex: currentIndex < 0 ? 2 : currentIndex,
+        selectedIndex: currentIndex < 0
+            ? tabs.indexOf(NavigationTab.home)
+            : currentIndex,
         onDestinationSelected: (index) {
-          final route = bottomNavList[index].route;
+          final route = tabs[index].route;
           if (location != route) context.push(route);
         },
         backgroundColor: colorScheme.surface,
@@ -146,8 +135,8 @@ class AppBottomNavigation extends StatelessWidget {
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
           );
         }),
-        destinations: bottomNavList.map((item) {
-          return NavigationDestination(icon: Icon(item.icon), label: item.text);
+        destinations: tabs.map((tab) {
+          return NavigationDestination(icon: Icon(tab.icon), label: tab.label);
         }).toList(),
       ),
     );

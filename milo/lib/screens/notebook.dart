@@ -130,7 +130,7 @@ class _NotebookPageState extends State<NotebookPage> {
 
   void _showFeatureComingSoon(BuildContext context, String feature) {
     ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text('$feature coming soon')));
+        .showSnackBar(SnackBar(content: Text('$feature will be available soon.')));
   }
 
   Widget _buildTaskItem(BuildContext context, Task task) {
