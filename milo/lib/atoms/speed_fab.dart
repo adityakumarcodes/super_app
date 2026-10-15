@@ -14,6 +14,7 @@ class SpeedFab extends StatelessWidget {
     this.onTranscribeAudio,
     this.onNewFolder,
     this.onUpload,
+    required void Function() onUploadAndRecord,
   });
 
   @override

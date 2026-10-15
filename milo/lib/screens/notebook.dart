@@ -122,15 +122,16 @@ class _NotebookPageState extends State<NotebookPage> {
         onTranscribeAudio: () =>
             _showFeatureComingSoon(context, 'Transcribe Audio'),
         onNewFolder: () => _dialogBuilder(context),
-        onUpload: () =>
+        onUploadAndRecord: () =>
             _showFeatureComingSoon(context, 'Upload files & photos'),
       ),
     );
   }
 
   void _showFeatureComingSoon(BuildContext context, String feature) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text('$feature will be available soon.')));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('$feature will be available soon.')));
   }
 
   Widget _buildTaskItem(BuildContext context, Task task) {

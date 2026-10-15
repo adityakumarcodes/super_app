@@ -18,6 +18,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentThemeColor = context.watch<ThemeProvider>().themeColor;
+    final themeProvider = context.watch<ThemeProvider>();
     final navigationProvider = context.watch<NavigationProvider>();
     final navigationView = navigationProvider.view;
     final colorScheme = Theme.of(context).colorScheme;
@@ -73,6 +74,45 @@ class SettingsPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
+                        'Theme mode',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        width: double.infinity,
+                        child: SegmentedButton<ThemeMode>(
+                          segments: const [
+                            ButtonSegment(
+                              value: ThemeMode.system,
+                              icon: Icon(Icons.brightness_auto_outlined),
+                              label: Text('System'),
+                            ),
+                            ButtonSegment(
+                              value: ThemeMode.light,
+                              icon: Icon(Icons.light_mode_outlined),
+                              label: Text('Light'),
+                            ),
+                            ButtonSegment(
+                              value: ThemeMode.dark,
+                              icon: Icon(Icons.dark_mode_outlined),
+                              label: Text('Dark'),
+                            ),
+                          ],
+                          selected: {themeProvider.themeMode},
+                          onSelectionChanged: (selection) => _saveSetting(
+                            context,
+                            () => context.read<ThemeProvider>().setThemeMode(
+                              selection.first,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Divider(color: colorScheme.outlineVariant),
+                      const SizedBox(height: 16),
+                      Text(
                         'Accent Color',
                         style: theme.textTheme.titleSmall?.copyWith(
                           color: colorScheme.onSurfaceVariant,
@@ -86,9 +126,12 @@ class SettingsPage extends StatelessWidget {
                           final isSelected = currentThemeColor == color;
 
                           return GestureDetector(
-                            onTap: () {
-                              context.read<ThemeProvider>().themeColor = color;
-                            },
+                            onTap: () => _saveSetting(
+                              context,
+                              () => context.read<ThemeProvider>().setThemeColor(
+                                color,
+                              ),
+                            ),
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
                               width: 44,
@@ -117,6 +160,8 @@ class SettingsPage extends StatelessWidget {
                         }).toList(),
                       ),
                       const SizedBox(height: 24),
+                      Divider(color: colorScheme.outlineVariant),
+                      const SizedBox(height: 16),
                       Text(
                         'Navigation menu',
                         style: theme.textTheme.titleSmall?.copyWith(
@@ -140,30 +185,35 @@ class SettingsPage extends StatelessWidget {
                             ),
                           ],
                           selected: {navigationView},
-                          onSelectionChanged: (selection) {
-                            context.read<NavigationProvider>().view =
-                                selection.first;
-                          },
+                          onSelectionChanged: (selection) => _saveSetting(
+                            context,
+                            () => context.read<NavigationProvider>().setView(
+                              selection.first,
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 24),
+                      Divider(color: colorScheme.outlineVariant),
+                      const SizedBox(height: 16),
                       Text(
                         'Navigation items',
                         style: theme.textTheme.titleSmall?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Home and Notes are always available. Drag to reorder.',
-                        style: theme.textTheme.bodySmall,
-                      ),
                       ReorderableListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         buildDefaultDragHandles: false,
                         itemCount: navigationProvider.tabOrder.length,
-                        onReorderItem: navigationProvider.reorderTabs,
+                        onReorderItem: (oldIndex, newIndex) => _saveSetting(
+                          context,
+                          () => context.read<NavigationProvider>().reorderTabs(
+                            oldIndex,
+                            newIndex,
+                          ),
+                        ),
                         itemBuilder: (context, index) {
                           final tab = navigationProvider.tabOrder[index];
                           return ListTile(
@@ -180,9 +230,12 @@ class SettingsPage extends StatelessWidget {
                                 if (!tab.isRequired)
                                   Switch(
                                     value: navigationProvider.isTabVisible(tab),
-                                    onChanged: (visible) => context
-                                        .read<NavigationProvider>()
-                                        .setTabVisible(tab, visible),
+                                    onChanged: (visible) => _saveSetting(
+                                      context,
+                                      () => context
+                                          .read<NavigationProvider>()
+                                          .setTabVisible(tab, visible),
+                                    ),
                                   ),
                                 ReorderableDragStartListener(
                                   index: index,
@@ -217,6 +270,21 @@ class SettingsPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _saveSetting(
+    BuildContext context,
+    Future<void> Function() save,
+  ) async {
+    try {
+      await save();
+    } catch (error) {
+      debugPrint('Failed to save app setting: $error');
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to save setting. Try again.')),
+      );
+    }
   }
 
   // Reusable settings tile

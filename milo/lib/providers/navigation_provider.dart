@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:milo/services/preferences_service.dart';
 
 enum NavigationView { navbar, gridView }
 
@@ -39,9 +40,21 @@ enum NavigationTab {
 }
 
 class NavigationProvider extends ChangeNotifier {
-  NavigationView _view = NavigationView.navbar;
-  final List<NavigationTab> _tabOrder = NavigationTab.values.toList();
-  final Set<NavigationTab> _hiddenTabs = {};
+  NavigationProvider(this._preferences)
+    :
+      _view = NavigationView.values.firstWhere(
+        (view) => view.name == _preferences.savedNavigationView,
+        orElse: () => NavigationView.navbar,
+      ),
+      _tabOrder = _loadTabOrder(_preferences.savedNavigationTabOrder),
+      _hiddenTabs = _loadHiddenTabs(
+        _preferences.savedHiddenNavigationTabs,
+      );
+
+  final PreferencesService _preferences;
+  NavigationView _view;
+  final List<NavigationTab> _tabOrder;
+  Set<NavigationTab> _hiddenTabs;
 
   NavigationView get view => _view;
   List<NavigationTab> get tabOrder => List.unmodifiable(_tabOrder);
@@ -50,23 +63,29 @@ class NavigationProvider extends ChangeNotifier {
 
   bool isTabVisible(NavigationTab tab) => !_hiddenTabs.contains(tab);
 
-  set view(NavigationView view) {
+  Future<void> setView(NavigationView view) async {
     if (_view == view) return;
+    await _preferences.saveNavigationView(view.name);
     _view = view;
     notifyListeners();
   }
 
-  void setTabVisible(NavigationTab tab, bool visible) {
+  Future<void> setTabVisible(NavigationTab tab, bool visible) async {
     if (tab.isRequired || isTabVisible(tab) == visible) return;
+    final updatedHiddenTabs = Set<NavigationTab>.of(_hiddenTabs);
     if (visible) {
-      _hiddenTabs.remove(tab);
+      updatedHiddenTabs.remove(tab);
     } else {
-      _hiddenTabs.add(tab);
+      updatedHiddenTabs.add(tab);
     }
+    await _preferences.saveHiddenNavigationTabs(
+      updatedHiddenTabs.map((tab) => tab.name).toList(),
+    );
+    _hiddenTabs = updatedHiddenTabs;
     notifyListeners();
   }
 
-  void reorderTabs(int oldIndex, int newIndex) {
+  Future<void> reorderTabs(int oldIndex, int newIndex) async {
     if (oldIndex == newIndex ||
         oldIndex < 0 ||
         oldIndex >= _tabOrder.length ||
@@ -74,8 +93,38 @@ class NavigationProvider extends ChangeNotifier {
         newIndex >= _tabOrder.length) {
       return;
     }
-    final tab = _tabOrder.removeAt(oldIndex);
-    _tabOrder.insert(newIndex, tab);
+    final updatedOrder = List<NavigationTab>.of(_tabOrder);
+    final tab = updatedOrder.removeAt(oldIndex);
+    updatedOrder.insert(newIndex, tab);
+    await _preferences.saveNavigationTabOrder(
+      updatedOrder.map((tab) => tab.name).toList(),
+    );
+    _tabOrder
+      ..clear()
+      ..addAll(updatedOrder);
     notifyListeners();
+  }
+
+  static List<NavigationTab> _loadTabOrder(List<String> storedOrder) {
+    final order = <NavigationTab>[];
+    for (final name in storedOrder) {
+      for (final tab in NavigationTab.values) {
+        if (tab.name == name && !order.contains(tab)) {
+          order.add(tab);
+          break;
+        }
+      }
+    }
+    for (final tab in NavigationTab.values) {
+      if (!order.contains(tab)) order.add(tab);
+    }
+    return order;
+  }
+
+  static Set<NavigationTab> _loadHiddenTabs(List<String> storedHiddenTabs) {
+    final hiddenNames = storedHiddenTabs.toSet();
+    return NavigationTab.values
+        .where((tab) => !tab.isRequired && hiddenNames.contains(tab.name))
+        .toSet();
   }
 }

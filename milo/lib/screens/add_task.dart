@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:milo/atoms/my_app_bar.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class AddTaskScreen extends StatefulWidget {
@@ -32,11 +33,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add Task'),
-        elevation: 2,
-        centerTitle: true,
-        shape: Border(bottom: BorderSide(color: Colors.black, width: 2)),
+      appBar: MyAppBar(
+        title: 'Add Task',
         actions: [
           IconButton(
             tooltip: 'Save',

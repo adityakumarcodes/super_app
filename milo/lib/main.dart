@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:milo/services/preferences_service.dart';
 // import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:milo/providers/task_provider.dart';
 import 'package:milo/providers/navigation_provider.dart';
@@ -24,12 +25,13 @@ import 'package:milo/providers/word_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final preferences = await PreferencesService.load();
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => FriendProvider()),
-        ChangeNotifierProvider(create: (_) => NavigationProvider()),
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => NavigationProvider(preferences)),
+        ChangeNotifierProvider(create: (_) => ThemeProvider(preferences)),
         ChangeNotifierProvider(create: (_) => WordProvider()),
         ChangeNotifierProvider(create: (_) => TaskProvider()),
       ],
@@ -118,6 +120,13 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: themeProvider.themeColor,
+        brightness: Brightness.dark,
+        fontFamily: GoogleFonts.poppins().fontFamily,
+      ),
+      themeMode: themeProvider.themeMode,
       routerConfig: _router,
     );
   }

@@ -24,19 +24,6 @@ class CategoryItem {
   });
 }
 
-const List<CategoryItem> categoriesList = [
-  CategoryItem(icon: LucideIcons.bookOpen, text: 'Notes', route: '/notebook'),
-  CategoryItem(
-    icon: LucideIcons.messageCircleMore,
-    text: 'Chat',
-    route: '/chat',
-  ),
-  CategoryItem(icon: LucideIcons.store, text: 'Shop', route: '/shop'),
-  CategoryItem(icon: LucideIcons.pyramid, text: 'Social', route: '/social'),
-
-  settingsCategory,
-];
-
 const settingsCategory = CategoryItem(
   icon: LucideIcons.bolt,
   text: 'Settings',
@@ -50,8 +37,14 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     // Access theme colors here to pass them down or rely on IconTile's internal theme access
     final colorScheme = Theme.of(context).colorScheme;
-    final navigationView = context.watch<NavigationProvider>().view;
-    final showSettingsFab = navigationView == NavigationView.navbar;
+    final navigationProvider = context.watch<NavigationProvider>();
+    final navigationView = navigationProvider.view;
+    final showNavigationGrid = navigationView == NavigationView.gridView;
+    final categories = [
+      for (final tab in navigationProvider.visibleTabs)
+        if (tab != NavigationTab.home)
+          CategoryItem(icon: tab.icon, text: tab.label, route: tab.route),
+    ];
 
     return Scaffold(
       key: _scaffoldKey,
@@ -61,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           children: [
             const WordOfTheDay(),
-            if (!showSettingsFab)
+            if (showNavigationGrid)
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 8,
@@ -76,9 +69,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisSpacing: 10,
                   ),
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: categoriesList.length,
+                  itemCount: categories.length,
                   itemBuilder: (context, index) {
-                    final item = categoriesList[index];
+                    final item = categories[index];
                     return IconTile(
                       item: item,
                       onTap: () => context.push(item.route),
@@ -89,13 +82,11 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: showSettingsFab
-          ? FloatingActionButton(
-              onPressed: () => context.push(settingsCategory.route),
-              tooltip: 'Settings',
-              child: const Icon(LucideIcons.bolt),
-            )
-          : null,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.push(settingsCategory.route),
+        tooltip: 'Settings',
+        child: const Icon(LucideIcons.bolt),
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:milo/atoms/my_app_bar.dart';
 
 class SocialPage extends StatefulWidget {
   const SocialPage({super.key});
@@ -11,12 +12,7 @@ class _SocialPageState extends State<SocialPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Social'),
-        centerTitle: true,
-        elevation: 2,
-        shape: Border(bottom: BorderSide(color: Colors.black, width: 2)),
-      ),
+      appBar: const MyAppBar(title: 'Social'),
       body: Center(child: Text('Social')),
     );
   }

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:milo/atoms/action_button.dart';
 import 'package:milo/atoms/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:milo/atoms/my_app_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
@@ -41,12 +42,7 @@ class ChatPage extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chat'),
-        centerTitle: true,
-        elevation: 2,
-        shape: Border(bottom: BorderSide(color: Colors.black, width: 2)),
-      ),
+      appBar: const MyAppBar(title: 'Chat'),
       body: Consumer<FriendProvider>(
         builder: (context, friendProvider, child) {
           final selectedIndex = friendProvider.friendSelectedToChat;
