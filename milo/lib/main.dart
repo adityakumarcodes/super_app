@@ -1,12 +1,15 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'package:milo/models/task.dart';
 import 'package:milo/screens/add_task.dart';
 import 'package:milo/screens/chat.dart';
 import 'package:milo/screens/chat_details.dart';
 import 'package:milo/atoms/constants.dart';
+import 'package:milo/atoms/folder_list.dart';
 import 'package:milo/screens/home.dart';
 import 'package:milo/screens/calculator.dart';
 import 'package:milo/screens/calender.dart';
+import 'package:milo/screens/note_details.dart';
 import 'package:milo/screens/notebook.dart';
 import 'package:milo/screens/settings.dart';
 import 'package:milo/screens/shop.dart';
@@ -21,8 +24,6 @@ import 'package:milo/providers/task_provider.dart';
 import 'package:milo/providers/navigation_provider.dart';
 import 'package:milo/providers/theme_provider.dart';
 import 'package:milo/providers/word_provider.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -71,22 +72,23 @@ final _router = GoRouter(
       ],
     ),
     GoRoute(
-      path: '/notebook/folder/:folderId',
+      path: '/notebook/folder/:name',
       builder: (context, state) {
-        final folderId = int.tryParse(state.pathParameters['folderId'] ?? '');
-        return NotebookPage(folderId: folderId);
+        final folderName = state.pathParameters['name']!;
+        return FolderList(folderName: folderName);
       },
     ),
     GoRoute(
-      path: '/notebook/note',
-      builder: (context, state) => AddTaskScreen(
-        noteId: int.tryParse(state.uri.queryParameters['id'] ?? ''),
-        folderId: int.tryParse(state.uri.queryParameters['folderId'] ?? ''),
-      ),
+      path: '/notebook/note/:id',
+      builder: (context, state) {
+        final task = state.extra as Task;
+
+        return NoteDetailsPage(task: task);
+      },
     ),
     GoRoute(
       path: '/notebook/addTask',
-      builder: (context, state) => const AddTaskScreen(),
+      builder: (context, state) => AddTaskScreen(),
     ),
     GoRoute(
       path: '/chat/details',
@@ -120,8 +122,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = context.watch<ThemeProvider>();
     return MaterialApp.router(
-      localizationsDelegates: const [FlutterQuillLocalizations.delegate],
-      supportedLocales: const [Locale('en')],
       debugShowCheckedModeBanner: false,
       title: 'Milo',
       theme: ThemeData(

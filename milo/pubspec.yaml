@@ -48,6 +48,8 @@ dependencies:
   path: ^1.9.1
   flutter_quill: ^11.6.0
   flutter_quill_extensions: ^11.0.0
+  flutter_svg: ^2.3.0
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:
