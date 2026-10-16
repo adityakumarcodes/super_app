@@ -22,6 +22,8 @@ import 'package:milo/providers/task_provider.dart';
 import 'package:milo/providers/navigation_provider.dart';
 import 'package:milo/providers/theme_provider.dart';
 import 'package:milo/providers/word_provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -112,6 +114,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = context.watch<ThemeProvider>();
     return MaterialApp.router(
+      localizationsDelegates: const [FlutterQuillLocalizations.delegate],
+      supportedLocales: const [Locale('en')],
       debugShowCheckedModeBanner: false,
       title: 'Milo',
       theme: ThemeData(
