@@ -1,25 +1,41 @@
 class Task {
   final int id;
   final String title;
-  final Map<String, dynamic>? content;
+  final String description;
+  final String deltaJson;
+  final int? folderId;
+  final bool isPinned;
   final String createdOn;
-  final String statusFlag;
+  final String updatedOn;
 
-  Task({
+  const Task({
     required this.id,
     required this.title,
-    this.content,
+    required this.description,
+    required this.deltaJson,
+    required this.folderId,
+    required this.isPinned,
     required this.createdOn,
-    required this.statusFlag,
+    required this.updatedOn,
   });
 
-  factory Task.fromJson(Map<String, dynamic> json) {
+  factory Task.fromDatabase(Map<String, Object?> row) {
     return Task(
-      id: json['id'],
-      title: json['title'],
-      content: json['content'] as Map<String, dynamic>?,
-      createdOn: json['createdOn'],
-      statusFlag: json['status_flag'],
+      id: row['id'] as int,
+      title: (row['title'] as String?) ?? '',
+      description: (row['description'] as String?) ?? '',
+      deltaJson: (row['delta_json'] as String?) ?? '[]',
+      folderId: row['folder_id'] as int?,
+      isPinned: (row['is_pinned'] as int? ?? 0) == 1,
+      createdOn: (row['created_at'] as String?) ?? '',
+      updatedOn: (row['updated_at'] as String?) ?? '',
     );
   }
+
+  String get displayTitle {
+    final trimmedTitle = title.trim();
+    return trimmedTitle.isEmpty ? 'Untitled note' : trimmedTitle;
+  }
+
+  String get preview => description.replaceAll(RegExp(r'\s+'), ' ').trim();
 }

@@ -4,7 +4,6 @@ import 'package:milo/screens/add_task.dart';
 import 'package:milo/screens/chat.dart';
 import 'package:milo/screens/chat_details.dart';
 import 'package:milo/atoms/constants.dart';
-import 'package:milo/atoms/folder_list.dart';
 import 'package:milo/screens/home.dart';
 import 'package:milo/screens/calculator.dart';
 import 'package:milo/screens/calender.dart';
@@ -72,15 +71,22 @@ final _router = GoRouter(
       ],
     ),
     GoRoute(
-      path: '/notebook/folder/:name',
+      path: '/notebook/folder/:folderId',
       builder: (context, state) {
-        final folderName = state.pathParameters['name']!;
-        return FolderList(folderName: folderName);
+        final folderId = int.tryParse(state.pathParameters['folderId'] ?? '');
+        return NotebookPage(folderId: folderId);
       },
     ),
     GoRoute(
+      path: '/notebook/note',
+      builder: (context, state) => AddTaskScreen(
+        noteId: int.tryParse(state.uri.queryParameters['id'] ?? ''),
+        folderId: int.tryParse(state.uri.queryParameters['folderId'] ?? ''),
+      ),
+    ),
+    GoRoute(
       path: '/notebook/addTask',
-      builder: (context, state) => AddTaskScreen(),
+      builder: (context, state) => const AddTaskScreen(),
     ),
     GoRoute(
       path: '/chat/details',
