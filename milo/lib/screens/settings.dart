@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
+import 'package:milo/providers/auth_provider.dart';
 import 'package:milo/providers/navigation_provider.dart';
+import 'package:milo/providers/task_provider.dart';
 import 'package:milo/providers/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -326,8 +328,11 @@ class SettingsPage extends StatelessWidget {
 
   // Profile bottom sheet
   void _showProfileSheet(BuildContext context) {
-    const String name = 'Aditya Kumar';
-    const String email = 'aditya@example.com';
+    final user = context.read<AuthProvider>().user;
+    final email = user?.email ?? '';
+    final name = user?.name.trim().isNotEmpty == true
+        ? user!.name
+        : email.split('@').first;
 
     showModalBottomSheet<void>(
       context: context,
@@ -384,9 +389,9 @@ class SettingsPage extends StatelessWidget {
                     icon: const Icon(Icons.copy),
                     tooltip: 'Copy email',
                     onPressed: () async {
-                      await Clipboard.setData(const ClipboardData(text: email));
+                      await Clipboard.setData(ClipboardData(text: email));
 
-                      if (!sheetContext.mounted) return;
+                      if (!sheetContext.mounted || !context.mounted) return;
 
                       Navigator.pop(sheetContext);
 
@@ -402,21 +407,46 @@ class SettingsPage extends StatelessWidget {
 
                 const SizedBox(height: 8),
 
-                // Sign out
                 SizedBox(
                   width: double.infinity,
-                  child: FilledButton.icon(
-                    onPressed: () {
-                      Navigator.pop(sheetContext);
+                  child: Consumer<AuthProvider>(
+                    builder: (buttonContext, auth, child) {
+                      return FilledButton.icon(
+                        onPressed: auth.isLoading
+                            ? null
+                            : () async {
+                                final tasks = buttonContext
+                                    .read<TaskProvider>();
+                                Navigator.pop(sheetContext);
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Sign out will be available soon.'),
+                                final signedOut = await auth.signOut();
+                                if (signedOut) {
+                                  tasks.clear();
+                                  return;
+                                }
+
+                                if (!context.mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      auth.error ?? 'Could not sign out.',
+                                    ),
+                                  ),
+                                );
+                              },
+                        icon: auth.isLoading
+                            ? const SizedBox.square(
+                                dimension: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(Icons.logout),
+                        label: Text(
+                          auth.isLoading ? 'Signing out...' : 'Sign out',
                         ),
                       );
                     },
-                    icon: const Icon(Icons.logout),
-                    label: const Text('Sign out'),
                   ),
                 ),
               ],

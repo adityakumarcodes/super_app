@@ -1,37 +1,43 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class WordProvider extends ChangeNotifier {
-  static const List<Map<String, String>> _wordList = [
-    {
-      'word': 'Aloha',
-      'meaning': 'The Hawaiian word for love, affection, compassion and mercy used to define a force that holds together existence',
-    },
-    {
-      'word': 'Gökotta',
-      'meaning': 'Act of getting up early in the morning specifically to go outside to hear the birds sing.',
-    },
-    {
-      'word': 'Flâner',
-      'meaning': 'A leisurely stroll with no destination in mind to enjoy the beauty of your surroundings.',
-    },
-    {
-      'word': 'Hanyauku',
-      'meaning':
-          'This describes the act of walking across warm sand on your tiptoes.',
-    },
-    {
-      'word': 'Wabi-Sabi',
-      'meaning': 'This word refers to Japanese mindset of finding beauty in something by embracing its flaws and imperfections.',
-    },
-    {
-      'word': 'Komorebi',
-      'meaning': 'A Japanese word for when the sun goes through the trees and the leaves filter the light.',
-    },
-    {
-      'word': 'Hozho',
-      'meaning': 'Working towards a sense of balance within oneself, our planet, and in life',
-    },
-  ];
+  WordProvider() {
+    loadWords();
+  }
 
-  List<Map<String, String>> get words => _wordList;
+  final _dio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 5),
+      receiveTimeout: const Duration(seconds: 5),
+    ),
+  );
+
+  List<Map<String, String>> words = [];
+  bool isLoading = true;
+  String? error;
+
+  Future<void> loadWords() async {
+    try {
+      final response = await _dio.get(
+        'http://192.168.1.11:3000/api/word-of-the-day',
+      );
+      // hostname -I
+      words = (response.data as List)
+          .map(
+            (item) => {
+              'word': item['word'] as String,
+              'meaning': item['meaning'] as String,
+            },
+          )
+          .toList();
+
+      error = null;
+    } catch (e) {
+      error = 'Unable to load words.';
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
 }

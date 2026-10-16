@@ -6,7 +6,7 @@ class ThemeProvider with ChangeNotifier {
     : _themeColor = _preferences.accentColor,
       _themeMode = ThemeMode.values.firstWhere(
         (mode) => mode.name == _preferences.savedThemeMode,
-        orElse: () => ThemeMode.system,
+        orElse: () => ThemeMode.light,
       );
 
   final PreferencesService _preferences;

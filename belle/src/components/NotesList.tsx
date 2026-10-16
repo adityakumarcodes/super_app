@@ -112,7 +112,7 @@ export default function NotesList() {
                                 src={image}
                                 alt={note.title || `Note ${note.id}`}
                                 loading="lazy"
-                                className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                className="aspect-4/3 w-full object-cover transition-transform duration-500 group-hover:scale-105"
                             />
                         ) : (
                             <div className="min-h-44 p-5">

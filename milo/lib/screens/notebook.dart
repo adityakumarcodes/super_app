@@ -37,7 +37,7 @@ class _NotebookPageState extends State<NotebookPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<TaskProvider>().fetchTasks();
+      context.read<TaskProvider>().fetchTasks(forceRefresh: true);
     });
   }
 
@@ -72,7 +72,23 @@ class _NotebookPageState extends State<NotebookPage> {
           }
 
           if (error != null) {
-            return Center(child: Text('Error: $error'));
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(error, textAlign: TextAlign.center),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      onPressed: taskProvider.refreshTasks,
+                      icon: const Icon(LucideIcons.refreshCw),
+                      label: const Text('Try again'),
+                    ),
+                  ],
+                ),
+              ),
+            );
           }
 
           return CustomScrollView(
@@ -145,9 +161,10 @@ class _NotebookPageState extends State<NotebookPage> {
         ),
         leading: const Icon(LucideIcons.asterisk),
         title: Text(
-          task.title,
+          task.displayTitle,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
         ),
+        // subtitle: task.preview.isEmpty ? null : Text(task.preview),
         onTap: () {
           context.push('/notebook/note/${task.id}', extra: task);
         },

@@ -21,8 +21,8 @@
 
 ## TODO
 
-- Darkmode
-- Notes update functionality
+- ✅Darkmode
+- Notes CRUD
 - ✅Why authenticated user can see the login register routes
 - Update backend dependency
 - ✅Integrate milo
@@ -32,6 +32,7 @@
 - ✅Email OTP login. 
 - Replace screenshot with figma url
 - Adaptive widgets
+- Migrate to Bloc state management
 
 https://medium.com/@balajibal/super-apps-the-operating-system-of-everyday-life-38706471a94b
 https://github.com/itsmbaqer/mini-programs-guidelines

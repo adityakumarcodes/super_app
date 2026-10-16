@@ -9,34 +9,23 @@ class NoteDetailsPage extends StatelessWidget {
 
   const NoteDetailsPage({super.key, required this.task});
 
-  static const Color _ink = Color(0xFF2F2D2D);
-  static const Color _paper = Color(0xFFF8F6F2);
-
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final createdDate = DateTime.tryParse(task.createdOn);
+    final hasDescription = task.description.trim().isNotEmpty;
 
     return Scaffold(
-      backgroundColor: _paper,
       appBar: AppBar(
-        backgroundColor: _paper,
-        foregroundColor: _ink,
-        // elevation: 0,
-        // centerTitle: true,
-        // title: const Text('Note'),
-        // shape: const Border(bottom: BorderSide(color: Colors.black, width: 2)),
-        // actions: [
-        //   IconButton(
-        //     tooltip: 'Edit note',
-        //     onPressed: () {},
-        //     icon: const Icon(LucideIcons.pen),
-        //   ),
-        //   IconButton(
-        //     tooltip: 'Delete note',
-        //     onPressed: () => _confirmDelete(context),
-        //     icon: const Icon(LucideIcons.trash2),
-        //   ),
-        // ],
+        //   // Use the application's Material 3 theme.
+        //   backgroundColor: colorScheme.surface,
+        //   foregroundColor: colorScheme.onSurface,
+        //   elevation: 0,
+        //   scrolledUnderElevation: 0,
+        //   centerTitle: true,
+        //   title: Text('Note', style: theme.textTheme.titleLarge),
+        //   shape: Border(bottom: BorderSide(color: colorScheme.outline, width: 2)),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -45,12 +34,12 @@ class NoteDetailsPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                task.title,
+                task.displayTitle,
                 style: GoogleFonts.bodoniModa(
+                  textStyle: theme.textTheme.headlineMedium,
                   fontSize: 42,
                   height: 1.12,
                   fontWeight: FontWeight.w500,
-                  color: _ink,
                 ),
               ),
 
@@ -59,28 +48,35 @@ class NoteDetailsPage extends StatelessWidget {
               if (createdDate != null)
                 Row(
                   children: [
-                    const Icon(LucideIcons.clock, size: 15, color: Colors.grey),
+                    Icon(
+                      LucideIcons.clock,
+                      size: 15,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       DateFormat.yMMMd().add_jm().format(createdDate),
-                      style: const TextStyle(fontSize: 13, color: Colors.grey),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
 
               const SizedBox(height: 28),
 
-              const Divider(color: Colors.black, thickness: 1.5),
+              Divider(color: colorScheme.outline, thickness: 1.5),
 
               const SizedBox(height: 24),
 
-              // Render the note content.
-              // if (task.content != null && task.content!.isNotEmpty)
-              //   UIBuilder(json: task.content!)
-              // else
-              const Text(
-                'No content yet.',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+              Text(
+                hasDescription ? task.description : 'No content yet.',
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  height: 1.7,
+                  color: hasDescription
+                      ? colorScheme.onSurface
+                      : colorScheme.onSurfaceVariant,
+                ),
               ),
 
               const SizedBox(height: 40),
@@ -95,8 +91,11 @@ class NoteDetailsPage extends StatelessWidget {
                       icon: const Icon(LucideIcons.pen),
                       label: const Text('Edit'),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: _ink,
-                        side: const BorderSide(color: Colors.black, width: 1.5),
+                        foregroundColor: colorScheme.primary,
+                        side: BorderSide(
+                          color: colorScheme.outline,
+                          width: 1.5,
+                        ),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                     ),
@@ -108,8 +107,8 @@ class NoteDetailsPage extends StatelessWidget {
                       icon: const Icon(LucideIcons.trash2),
                       label: const Text('Delete'),
                       style: FilledButton.styleFrom(
-                        backgroundColor: _ink,
-                        foregroundColor: Colors.white,
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: theme.colorScheme.onPrimary,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                     ),
@@ -124,6 +123,8 @@ class NoteDetailsPage extends StatelessWidget {
   }
 
   Future<void> _confirmDelete(BuildContext context) async {
+    final theme = Theme.of(context);
+
     final shouldDelete = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
@@ -136,6 +137,10 @@ class NoteDetailsPage extends StatelessWidget {
               child: const Text('Cancel'),
             ),
             FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: theme.colorScheme.onPrimary,
+              ),
               onPressed: () => Navigator.pop(dialogContext, true),
               child: const Text('Delete'),
             ),

@@ -32,6 +32,19 @@ class Task {
     );
   }
 
+  factory Task.fromApi(Map<String, dynamic> json) {
+    return Task(
+      id: (json['id'] as num).toInt(),
+      title: json['title'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      deltaJson: '[]',
+      folderId: null,
+      isPinned: false,
+      createdOn: json['createdAt'] as String? ?? '',
+      updatedOn: json['updatedAt'] as String? ?? '',
+    );
+  }
+
   String get displayTitle {
     final trimmedTitle = title.trim();
     return trimmedTitle.isEmpty ? 'Untitled note' : trimmedTitle;

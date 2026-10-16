@@ -48,8 +48,18 @@ class _WordOfTheDayState extends State<WordOfTheDay> {
                 ),
               ),
               child: Center(
-                child: data.isEmpty
-                    ? const Text('No words available')
+                child: wordProvider.isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : wordProvider.error != null
+                    ? Text(
+                        wordProvider.error!,
+                        style: const TextStyle(color: Colors.white),
+                      )
+                    : data.isEmpty
+                    ? const Text(
+                        'No words available',
+                        style: TextStyle(color: Colors.white),
+                      )
                     : Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
