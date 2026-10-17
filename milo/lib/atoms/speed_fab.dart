@@ -14,7 +14,6 @@ class SpeedFab extends StatelessWidget {
     this.onTranscribeAudio,
     this.onNewFolder,
     this.onUpload,
-    required void Function() onUploadAndRecord,
   });
 
   @override
@@ -38,21 +37,21 @@ class SpeedFab extends StatelessWidget {
           ),
         if (onTranscribeAudio != null)
           SpeedDialChild(
-            child: const Icon(LucideIcons.audioLines),
-            label: 'Transcribe Audio',
+            child: const Icon(LucideIcons.mic),
+            label: 'Record',
             onTap: onTranscribeAudio,
+          ),
+        if (onUpload != null)
+          SpeedDialChild(
+            child: const Icon(LucideIcons.upload),
+            label: 'Upload',
+            onTap: onUpload,
           ),
         if (onNewFolder != null)
           SpeedDialChild(
             child: const Icon(LucideIcons.folderPlus),
             label: 'New Folder',
             onTap: onNewFolder,
-          ),
-        if (onUpload != null)
-          SpeedDialChild(
-            child: const Icon(LucideIcons.imagePlus),
-            label: 'Upload files & photos',
-            onTap: onUpload,
           ),
       ],
     );

@@ -253,8 +253,6 @@ class _FolderListState extends State<FolderList> {
         onNewFolder: () => _dialogBuilder(context),
         onUpload: () =>
             _showFeatureComingSoon(context, 'Upload files & photos'),
-        onUploadAndRecord: () =>
-            _showFeatureComingSoon(context, 'Upload files & photos'),
       ),
     );
   }

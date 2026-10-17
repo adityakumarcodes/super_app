@@ -30,6 +30,8 @@ import 'package:milo/screens/social.dart';
 import 'package:milo/services/preferences_service.dart';
 import 'package:provider/provider.dart';
 
+import 'screens/calculator.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterBetterAuth.initialize(url: AppConfig.authBaseUrl);
@@ -136,10 +138,10 @@ GoRouter _createRouter(AuthProvider authProvider) {
           ),
         ),
       ),
-      GoRoute(
-        path: '/calculator',
-        builder: (context, state) => const CalculatorPage(),
-      ),
+      // GoRoute(
+      //   path: '/calculator',
+      //   builder: (context, state) => const CalculatorPage(),
+      // ),
       GoRoute(
         path: '/calendar',
         builder: (context, state) => const CalendarPage(),

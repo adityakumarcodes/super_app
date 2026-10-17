@@ -37,7 +37,7 @@ class _NotebookPageState extends State<NotebookPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<TaskProvider>().fetchTasks(forceRefresh: true);
+      context.read<TaskProvider>().fetchTasks();
     });
   }
 
@@ -137,7 +137,7 @@ class _NotebookPageState extends State<NotebookPage> {
         onTranscribeAudio: () =>
             _showFeatureComingSoon(context, 'Transcribe Audio'),
         onNewFolder: () => _dialogBuilder(context),
-        onUploadAndRecord: () =>
+        onUpload: () =>
             _showFeatureComingSoon(context, 'Upload files & photos'),
       ),
     );

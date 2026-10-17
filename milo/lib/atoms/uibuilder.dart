@@ -1,26 +1,45 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-// import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-
 class ChecklistWidget extends StatelessWidget {
-  final List<Map<String, dynamic>> items;
+  final List<dynamic> items;
 
   const ChecklistWidget({super.key, required this.items});
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: items.map((item) {
-        return CheckboxListTile(
-          value: item['meta']['checked'] ?? false,
-          onChanged: null,
-          title: SelectableText(item['content'] ?? ''),
-          controlAffinity: ListTileControlAffinity.leading,
-        );
-      }).toList(),
+      children: items
+          .map((item) {
+            final itemData = _asMap(item);
+            final meta = _asMap(itemData['meta']);
+            final children = _asList(itemData['items']);
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Column(
+                children: [
+                  CheckboxListTile(
+                    value: meta['checked'] == true,
+                    onChanged: null,
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                    title: SelectableText(
+                      _plainText(itemData['content'] ?? item),
+                    ),
+                    controlAffinity: ListTileControlAffinity.leading,
+                  ),
+                  if (children.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 24),
+                      child: ChecklistWidget(items: children),
+                    ),
+                ],
+              ),
+            );
+          })
+          .toList(growable: false),
     );
   }
 }
@@ -30,48 +49,99 @@ class DelimiterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Icon(LucideIcons.asterisk),
-        Icon(LucideIcons.asterisk),
-        Icon(LucideIcons.asterisk),
-      ],
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(LucideIcons.asterisk, size: 15),
+          Icon(LucideIcons.asterisk, size: 15),
+          Icon(LucideIcons.asterisk, size: 15),
+        ],
+      ),
     );
   }
 }
 
 class ImageWidget extends StatelessWidget {
   final String imageUrl;
+  final String caption;
   final double borderRadius;
 
   const ImageWidget({
     super.key,
     required this.imageUrl,
+    this.caption = '',
     this.borderRadius = 12,
   });
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(borderRadius),
-        child: CachedNetworkImage(imageUrl: imageUrl, fit: BoxFit.cover),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(borderRadius),
+            child: imageUrl.isEmpty
+                ? _ImageFallback(colorScheme: colorScheme)
+                : CachedNetworkImage(
+                    imageUrl: imageUrl,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => const AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: Center(
+                        child: CircularProgressIndicator.adaptive(),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) =>
+                        _ImageFallback(colorScheme: colorScheme),
+                  ),
+          ),
+          if (caption.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                caption,
+                style: Theme.of(context).textTheme.bodySmall
+                    ?.copyWith(color: colorScheme.onSurfaceVariant),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ImageFallback extends StatelessWidget {
+  final ColorScheme colorScheme;
+
+  const _ImageFallback({required this.colorScheme});
+
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: ColoredBox(
+        color: colorScheme.surfaceContainerHighest,
+        child: Icon(LucideIcons.imageOff, color: colorScheme.onSurfaceVariant),
       ),
     );
   }
 }
 
 class HeadingWidget extends StatelessWidget {
-  static const Map<int, double> _fontSizes = {
-    1: 40.0,
-    2: 35.0,
-    3: 30.0,
-    4: 25.0,
-    5: 20.0,
-    6: 15.0,
+  static final Map<int, TextStyle Function(TextTheme)> _headingStyles = {
+    1: (theme) => theme.headlineLarge!,
+    2: (theme) => theme.headlineMedium!,
+    3: (theme) => theme.headlineSmall!,
+    4: (theme) => theme.titleLarge!,
+    5: (theme) => theme.titleMedium!,
+    6: (theme) => theme.titleSmall!,
   };
 
   final String text;
@@ -81,12 +151,12 @@ class HeadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final headingStyle = _headingStyles[level.clamp(1, 6)]!(textTheme);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
-      child: SelectableText(
-        text,
-        style: GoogleFonts.bodoniModa(fontSize: _fontSizes[level.clamp(1, 6)]!),
-      ),
+      child: SelectableText(text, style: headingStyle),
     );
   }
 }
@@ -109,8 +179,12 @@ class RecursiveListWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: List.generate(items.length, (index) {
         final item = items[index];
+        final itemData = _asMap(item);
+        final content = itemData.isEmpty ? item : itemData['content'];
+        final children = _asList(itemData['items']);
+
         return Padding(
-          padding: EdgeInsets.only(left: 16.0 * indentLevel, bottom: 4),
+          padding: EdgeInsets.only(left: 16.0 * indentLevel, bottom: 6),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -119,20 +193,20 @@ class RecursiveListWidget extends StatelessWidget {
                 children: [
                   Text(
                     ordered ? '${index + 1}.' : '•',
-                    style: const TextStyle(fontSize: 16),
+                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text(
-                      item['content'] ?? '',
-                      style: const TextStyle(fontSize: 16),
+                    child: SelectableText(
+                      _plainText(content),
+                      style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ),
                 ],
               ),
-              if (item['items'] != null && item['items'].isNotEmpty)
+              if (children.isNotEmpty)
                 RecursiveListWidget(
-                  items: List<Map<String, dynamic>>.from(item['items']),
+                  items: children,
                   ordered: ordered,
                   indentLevel: indentLevel + 1,
                 ),
@@ -144,152 +218,157 @@ class RecursiveListWidget extends StatelessWidget {
   }
 }
 
-// class YTPreviewWidget extends StatefulWidget {
-//   final String url;
+class CalloutWidget extends StatelessWidget {
+  final String text;
 
-//   const YTPreviewWidget({super.key, required this.url});
-
-//   @override
-//   State<YTPreviewWidget> createState() => _YTPreviewWidgetState();
-// }
-
-// class _YTPreviewWidgetState extends State<YTPreviewWidget> {
-//   YoutubePlayerController? _controller;
-//   String? _videoId;
-//   bool _isPlayerReady = false;
-
-//   void _extractVideoId() {
-//     final id = YoutubePlayer.convertUrlToId(widget.url);
-//     if (id != null) {
-//       setState(() {
-//         _videoId = id;
-//         _isPlayerReady = false;
-//         _controller?.dispose();
-//         _controller = null;
-//       });
-//     } else {
-//       ScaffoldMessenger.of(context)
-//           .showSnackBar(const SnackBar(content: Text('Invalid YouTube URL')));
-//     }
-//   }
-
-//   void _loadPlayer() {
-//     if (_videoId == null) return;
-//     _controller = YoutubePlayerController(
-//       initialVideoId: _videoId!,
-//       flags: const YoutubePlayerFlags(autoPlay: true, mute: false),
-//     );
-//     setState(() {
-//       _isPlayerReady = true;
-//     });
-//   }
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _extractVideoId();
-//   }
-
-//   @override
-//   void dispose() {
-//     _controller?.dispose();
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       children: [
-//         if (_videoId != null && !_isPlayerReady)
-//           ClipRRect(
-//             borderRadius: BorderRadius.circular(12),
-//             child: Stack(
-//               alignment: Alignment.center,
-//               children: [
-//                 Image.network(
-//                   YoutubePlayer.getThumbnail(videoId: _videoId!),
-//                   width: double.infinity,
-//                   fit: BoxFit.cover,
-//                 ),
-//                 IconButton(
-//                   iconSize: 64,
-//                   icon: const Icon(Icons.play_circle_fill, color: Colors.white),
-//                   onPressed: _loadPlayer,
-//                 ),
-//               ],
-//             ),
-//           ),
-//         if (_controller != null && _isPlayerReady)
-//           ClipRRect(
-//             borderRadius: BorderRadius.circular(12),
-//             child: YoutubePlayer(
-//               controller: _controller!,
-//               showVideoProgressIndicator: true,
-//               progressIndicatorColor: Colors.amber,
-//               progressColors: const ProgressBarColors(
-//                 playedColor: Colors.amber,
-//                 handleColor: Colors.amberAccent,
-//               ),
-//             ),
-//           ),
-//       ],
-//     );
-//   }
-// }
-
-
-class UIBuilder extends StatelessWidget {
-  final Map<String, dynamic> json;
-
-  const UIBuilder({super.key, required this.json});
+  const CalloutWidget({super.key, required this.text});
 
   @override
   Widget build(BuildContext context) {
-    final blocks = (json['blocks'] as List<dynamic>?)?.skip(1).toList() ?? [];
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: colorScheme.outlineVariant),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('💡', style: TextStyle(fontSize: 20)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: SelectableText(
+              text,
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(height: 1.5),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class UIBuilder extends StatelessWidget {
+  final List<dynamic>? blocks;
+  final Map<String, dynamic>? json;
+
+  const UIBuilder({super.key, this.blocks, this.json});
+
+  @override
+  Widget build(BuildContext context) {
+    final resolvedBlocks = blocks ?? _asList(json?['blocks']);
 
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(16),
-      itemCount: blocks.length,
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      itemCount: resolvedBlocks.length,
       itemBuilder: (context, index) {
-        return _buildBlock(context, blocks[index]);
+        return _buildBlock(context, resolvedBlocks[index]);
       },
     );
   }
 
   Widget _buildBlock(BuildContext context, dynamic block) {
-    final type = block['type'] as String?;
-    final data = block['data'] as Map<String, dynamic>? ?? {};
+    final blockData = _asMap(block);
+    final type = blockData['type']?.toString().toLowerCase() ?? '';
+    final data = _asMap(blockData['data']);
 
     switch (type) {
       case 'header':
         return HeadingWidget(
-          text: data['text'] ?? '',
-          level: data['level'] is int ? data['level'] as int : 1,
+          text: _plainText(data['text']),
+          level: data['level'] is num ? (data['level'] as num).toInt() : 1,
         );
       case 'paragraph':
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Text(data['text'] ?? '', style: const TextStyle(fontSize: 16)),
+          child: SelectableText(
+            _plainText(data['text']),
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.7),
+          ),
         );
       case 'delimiter':
         return const DelimiterWidget();
       case 'image':
-        return ImageWidget(imageUrl: data['file']?['url'] ?? '');
+        final file = _asMap(data['file']);
+        return ImageWidget(
+          imageUrl: file['url']?.toString() ?? '',
+          caption: _plainText(data['caption']),
+        );
       case 'list':
+        final items = _asList(data['items']);
+        if (data['style'] == 'checklist') {
+          return ChecklistWidget(items: items);
+        }
         return RecursiveListWidget(
-          items: List<dynamic>.from(data['items'] ?? []),
+          items: items,
           ordered: data['style'] == 'ordered',
         );
       case 'checklist':
-        return ChecklistWidget(
-          items: List<Map<String, dynamic>>.from(data['items'] ?? []),
-        );
-      // case 'embed':
-      //   return YTPreviewWidget(url: data['source'] ?? '');
+        return ChecklistWidget(items: _asList(data['items']));
+      case 'callout':
+        return CalloutWidget(text: _plainText(data['text']));
       default:
-        return const SizedBox.shrink();
+        return _UnsupportedBlock(type: type, data: data);
     }
   }
+}
+
+class _UnsupportedBlock extends StatelessWidget {
+  final String type;
+  final Map<String, dynamic> data;
+
+  const _UnsupportedBlock({required this.type, required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    final text = _plainText(data['text'] ?? data['content']);
+    if (text.isNotEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: SelectableText(text),
+      );
+    }
+
+    return Card.outlined(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Text(
+          type.isEmpty ? 'Unsupported note block' : 'Unsupported block: $type',
+        ),
+      ),
+    );
+  }
+}
+
+Map<String, dynamic> _asMap(dynamic value) {
+  if (value is! Map) return const {};
+  return Map<String, dynamic>.from(value);
+}
+
+List<dynamic> _asList(dynamic value) => value is List ? value : const [];
+
+String _plainText(dynamic value) {
+  if (value == null) return '';
+
+  return value
+      .toString()
+      .replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n')
+      .replaceAll(RegExp(r'</p\s*>', caseSensitive: false), '\n')
+      .replaceAll(RegExp(r'<[^>]*>'), '')
+      .replaceAll('&nbsp;', ' ')
+      .replaceAll('&lt;', '<')
+      .replaceAll('&gt;', '>')
+      .replaceAll('&quot;', '"')
+      .replaceAll('&#39;', "'")
+      .replaceAll('&apos;', "'")
+      .replaceAll('&amp;', '&')
+      .trim();
 }

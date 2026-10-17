@@ -7,6 +7,7 @@ class Task {
   final bool isPinned;
   final String createdOn;
   final String updatedOn;
+  final List<Map<String, dynamic>> blocks;
 
   const Task({
     required this.id,
@@ -17,6 +18,7 @@ class Task {
     required this.isPinned,
     required this.createdOn,
     required this.updatedOn,
+    this.blocks = const [],
   });
 
   factory Task.fromDatabase(Map<String, Object?> row) {
@@ -29,6 +31,7 @@ class Task {
       isPinned: (row['is_pinned'] as int? ?? 0) == 1,
       createdOn: (row['created_at'] as String?) ?? '',
       updatedOn: (row['updated_at'] as String?) ?? '',
+      blocks: const [],
     );
   }
 
@@ -42,7 +45,17 @@ class Task {
       isPinned: false,
       createdOn: json['createdAt'] as String? ?? '',
       updatedOn: json['updatedAt'] as String? ?? '',
+      blocks: _parseBlocks(json['blocks']),
     );
+  }
+
+  static List<Map<String, dynamic>> _parseBlocks(dynamic value) {
+    if (value is! List) return const [];
+
+    return value
+        .whereType<Map>()
+        .map((block) => Map<String, dynamic>.from(block))
+        .toList(growable: false);
   }
 
   String get displayTitle {

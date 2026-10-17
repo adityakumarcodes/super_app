@@ -25,4 +25,22 @@ class TaskService {
       );
     }
   }
+
+  Future<Task> fetchTask(int id) async {
+    try {
+      final response = await FlutterBetterAuth.dioClient
+          .get<Map<String, dynamic>>('${AppConfig.notesUrl}$id')
+          .timeout(AppConfig.requestTimeout);
+      final note = response.data;
+      if (note == null) {
+        throw const FormatException('Missing note response.');
+      }
+
+      return Task.fromApi(note);
+    } catch (_) {
+      throw Exception(
+        'Could not load note details. Check your connection and try again.',
+      );
+    }
+  }
 }
