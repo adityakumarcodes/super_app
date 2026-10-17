@@ -146,15 +146,6 @@ List<ChatUsers> chatUsers = [
   ),
 ];
 
-class FriendProvider extends ChangeNotifier {
-  int friendSelectedToChat = 0;
-
-  void setFriendSelectedToChat(int f) {
-    friendSelectedToChat = f;
-    notifyListeners();
-  }
-}
-
 class ChatMessage {
   String messageContent;
   String messageType;

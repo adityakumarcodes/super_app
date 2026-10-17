@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:milo/atoms/my_app_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:milo/features/chat/presentation/bloc/chat_cubit.dart';
 
 class ChatPage extends StatelessWidget {
   const ChatPage({super.key});
@@ -43,9 +44,9 @@ class ChatPage extends StatelessWidget {
 
     return Scaffold(
       appBar: const MyAppBar(title: 'Chat'),
-      body: Consumer<FriendProvider>(
-        builder: (context, friendProvider, child) {
-          final selectedIndex = friendProvider.friendSelectedToChat;
+      body: BlocBuilder<ChatCubit, ChatState>(
+        builder: (context, chatState) {
+          final selectedIndex = chatState.selectedIndex;
           return Column(
             children: [
               Padding(
@@ -76,7 +77,7 @@ class ChatPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return ListTile(
                       onTap: () {
-                        friendProvider.setFriendSelectedToChat(index);
+                        context.read<ChatCubit>().selectConversation(index);
                         context.push('/chat/details');
                       },
                       shape: Border(
@@ -155,8 +156,9 @@ class ChatPage extends StatelessWidget {
 }
 
 void _showComingSoon(BuildContext context, String feature) {
-  ScaffoldMessenger.of(context)
-      .showSnackBar(SnackBar(content: Text('$feature will be available soon.')));
+  ScaffoldMessenger.of(
+    context,
+  ).showSnackBar(SnackBar(content: Text('$feature will be available soon.')));
 }
 
 void _showProfilePreview(BuildContext context, ChatUsers user) {

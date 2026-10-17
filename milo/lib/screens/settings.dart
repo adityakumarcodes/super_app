@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:milo/providers/auth_provider.dart';
-import 'package:milo/providers/navigation_provider.dart';
-import 'package:milo/providers/task_provider.dart';
-import 'package:milo/providers/theme_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:milo/features/auth/presentation/bloc/auth_cubit.dart';
+import 'package:milo/features/notes/presentation/bloc/task_cubit.dart';
+import 'package:milo/features/settings/presentation/bloc/navigation_cubit.dart';
+import 'package:milo/features/settings/presentation/bloc/theme_cubit.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -19,10 +19,10 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentThemeColor = context.watch<ThemeProvider>().themeColor;
-    final themeProvider = context.watch<ThemeProvider>();
-    final navigationProvider = context.watch<NavigationProvider>();
-    final navigationView = navigationProvider.view;
+    final themeState = context.watch<ThemeCubit>().state;
+    final navigationState = context.watch<NavigationCubit>().state;
+    final currentThemeColor = themeState.color;
+    final navigationView = navigationState.view;
     final colorScheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
 
@@ -102,10 +102,10 @@ class SettingsPage extends StatelessWidget {
                               label: Text('Dark'),
                             ),
                           ],
-                          selected: {themeProvider.themeMode},
+                          selected: {themeState.mode},
                           onSelectionChanged: (selection) => _saveSetting(
                             context,
-                            () => context.read<ThemeProvider>().setThemeMode(
+                            () => context.read<ThemeCubit>().setThemeMode(
                               selection.first,
                             ),
                           ),
@@ -130,7 +130,7 @@ class SettingsPage extends StatelessWidget {
                           return GestureDetector(
                             onTap: () => _saveSetting(
                               context,
-                              () => context.read<ThemeProvider>().setThemeColor(
+                              () => context.read<ThemeCubit>().setThemeColor(
                                 color,
                               ),
                             ),
@@ -189,7 +189,7 @@ class SettingsPage extends StatelessWidget {
                           selected: {navigationView},
                           onSelectionChanged: (selection) => _saveSetting(
                             context,
-                            () => context.read<NavigationProvider>().setView(
+                            () => context.read<NavigationCubit>().setView(
                               selection.first,
                             ),
                           ),
@@ -208,16 +208,16 @@ class SettingsPage extends StatelessWidget {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         buildDefaultDragHandles: false,
-                        itemCount: navigationProvider.tabOrder.length,
+                        itemCount: navigationState.tabOrder.length,
                         onReorderItem: (oldIndex, newIndex) => _saveSetting(
                           context,
-                          () => context.read<NavigationProvider>().reorderTabs(
+                          () => context.read<NavigationCubit>().reorderTabs(
                             oldIndex,
                             newIndex,
                           ),
                         ),
                         itemBuilder: (context, index) {
-                          final tab = navigationProvider.tabOrder[index];
+                          final tab = navigationState.tabOrder[index];
                           return ListTile(
                             key: ValueKey(tab),
                             contentPadding: EdgeInsets.zero,
@@ -231,11 +231,11 @@ class SettingsPage extends StatelessWidget {
                               children: [
                                 if (!tab.isRequired)
                                   Switch(
-                                    value: navigationProvider.isTabVisible(tab),
+                                    value: navigationState.isTabVisible(tab),
                                     onChanged: (visible) => _saveSetting(
                                       context,
                                       () => context
-                                          .read<NavigationProvider>()
+                                          .read<NavigationCubit>()
                                           .setTabVisible(tab, visible),
                                     ),
                                   ),
@@ -328,7 +328,7 @@ class SettingsPage extends StatelessWidget {
 
   // Profile bottom sheet
   void _showProfileSheet(BuildContext context) {
-    final user = context.read<AuthProvider>().user;
+    final user = context.read<AuthCubit>().state.user;
     final email = user?.email ?? '';
     final name = user?.name.trim().isNotEmpty == true
         ? user!.name
@@ -409,17 +409,18 @@ class SettingsPage extends StatelessWidget {
 
                 SizedBox(
                   width: double.infinity,
-                  child: Consumer<AuthProvider>(
-                    builder: (buttonContext, auth, child) {
+                  child: BlocBuilder<AuthCubit, AuthState>(
+                    builder: (buttonContext, auth) {
                       return FilledButton.icon(
                         onPressed: auth.isLoading
                             ? null
                             : () async {
-                                final tasks = buttonContext
-                                    .read<TaskProvider>();
+                                final tasks = buttonContext.read<TaskCubit>();
                                 Navigator.pop(sheetContext);
 
-                                final signedOut = await auth.signOut();
+                                final signedOut = await buttonContext
+                                    .read<AuthCubit>()
+                                    .signOut();
                                 if (signedOut) {
                                   tasks.clear();
                                   return;

@@ -3,8 +3,8 @@ import 'package:milo/atoms/wordoftheday.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:milo/providers/navigation_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:milo/features/settings/presentation/bloc/navigation_cubit.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -37,11 +37,11 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     // Access theme colors here to pass them down or rely on IconTile's internal theme access
     final colorScheme = Theme.of(context).colorScheme;
-    final navigationProvider = context.watch<NavigationProvider>();
-    final navigationView = navigationProvider.view;
+    final navigationState = context.watch<NavigationCubit>().state;
+    final navigationView = navigationState.view;
     final showNavigationGrid = navigationView == NavigationView.gridView;
     final categories = [
-      for (final tab in navigationProvider.visibleTabs)
+      for (final tab in navigationState.visibleTabs)
         if (tab != NavigationTab.home)
           CategoryItem(icon: tab.icon, text: tab.label, route: tab.route),
     ];
@@ -98,7 +98,7 @@ class AppBottomNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
     final colorScheme = Theme.of(context).colorScheme;
-    final tabs = context.watch<NavigationProvider>().visibleTabs;
+    final tabs = context.watch<NavigationCubit>().state.visibleTabs;
 
     final currentIndex = tabs.indexWhere((tab) => location == tab.route);
 

@@ -4,8 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:milo/atoms/uibuilder.dart';
 import 'package:milo/models/task.dart';
-import 'package:milo/providers/task_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:milo/features/notes/presentation/bloc/task_cubit.dart';
 
 class NoteDetailsPage extends StatefulWidget {
   final Task task;
@@ -34,7 +34,7 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
   }
 
   Future<Task> _fetchDetails({bool forceRefresh = false}) {
-    return context.read<TaskProvider>().fetchTask(
+    return context.read<TaskCubit>().fetchTask(
       widget.task.id,
       forceRefresh: forceRefresh,
     );
@@ -232,7 +232,7 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
     );
 
     if (shouldDelete == true && context.mounted) {
-      // TODO: Call TaskProvider.deleteTask after the write API is available.
+      // TODO: Dispatch the delete use case after the write API is available.
       Navigator.pop(context);
     }
   }

@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
-import 'package:milo/providers/word_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:milo/features/home/presentation/bloc/word_cubit.dart';
 
 class WordOfTheDay extends StatefulWidget {
   const WordOfTheDay({super.key});
@@ -16,9 +16,9 @@ class _WordOfTheDayState extends State<WordOfTheDay> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<WordProvider>(
-      builder: (context, wordProvider, child) {
-        final data = wordProvider.words;
+    return BlocBuilder<WordCubit, WordState>(
+      builder: (context, wordState) {
+        final data = wordState.words;
 
         return Padding(
           padding: const EdgeInsets.only(top: 30),
@@ -48,11 +48,11 @@ class _WordOfTheDayState extends State<WordOfTheDay> {
                 ),
               ),
               child: Center(
-                child: wordProvider.isLoading
+                child: wordState.isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : wordProvider.error != null
+                    : wordState.error != null
                     ? Text(
-                        wordProvider.error!,
+                        wordState.error!,
                         style: const TextStyle(color: Colors.white),
                       )
                     : data.isEmpty

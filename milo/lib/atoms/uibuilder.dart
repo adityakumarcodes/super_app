@@ -2,15 +2,20 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-class ChecklistWidget extends StatelessWidget {
+class ChecklistWidget extends StatefulWidget {
   final List<dynamic> items;
 
   const ChecklistWidget({super.key, required this.items});
 
   @override
+  State<ChecklistWidget> createState() => _ChecklistWidgetState();
+}
+
+class _ChecklistWidgetState extends State<ChecklistWidget> {
+  @override
   Widget build(BuildContext context) {
     return Column(
-      children: items
+      children: widget.items
           .map((item) {
             final itemData = _asMap(item);
             final meta = _asMap(itemData['meta']);
@@ -22,9 +27,13 @@ class ChecklistWidget extends StatelessWidget {
                 children: [
                   CheckboxListTile(
                     value: meta['checked'] == true,
-                    onChanged: null,
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
+                    onChanged: (value) {
+                      setState(() {
+                        meta['checked'] = value ?? false;
+                      });
+                    },
+                    // dense: true,
+                    // contentPadding: EdgeInsets.zero,
                     title: SelectableText(
                       _plainText(itemData['content'] ?? item),
                     ),

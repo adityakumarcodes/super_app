@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:milo/features/chat/presentation/bloc/chat_cubit.dart';
 
 class ChatDetails extends StatefulWidget {
   final ChatUsers user;
@@ -141,9 +142,9 @@ class _ChatDetailsState extends State<ChatDetails> {
 
   @override
   Widget build(BuildContext context) {
-    final friendProvider = context.watch<FriendProvider>();
-    final selectedUser = chatUsers[friendProvider.friendSelectedToChat];
-    final isOnline = (friendProvider.friendSelectedToChat % 3 != 0);
+    final selectedIndex = context.watch<ChatCubit>().state.selectedIndex;
+    final selectedUser = chatUsers[selectedIndex];
+    final isOnline = (selectedIndex % 3 != 0);
 
     return Scaffold(
       key: _scaffoldKey,

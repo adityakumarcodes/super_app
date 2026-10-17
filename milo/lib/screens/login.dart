@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:milo/providers/auth_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:milo/features/auth/presentation/bloc/auth_cubit.dart';
 
 class AuthLoadingScreen extends StatelessWidget {
   const AuthLoadingScreen({super.key});
@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = context.watch<AuthProvider>();
+    final auth = context.watch<AuthCubit>().state;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
 
@@ -197,9 +197,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _submit() async {
-    final auth = context.read<AuthProvider>();
+    final auth = context.read<AuthCubit>();
 
-    if (auth.isLoading) return;
+    if (auth.state.isLoading) return;
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     if (!_otpSent) {
@@ -222,9 +222,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _resendOtp() async {
-    final auth = context.read<AuthProvider>();
+    final auth = context.read<AuthCubit>();
 
-    if (auth.isLoading) return;
+    if (auth.state.isLoading) return;
 
     final sent = await auth.sendOtp(_emailController.text.trim());
 
@@ -237,7 +237,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _useDifferentEmail() {
-    context.read<AuthProvider>().clearError();
+    context.read<AuthCubit>().clearError();
     _otpController.clear();
 
     setState(() => _otpSent = false);

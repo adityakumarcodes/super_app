@@ -8,15 +8,16 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:milo/atoms/constants.dart';
 import 'package:milo/atoms/folder_list.dart';
+import 'package:milo/core/routing/cubit_router_refresh.dart';
+import 'package:milo/features/auth/presentation/bloc/auth_cubit.dart';
+import 'package:milo/features/chat/presentation/bloc/chat_cubit.dart';
+import 'package:milo/features/home/presentation/bloc/word_cubit.dart';
+import 'package:milo/features/notes/presentation/bloc/task_cubit.dart';
+import 'package:milo/features/settings/presentation/bloc/navigation_cubit.dart';
+import 'package:milo/features/settings/presentation/bloc/theme_cubit.dart';
 import 'package:milo/services/app_config.dart';
 import 'package:milo/models/task.dart';
-import 'package:milo/providers/auth_provider.dart';
-import 'package:milo/providers/navigation_provider.dart';
-import 'package:milo/providers/task_provider.dart';
-import 'package:milo/providers/theme_provider.dart';
-import 'package:milo/providers/word_provider.dart';
 import 'package:milo/screens/add_task.dart';
-import 'package:milo/screens/calculator.dart';
 import 'package:milo/screens/calender.dart';
 import 'package:milo/screens/chat.dart';
 import 'package:milo/screens/chat_details.dart';
@@ -28,31 +29,27 @@ import 'package:milo/screens/settings.dart';
 import 'package:milo/screens/shop.dart';
 import 'package:milo/screens/social.dart';
 import 'package:milo/services/preferences_service.dart';
-import 'package:provider/provider.dart';
-
-import 'screens/calculator.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterBetterAuth.initialize(url: AppConfig.authBaseUrl);
 
   final preferences = await PreferencesService.load();
-  final authProvider = AuthProvider(FlutterBetterAuth.client);
-  final router = _createRouter(authProvider);
-  unawaited(authProvider.restoreSession());
+  final authCubit = AuthCubit(FlutterBetterAuth.client);
+  final router = _createRouter(authCubit);
+  unawaited(authCubit.restoreSession());
 
   runApp(
     BetterAuthProvider(
-      child: MultiProvider(
+      child: MultiBlocProvider(
         providers: [
-          ChangeNotifierProvider.value(value: authProvider),
-          ChangeNotifierProvider(create: (_) => FriendProvider()),
-          ChangeNotifierProvider(
-            create: (_) => NavigationProvider(preferences),
-          ),
-          ChangeNotifierProvider(create: (_) => ThemeProvider(preferences)),
-          ChangeNotifierProvider(create: (_) => WordProvider()),
-          ChangeNotifierProvider(create: (_) => TaskProvider()),
+          BlocProvider.value(value: authCubit),
+          BlocProvider(create: (_) => ChatCubit()),
+          BlocProvider(create: (_) => NavigationCubit(preferences)),
+          BlocProvider(create: (_) => ThemeCubit(preferences)),
+          BlocProvider(create: (_) => WordCubit()),
+          BlocProvider(create: (_) => TaskCubit()),
         ],
         child: MyApp(router: router),
       ),
@@ -60,18 +57,18 @@ Future<void> main() async {
   );
 }
 
-GoRouter _createRouter(AuthProvider authProvider) {
+GoRouter _createRouter(AuthCubit authCubit) {
   return GoRouter(
     initialLocation: '/',
-    refreshListenable: authProvider,
+    refreshListenable: CubitRouterRefresh(authCubit),
     redirect: (context, state) {
       final isLogin = state.matchedLocation == '/login';
       final isAuthLoading = state.matchedLocation == '/auth-loading';
 
-      if (authProvider.isRestoring) {
+      if (authCubit.state.isRestoring) {
         return isAuthLoading ? null : '/auth-loading';
       }
-      if (!authProvider.isAuthenticated) return isLogin ? null : '/login';
+      if (!authCubit.state.isAuthenticated) return isLogin ? null : '/login';
       return isLogin || isAuthLoading ? '/' : null;
     },
     routes: [
@@ -83,7 +80,8 @@ GoRouter _createRouter(AuthProvider authProvider) {
       ShellRoute(
         builder: (context, state, child) {
           final showNavigationBar =
-              context.watch<NavigationProvider>().view == NavigationView.navbar;
+              context.select((NavigationCubit cubit) => cubit.state.view) ==
+              NavigationView.navbar;
 
           return Scaffold(
             body: child,
@@ -159,23 +157,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = context.watch<ThemeProvider>();
+    final themeState = context.watch<ThemeCubit>().state;
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Milo',
       theme: ThemeData(
         useMaterial3: true,
-        colorSchemeSeed: themeProvider.themeColor,
+        colorSchemeSeed: themeState.color,
         brightness: Brightness.light,
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
-        colorSchemeSeed: themeProvider.themeColor,
+        colorSchemeSeed: themeState.color,
         brightness: Brightness.dark,
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
-      themeMode: themeProvider.themeMode,
+      themeMode: themeState.mode,
       routerConfig: router,
     );
   }

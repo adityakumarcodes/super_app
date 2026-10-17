@@ -2,13 +2,13 @@ import 'package:milo/atoms/speed_fab.dart';
 import 'package:milo/screens/home.dart';
 import 'package:milo/atoms/icon_tile.dart';
 import 'package:milo/models/task.dart';
-import 'package:milo/providers/task_provider.dart';
+import 'package:milo/features/notes/presentation/bloc/task_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 // ignore: unused_import
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NotebookPage extends StatefulWidget {
   const NotebookPage({super.key});
@@ -37,7 +37,7 @@ class _NotebookPageState extends State<NotebookPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<TaskProvider>().fetchTasks();
+      context.read<TaskCubit>().fetchTasks();
     });
   }
 
@@ -56,11 +56,11 @@ class _NotebookPageState extends State<NotebookPage> {
         elevation: 2,
         shape: Border(bottom: BorderSide(color: Colors.black, width: 2)),
       ),
-      body: Consumer<TaskProvider>(
-        builder: (context, taskProvider, child) {
-          final tasks = taskProvider.tasks;
-          final isLoading = taskProvider.isLoading;
-          final error = taskProvider.error;
+      body: BlocBuilder<TaskCubit, TaskState>(
+        builder: (context, taskState) {
+          final tasks = taskState.tasks;
+          final isLoading = taskState.isLoading;
+          final error = taskState.error;
 
           if (isLoading) {
             return const Center(
@@ -81,7 +81,7 @@ class _NotebookPageState extends State<NotebookPage> {
                     Text(error, textAlign: TextAlign.center),
                     const SizedBox(height: 12),
                     OutlinedButton.icon(
-                      onPressed: taskProvider.refreshTasks,
+                      onPressed: () => context.read<TaskCubit>().refreshTasks(),
                       icon: const Icon(LucideIcons.refreshCw),
                       label: const Text('Try again'),
                     ),
