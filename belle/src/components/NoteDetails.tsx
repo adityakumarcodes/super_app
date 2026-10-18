@@ -1,23 +1,42 @@
 import EditorJS, { type OutputData } from "@editorjs/editorjs";
-import { useEffect } from "react";
+import {
+    forwardRef,
+    useEffect,
+    useImperativeHandle,
+    useMemo,
+    useRef,
+} from "react";
 import { EDITOR_JS_TOOLS } from "../constants/editorConfig";
 
 interface NoteDetailsProps {
     data: OutputData;
-    imageUrl?: string;
+    editable?: boolean;
 }
 
-const NoteDetails = ({ data }: NoteDetailsProps) => {
-    const images = import.meta.glob(
+export type NoteDetailsHandle = {
+    save: () => Promise<OutputData>;
+};
+
+const NoteDetails = forwardRef<NoteDetailsHandle, NoteDetailsProps>(function NoteDetails(
+    { data, editable = false },
+    ref,
+) {
+    const holderRef = useRef<HTMLDivElement | null>(null);
+    const editorRef = useRef<EditorJS | null>(null);
+    const images = useMemo(() => import.meta.glob(
         "../assets/images/notes/*.jpg",
         {
             eager: true,
             import: "default",
         },
-    ) as Record<string, string>;
+    ) as Record<string, string>, []);
 
-    useEffect(() => {
-        const renderData: OutputData = {
+    const editorData = useMemo<OutputData>(() => {
+        if (editable) {
+            return data;
+        }
+
+        return {
             ...data,
             blocks: data.blocks.map((block) => {
                 if (block.type !== "image") {
@@ -52,28 +71,55 @@ const NoteDetails = ({ data }: NoteDetailsProps) => {
                 };
             }),
         };
+    }, [data, editable, images]);
+
+    useImperativeHandle(ref, () => ({
+        async save() {
+            const editor = editorRef.current;
+            if (!editor) {
+                throw new Error("The note editor is still loading. Please try again.");
+            }
+
+            await editor.isReady;
+            return editor.save();
+        },
+    }), []);
+
+    useEffect(() => {
+        const holder = holderRef.current;
+        if (!holder) {
+            return;
+        }
 
         const editor = new EditorJS({
-            holder: "editorjs",
+            holder,
             tools: EDITOR_JS_TOOLS,
-            data: renderData,
-            // readOnly: true,
+            data: editorData,
+            readOnly: !editable,
+            autofocus: editable,
+            placeholder: editable ? "Start writing your note…" : undefined,
         });
+        editorRef.current = editor;
 
         return () => {
+            if (editorRef.current === editor) {
+                editorRef.current = null;
+            }
+
             if (typeof editor.destroy === "function") {
                 editor.destroy();
             } else {
-                document.getElementById("editorjs")?.replaceChildren();
+                holder.replaceChildren();
             }
         };
-    }, [data]);
+    }, [editable, editorData]);
 
     return (
         <div className="p-2 text-left">
-            <div id="editorjs" />
+            {editable && <p className="mb-3 text-sm text-secondary">Content — click below to write, then use the + menu to add a different block type.</p>}
+            <div ref={holderRef} />
         </div>
     );
-};
+});
 
 export default NoteDetails;

@@ -108,8 +108,9 @@ class NavigationCubit extends Cubit<NavigationState> {
         oldIndex >= state.tabOrder.length ||
         newIndex < 0 ||
         newIndex >= state.tabOrder.length ||
-        oldIndex == newIndex)
+        oldIndex == newIndex) {
       return;
+    }
     final tabs = [...state.tabOrder];
     final tab = tabs.removeAt(oldIndex);
     tabs.insert(newIndex, tab);

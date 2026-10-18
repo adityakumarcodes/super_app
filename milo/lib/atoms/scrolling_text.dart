@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+
+import 'package:flutter/material.dart';
 
 class ScrollingText extends StatefulWidget {
   final String text;
@@ -26,29 +27,69 @@ class ScrollingText extends StatefulWidget {
 class _ScrollingTextState extends State<ScrollingText> {
   final ScrollController _scrollController = ScrollController();
 
+  bool _needsScrolling = false;
+  int _loopId = 0;
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _startScrollingLoop());
+    _scheduleScrolling();
   }
 
-  Future<void> _startScrollingLoop() async {
+  @override
+  void didUpdateWidget(covariant ScrollingText oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.text != widget.text) {
+      _scheduleScrolling();
+    }
+  }
+
+  void _scheduleScrolling() {
+    final loopId = ++_loopId;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      _startScrollingLoop(loopId);
+    });
+  }
+
+  Future<void> _startScrollingLoop(int loopId) async {
     await Future.delayed(widget.initialDelay);
 
-    while (mounted) {
-      // if (_scrollController.position.maxScrollExtent == 0) {
-      //   // No scrolling needed; check again after some time
-      //   await Future.delayed(const Duration(seconds: 5));
-      //   continue;
-      // }
+    while (mounted && loopId == _loopId) {
+      if (!_scrollController.hasClients) {
+        await Future.delayed(const Duration(milliseconds: 200));
+        continue;
+      }
+
+      final maxExtent = _scrollController.position.maxScrollExtent;
+
+      if (maxExtent <= 0) {
+        if (_needsScrolling) {
+          setState(() => _needsScrolling = false);
+        }
+
+        await Future.delayed(const Duration(seconds: 2));
+        continue;
+      }
+
+      if (!_needsScrolling) {
+        setState(() => _needsScrolling = true);
+      }
 
       await _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
+        maxExtent,
         duration: widget.scrollDuration,
         curve: Curves.linear,
       );
 
+      if (!mounted || loopId != _loopId) return;
+
       await Future.delayed(widget.endDelay);
+
+      if (!mounted || loopId != _loopId) return;
 
       await _scrollController.animateTo(
         0,
@@ -62,6 +103,7 @@ class _ScrollingTextState extends State<ScrollingText> {
 
   @override
   void dispose() {
+    _loopId++;
     _scrollController.dispose();
     super.dispose();
   }
@@ -69,15 +111,18 @@ class _ScrollingTextState extends State<ScrollingText> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (_, constraints) {
+      builder: (context, constraints) {
         return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
           controller: _scrollController,
+          scrollDirection: Axis.horizontal,
+          physics: const NeverScrollableScrollPhysics(),
           child: ConstrainedBox(
             constraints: BoxConstraints(minWidth: constraints.maxWidth),
             child: Text(
               widget.text,
               style: widget.style,
+              maxLines: 1,
+              softWrap: false,
               overflow: TextOverflow.visible,
             ),
           ),

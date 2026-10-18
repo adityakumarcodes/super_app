@@ -1,11 +1,12 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft, Pencil, Trash2, X } from 'lucide-react'
-import { useMemo, useState } from 'react'
-import NoteDetails from '../../components/NoteDetails'
-import NoteComposerModal from '../../components/NoteCompose'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { ArrowLeft, Check, Pencil, Trash2, X } from 'lucide-react'
+import { useMemo, useRef, useState } from 'react'
+import NoteDetails, { type NoteDetailsHandle } from '../../components/NoteDetails'
 import useFetchQuery from '../../utils/useFetchQuery'
 import Spinner from '../../components/Spinner'
-import { deleteLocalNote, getDrafts, getOverride, saveNote, type Note } from '../../utils/noteDrafts'
+import { deleteNote, NOTES_API_BASE, updateNote } from '../../utils/notesApi'
+import { editorDataToBlocks, type Note, type NoteWriteInput } from '../../utils/notes'
 
 export const Route = createFileRoute('/_authenticated/notes/$noteId')({
   component: RouteComponent,
@@ -14,42 +15,87 @@ export const Route = createFileRoute('/_authenticated/notes/$noteId')({
 function RouteComponent() {
   const { noteId } = Route.useParams()
   const navigate = useNavigate()
-  const [isEditorOpen, setIsEditorOpen] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
-  const [localVersion, setLocalVersion] = useState<Note | undefined>(() => getDrafts().find((draft) => String(draft.id) === noteId) ?? getOverride(noteId))
-  const BASE = (import.meta.env.VITE_API_BASE as string) || 'http://localhost:3000/api'
-  const { data: fetchedNote, isLoading } = useFetchQuery<Note>({ queryKey: ['note', noteId], queryLink: `${BASE}/notes/${noteId}`, queryOptions: { enabled: !!noteId && !noteId.startsWith('draft-') } })
-  const note = useMemo(() => {
-    if (localVersion?.isLocal) return localVersion
-    return localVersion ? { ...fetchedNote, ...localVersion, blocks: localVersion.blocks ?? fetchedNote?.blocks } : fetchedNote
-  }, [fetchedNote, localVersion])
+  const [notice, setNotice] = useState<string | null>(null)
+  const [saveError, setSaveError] = useState<string | null>(null)
+  const [draftTitle, setDraftTitle] = useState('')
+  const [draftDescription, setDraftDescription] = useState('')
+  const noteDetailsRef = useRef<NoteDetailsHandle | null>(null)
+  const queryClient = useQueryClient()
+  const { data: note, isLoading, isError, error, refetch } = useFetchQuery<Note>({ queryKey: ['note', noteId], queryLink: `${NOTES_API_BASE}/notes/${noteId}`, queryOptions: { enabled: !!noteId } })
+  const updateMutation = useMutation({ mutationFn: (updatedNote: NoteWriteInput) => updateNote(noteId, updatedNote) })
+  const deleteMutation = useMutation({ mutationFn: () => deleteNote(noteId) })
 
-  if (isLoading && !note) return <Spinner />
+  const editorData = useMemo(() => ({
+    time: note?.updatedAt ? new Date(note.updatedAt).getTime() : 0,
+    blocks: (note?.blocks ?? []).map((block) => ({
+      id: block.blockKey ?? String(block.id),
+      type: block.type,
+      data: block.data,
+    })),
+    version: note?.editorVersion ?? undefined,
+  }), [note?.blocks, note?.editorVersion, note?.id, note?.updatedAt])
+
+  if (isLoading) return <Spinner />
+
+  if (isError) {
+    return <div className='p-8 text-center'>
+      <h1 className='text-3xl'>This note could not load</h1>
+      <p className='mt-2 text-secondary'>{error instanceof Error ? error.message : 'Please check your connection and try again.'}</p>
+      <button type='button' onClick={() => void refetch()} className='theme-accent-bg control-pill mt-5 border border-strong px-5 py-2.5'>Try again</button>
+    </div>
+  }
 
   if (!note) {
     return <div className='p-8'>Note not found.</div>
   }
 
-  const editorData = {
-    time: Date.now(),
-    blocks: (note.blocks || []).map((b) => ({
-      id: b.blockKey ?? String(b.id),
-      type: b.type,
-      data: b.data,
-    })),
-    version: note.editorVersion ?? undefined,
+  const beginEditing = () => {
+    setDraftTitle(note.title ?? '')
+    setDraftDescription(note.description ?? '')
+    setSaveError(null)
+    setNotice(null)
+    setIsEditing(true)
   }
 
-  const saveLocalChange = (updatedNote: Note) => {
-    const nextNote = { ...updatedNote, isLocal: note.isLocal }
-    saveNote(nextNote)
-    setLocalVersion(nextNote)
-    setIsEditorOpen(false)
+  const cancelEditing = () => {
+    setIsEditing(false)
+    setSaveError(null)
   }
 
-  const removeNote = () => {
-    deleteLocalNote(noteId)
-    void navigate({ to: '/notes' })
+  const saveNote = async () => {
+    setSaveError(null)
+
+    try {
+      const output = await noteDetailsRef.current?.save()
+      if (!output) {
+        throw new Error('The note editor is still loading. Please try again.')
+      }
+
+      await updateMutation.mutateAsync({
+        title: draftTitle.trim() || 'Untitled note',
+        description: draftDescription.trim() || null,
+        imageUrl: note.imageUrl ?? null,
+        blocks: editorDataToBlocks(output),
+        editorVersion: output.version ?? null,
+      })
+      setIsEditing(false)
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['notes'] }),
+        queryClient.invalidateQueries({ queryKey: ['note', noteId] }),
+      ])
+      setNotice('Note saved.')
+    } catch (saveError) {
+      setSaveError(saveError instanceof Error ? saveError.message : 'The note could not be saved. Please try again.')
+    }
+  }
+
+  const removeNote = async () => {
+    await deleteMutation.mutateAsync()
+    queryClient.removeQueries({ queryKey: ['note', noteId] })
+    await queryClient.invalidateQueries({ queryKey: ['notes'] })
+    await navigate({ to: '/notes' })
   }
 
   return (
@@ -59,19 +105,30 @@ function RouteComponent() {
           <div className="mb-8 flex items-center justify-between gap-3">
             <Link to="/notes" className="control-pill inline-flex items-center gap-2 border border-strong px-4 py-2 hover-surface-card"><ArrowLeft size={18} />All notes</Link>
             <div className="flex gap-2">
-              <button type="button" onClick={() => setIsEditorOpen(true)} className="control-pill inline-flex items-center gap-2 border border-strong px-4 py-2 hover-surface-card"><Pencil size={17} />Edit</button>
-              <button type="button" onClick={() => setIsDeleteOpen(true)} className="control-pill inline-flex items-center gap-2 border border-strong px-4 py-2 text-red-700 hover:bg-red-50" aria-label="Delete note"><Trash2 size={17} /></button>
+              {isEditing ? <>
+                <button type="button" disabled={updateMutation.isPending} onClick={cancelEditing} className="control-pill border border-strong px-4 py-2 hover-surface-card disabled:opacity-70">Cancel</button>
+                <button type="button" disabled={updateMutation.isPending} onClick={() => void saveNote()} className="theme-accent-bg control-pill inline-flex items-center gap-2 border border-strong px-4 py-2 disabled:cursor-wait disabled:opacity-70"><Check size={17} />{updateMutation.isPending ? 'Saving…' : 'Save'}</button>
+              </> : <>
+                <button type="button" onClick={beginEditing} className="control-pill inline-flex items-center gap-2 border border-strong px-4 py-2 hover-surface-card"><Pencil size={17} />Edit</button>
+                <button type="button" onClick={() => setIsDeleteOpen(true)} className="control-pill inline-flex items-center gap-2 border border-strong px-4 py-2 text-red-700 hover:bg-red-50" aria-label="Delete note"><Trash2 size={17} /></button>
+              </>}
             </div>
           </div>
-          {localVersion && <p className="theme-accent-soft mb-6 rounded-xl border border-strong px-4 py-3 text-sm">This version is saved locally in this browser. Connect the note write API to sync it everywhere.</p>}
+          {notice && <div className="theme-accent-soft mb-6 flex items-center justify-between rounded-xl border border-strong px-4 py-3 text-sm"><span>{notice}</span><button type="button" onClick={() => setNotice(null)} aria-label="Dismiss message"><X size={16} /></button></div>}
+          {saveError && <p className="mb-6 text-sm text-red-700" role="alert">{saveError}</p>}
           <div className="max-w-4xl">
-            <h1 className="font-bodoni text-5xl leading-tight tracking-tight md:text-7xl">
-              {note.title || "Untitled note"}
-            </h1>
+            {isEditing ? <>
+              <input value={draftTitle} onChange={(event) => setDraftTitle(event.target.value)} placeholder="Untitled" aria-label="Note title" className="w-full bg-transparent font-bodoni text-5xl leading-tight tracking-tight outline-none placeholder:text-stone-400 md:text-7xl" />
+              <textarea value={draftDescription} onChange={(event) => setDraftDescription(event.target.value)} placeholder="Add a short description…" aria-label="Note description" rows={2} className="mt-6 w-full max-w-3xl resize-none bg-transparent text-lg leading-8 text-gray-500 outline-none placeholder:text-stone-400 md:text-xl" />
+            </> : <>
+              <h1 className="font-bodoni text-5xl leading-tight tracking-tight md:text-7xl">
+                {note.title || "Untitled note"}
+              </h1>
 
-            <p className="mt-6 max-w-3xl text-lg leading-8 text-gray-500 md:text-xl">
-              {note.description || "No description provided."}
-            </p>
+              <p className="mt-6 max-w-3xl text-lg leading-8 text-gray-500 md:text-xl">
+                {note.description || "No description provided."}
+              </p>
+            </>}
           </div>
 
           {note.imageUrl && (
@@ -85,15 +142,15 @@ function RouteComponent() {
         </header>
 
         <main className="mx-auto max-w-4xl">
-          <NoteDetails data={editorData} />
+          <NoteDetails ref={noteDetailsRef} data={editorData} editable={isEditing} />
         </main>
       </div>
-      {isEditorOpen && <NoteComposerModal note={note} onClose={() => setIsEditorOpen(false)} onSave={saveLocalChange} />}
       {isDeleteOpen && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-5 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Delete note">
         <div className="surface-body w-full max-w-md p-6 shadow-2xl">
           <div className="flex items-start justify-between"><div><p className="text-sm text-secondary">This cannot be undone</p><h2 className="mt-1 text-3xl">Delete this note?</h2></div><button type="button" onClick={() => setIsDeleteOpen(false)} aria-label="Close confirmation"><X /></button></div>
-          <p className="mt-3 text-secondary">{note.isLocal ? 'This local draft will be removed from this browser.' : 'The local version will be removed. The server copy remains until delete is connected to the API.'}</p>
-          <div className="mt-6 flex justify-end gap-3"><button type="button" onClick={() => setIsDeleteOpen(false)} className="control-pill border border-strong px-4 py-2">Keep note</button><button type="button" onClick={removeNote} className="control-pill border border-red-800 bg-red-700 px-4 py-2 text-white">Delete</button></div>
+          <p className="mt-3 text-secondary">This note will be permanently deleted.</p>
+          {deleteMutation.isError && <p className="mt-3 text-sm text-red-700" role="alert">{deleteMutation.error instanceof Error ? deleteMutation.error.message : 'The note could not be deleted. Please try again.'}</p>}
+          <div className="mt-6 flex justify-end gap-3"><button type="button" onClick={() => setIsDeleteOpen(false)} className="control-pill border border-strong px-4 py-2">Keep note</button><button type="button" disabled={deleteMutation.isPending} onClick={() => void removeNote()} className="control-pill border border-red-800 bg-red-700 px-4 py-2 text-white disabled:cursor-wait disabled:opacity-70">{deleteMutation.isPending ? 'Deleting…' : 'Delete'}</button></div>
         </div>
       </div>}
     </div>

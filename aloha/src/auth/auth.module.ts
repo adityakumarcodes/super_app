@@ -16,6 +16,11 @@ import { createAuth } from "./auth";
 
             useFactory: (prisma: PrismaService) => ({
                 auth: createAuth(prisma),
+                bodyParser: {
+                    json: {
+                        limit: "5mb",
+                    },
+                },
             }),
         }),
     ],

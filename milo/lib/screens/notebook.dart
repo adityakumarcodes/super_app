@@ -1,3 +1,4 @@
+import 'package:milo/atoms/scrolling_text.dart';
 import 'package:milo/atoms/speed_fab.dart';
 import 'package:milo/screens/home.dart';
 import 'package:milo/atoms/icon_tile.dart';
@@ -160,8 +161,8 @@ class _NotebookPageState extends State<NotebookPage> {
           side: const BorderSide(color: Colors.black, width: 2),
         ),
         leading: const Icon(LucideIcons.asterisk),
-        title: Text(
-          task.displayTitle,
+        title: ScrollingText(
+          text: task.displayTitle,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
         ),
         // subtitle: task.preview.isEmpty ? null : Text(task.preview),

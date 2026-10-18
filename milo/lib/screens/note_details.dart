@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:milo/atoms/uibuilder.dart';
@@ -96,7 +95,7 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
                 onPressed: () {},
               ),
 
-              const SizedBox(width: 8),
+              const SizedBox(width: 4),
             ],
           ),
 

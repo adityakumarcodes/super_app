@@ -37,7 +37,7 @@ class WordCubit extends Cubit<WordState> {
             },
           )
           .toList(growable: false);
-      emit(WordState(words: words));
+      emit(WordState(words: words, isLoading: false));
     } catch (_) {
       emit(const WordState(isLoading: false, error: 'Unable to load words.'));
     }

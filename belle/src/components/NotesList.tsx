@@ -4,9 +4,9 @@ import { FileText, Plus, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import useFetchQuery from '../utils/useFetchQuery'
 import NotesActionFab from './NotesActionFab';
-import NoteComposerModal from './NoteCompose';
 import Spinner from "./Spinner";
-import { getDrafts, getOverrides, saveNote, type Note } from '../utils/noteDrafts';
+import { NOTES_API_BASE } from '../utils/notesApi';
+import { type Note } from '../utils/notes';
 
 const images = import.meta.glob(
     "../assets/images/notes/*.{jpg,jpeg,jfif,png}",
@@ -19,48 +19,32 @@ const images = import.meta.glob(
 const getNoteImage = (note: Note) => {
     if (!note.imageUrl) return undefined;
 
-    // Handle remote images not hosted locally
-    if (!note.imageUrl.includes('localhost')) {
+    if (/^(https?:|data:)/.test(note.imageUrl)) {
         return note.imageUrl;
     }
 
-    // Handle local images
     const imageName = note.imageUrl.split('/').pop();
-    return imageName ? images[`../assets/images/notes/${imageName}`] : undefined;
+    return imageName ? images[`../assets/images/notes/${imageName}`] ?? note.imageUrl : note.imageUrl;
 };
 
 export default function NotesList() {
     const [filter, setFilter] = useState<'All' | 'Recent' | 'With cover' | 'Text only'>('All');
     const [search, setSearch] = useState('');
-    const [drafts, setDrafts] = useState<Note[]>(getDrafts);
-    const [isComposerOpen, setIsComposerOpen] = useState(false);
+    const [, setIsComposerOpen] = useState(false);
     const [notice, setNotice] = useState<string | null>(null);
-    const BASE = (import.meta.env.VITE_API_BASE as string) || 'http://localhost:3000/api'
-    const { data: pages = [], isLoading, isError, error, refetch } = useFetchQuery<Note[]>({ queryKey: ['notes'], queryLink: `${BASE}/notes` })
+    const { data: pages = [], isLoading, isError, error, refetch } = useFetchQuery<Note[]>({ queryKey: ['notes'], queryLink: `${NOTES_API_BASE}/notes` })
 
     const notes = useMemo(() => {
-        const overrides = getOverrides()
-        const serverNotes = pages.map((page) => {
-            const override = overrides.find((entry) => String(entry.id) === String(page.id))
-            return override ? { ...page, ...override, blocks: override.blocks ?? page.blocks } : page
-        })
-        const merged = [...drafts, ...serverNotes.filter((page) => !drafts.some((draft) => String(draft.id) === String(page.id)))]
         const query = search.trim().toLowerCase()
-        return merged.filter((note) => {
+        return pages.filter((note) => {
             const matchesSearch = !query || `${note.title ?? ''} ${note.description ?? ''}`.toLowerCase().includes(query)
             const matchesFilter = filter === 'All' || (filter === 'With cover' && Boolean(note.imageUrl)) || (filter === 'Text only' && !note.imageUrl) || (filter === 'Recent' && Boolean(note.updatedAt ?? note.createdAt))
             return matchesSearch && matchesFilter
         })
-    }, [drafts, filter, pages, search])
+    }, [filter, pages, search])
 
-    if (isLoading && drafts.length === 0) return <Spinner />;
+    if (isLoading) return <Spinner />;
 
-    const saveLocalNote = (note: Note) => {
-        saveNote(note)
-        setDrafts(getDrafts())
-        setIsComposerOpen(false)
-        setNotice('Saved in this browser. It will sync once note write endpoints are connected.')
-    }
 
     return (<>
         <div className="mx-auto mb-8 max-w-6xl">
@@ -116,7 +100,7 @@ export default function NotesList() {
                             />
                         ) : (
                             <div className="min-h-44 p-5">
-                                <p className="mb-5 text-xs uppercase tracking-[0.18em] text-secondary">{note.isLocal ? 'Local draft' : 'Note'}</p>
+                                <p className="mb-5 text-xs uppercase tracking-[0.18em] text-secondary">Note</p>
                                 <h2 className="mb-2 text-3xl">
                                     {note.title || `Note ${note.id}`}
                                 </h2>
@@ -132,7 +116,6 @@ export default function NotesList() {
         </div>}
 
         <NotesActionFab onNewNote={() => setIsComposerOpen(true)} onNotice={setNotice} />
-        {isComposerOpen && <NoteComposerModal onClose={() => setIsComposerOpen(false)} onSave={saveLocalNote} />}
     </>
     );
 }

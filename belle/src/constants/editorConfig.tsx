@@ -4,9 +4,13 @@ import Header from "@editorjs/header";
 import EditorjsList from "@editorjs/list";
 import ImageTool from '@editorjs/image';
 import Delimiter from '@editorjs/delimiter';
-import MyCallout from "../components/MyCallout";
+import Paragraph from "@editorjs/paragraph";
 
 export const EDITOR_JS_TOOLS: ToolConfig = {
+  paragraph: {
+    class: Paragraph,
+    inlineToolbar: true,
+  },
   header: {
     class: Header,
     inlineToolbar: true,
@@ -16,10 +20,6 @@ export const EDITOR_JS_TOOLS: ToolConfig = {
       levels: [1, 2, 3, 4, 5, 6],
       defaultLevel: 1
     },
-  },
-  callout: {
-    class: MyCallout,
-    inlineToolbar: true,
   },
   list: {
     class: EditorjsList,
