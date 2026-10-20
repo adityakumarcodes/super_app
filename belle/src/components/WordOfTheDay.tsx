@@ -11,7 +11,7 @@ const WordOfTheDay = () => {
     const [counter, setCounter] = useState(0);
 
     const BASE =
-        (import.meta.env.VITE_API_BASE as string) ||
+        (import.meta.env.VITE_BACKEND_URL as string) ||
         `http://localhost:${import.meta.env.VITE_BACKEND_PORT || 3000
         }/api`;
 

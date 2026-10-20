@@ -1,7 +1,7 @@
 
 import type { Note, NoteWriteInput } from './notes'
 
-export const NOTES_API_BASE = (import.meta.env.VITE_API_BASE as string)
+export const NOTES_API_BASE = (import.meta.env.VITE_BACKEND_URL as string) || 'api'
 
 function getErrorMessage(body: unknown, fallback: string) {
     if (!body || typeof body !== 'object' || !('message' in body)) return fallback
