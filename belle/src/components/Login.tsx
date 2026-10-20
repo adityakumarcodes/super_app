@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { authClient } from '../utils/auth-client';
 
 const Login = () => {
@@ -153,8 +153,8 @@ const Login = () => {
                                     ? 'Sending code...'
                                     : 'Verifying...'
                                 : step === 'email'
-                                  ? 'Send verification code'
-                                  : 'Verify and sign in'}
+                                    ? 'Send verification code'
+                                    : 'Verify and sign in'}
                         </button>
 
                         {step === 'otp' && (
@@ -172,7 +172,7 @@ const Login = () => {
                         )}
                     </div>
 
-                   
+
                 </form>
             </div>
         </div>

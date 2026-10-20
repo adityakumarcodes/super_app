@@ -1,5 +1,5 @@
 
-import { Check, ListTodo, Plus, X } from 'lucide-react'
+import { Check, Plus, X } from 'lucide-react'
 import { useState } from 'react'
 
 type Todo = {

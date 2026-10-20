@@ -8,8 +8,11 @@ export const Route = createFileRoute('/_authenticated/shop/$category')({
 function CategoryPage() {
     const { category } = Route.useParams();
     const matches = useMatches();
-    const isProductDetailRoute = matches.some((match) => match.routeId === '/shop/$category/$productId');
-
+    const isProductDetailRoute = matches.some(
+        (match) =>
+            match.routeId ===
+            '/_authenticated/shop/$category/$productId',
+    );
     if (isProductDetailRoute) return <Outlet />;
 
     if (category === 'grocery') return <ProductList />;

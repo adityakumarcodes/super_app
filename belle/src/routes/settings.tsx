@@ -36,7 +36,6 @@ function RouteComponent() {
 
 
 const Appearance = () => {
-  const [notesView, setNotesView] = useState<'list' | 'tree'>('list');
   const [themeColor, setThemeColor] = useState(() => localStorage.getItem('belle-theme-color') ?? '#f0d5a6');
   const colors = [
     { name: 'Peach', value: '#f0d5a6' },
@@ -94,8 +93,8 @@ const Appearance = () => {
         </div>
       </div>
 
-      
-      
+
+
     </div>
   );
 };

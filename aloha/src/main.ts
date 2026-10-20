@@ -4,7 +4,10 @@ import { AppModule } from "./app.module";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bodyParser: false });
   app.enableCors({
-    origin: `http://localhost:${process.env.FRONTEND_PORT!}`,
+    origin: [
+      `http://localhost:${process.env.FRONTEND_PORT!}`,
+      'https://belle-wnc4.onrender.com',
+    ],
     credentials: true,
   });
   app.setGlobalPrefix('api');
