@@ -29,20 +29,18 @@
 ## TODO
 
 - ✅Darkmode
-- Notes CRUD
 - ✅Why authenticated user can see the login register routes
-- Update backend dependency
 - ✅Integrate milo
-- Prisma upgrade
-- Authentication and Authorization. 
-- Admin can control the user visible mini-apps. 
 - ✅Email OTP login. 
+- ✅Migrate to Bloc state management
+- ✅delete image should delete from storage also
+- ✅Build apk automatically on any changes in the milo
+- ✅Notes CRUD
+- Update backend dependency
+- Prisma upgrade
+- Admin can control the user visible mini-apps. 
 - Replace screenshot with figma url
-- Adaptive widgets
-- Migrate to Bloc state management
 - Explore single env use
-- delete image should delete from storage also
-- Build apk automatically on any changes in the milo
 
 https://medium.com/@balajibal/super-apps-the-operating-system-of-everyday-life-38706471a94b
 https://github.com/itsmbaqer/mini-programs-guidelines

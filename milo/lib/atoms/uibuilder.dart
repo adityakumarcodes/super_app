@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:milo/models/note_image_resolver.dart';
+import 'package:milo/services/storage_service.dart';
 
 class ChecklistWidget extends StatefulWidget {
   final List<dynamic> items;
@@ -72,7 +74,7 @@ class DelimiterWidget extends StatelessWidget {
   }
 }
 
-class ImageWidget extends StatelessWidget {
+class ImageWidget extends StatefulWidget {
   final String imageUrl;
   final String caption;
   final double borderRadius;
@@ -85,8 +87,55 @@ class ImageWidget extends StatelessWidget {
   });
 
   @override
+  State<ImageWidget> createState() => _ImageWidgetState();
+}
+
+class _ImageWidgetState extends State<ImageWidget> {
+  final StorageService _storageService = StorageService();
+  String? _resolvedUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _resolve();
+  }
+
+  @override
+  void didUpdateWidget(covariant ImageWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.imageUrl != widget.imageUrl) {
+      _resolvedUrl = null;
+      _resolve();
+    }
+  }
+
+  Future<void> _resolve() async {
+    final url = widget.imageUrl;
+    if (url.isEmpty || !isStoragePath(url)) {
+      setState(() {
+        _resolvedUrl = url;
+      });
+      return;
+    }
+
+    try {
+      final signed = await _storageService.fetchSignedUrl(url);
+      if (!mounted) return;
+      setState(() {
+        _resolvedUrl = signed ?? url;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _resolvedUrl = url;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final displayUrl = _resolvedUrl ?? widget.imageUrl;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -94,11 +143,11 @@ class ImageWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(borderRadius),
-            child: imageUrl.isEmpty
+            borderRadius: BorderRadius.circular(widget.borderRadius),
+            child: displayUrl.isEmpty
                 ? _ImageFallback(colorScheme: colorScheme)
                 : CachedNetworkImage(
-                    imageUrl: imageUrl,
+                    imageUrl: displayUrl,
                     width: double.infinity,
                     fit: BoxFit.cover,
                     placeholder: (context, url) => const AspectRatio(
@@ -111,11 +160,11 @@ class ImageWidget extends StatelessWidget {
                         _ImageFallback(colorScheme: colorScheme),
                   ),
           ),
-          if (caption.isNotEmpty)
+          if (widget.caption.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(top: 8),
               child: Text(
-                caption,
+                widget.caption,
                 style: Theme.of(context).textTheme.bodySmall
                     ?.copyWith(color: colorScheme.onSurfaceVariant),
               ),
@@ -307,8 +356,10 @@ class UIBuilder extends StatelessWidget {
         return const DelimiterWidget();
       case 'image':
         final file = _asMap(data['file']);
+        final storagePath = extractStoragePath(file);
+        final url = storagePath ?? file['url']?.toString() ?? file['path']?.toString() ?? '';
         return ImageWidget(
-          imageUrl: file['url']?.toString() ?? '',
+          imageUrl: url,
           caption: _plainText(data['caption']),
         );
       case 'list':
