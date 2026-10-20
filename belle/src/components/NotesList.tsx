@@ -49,7 +49,7 @@ export default function NotesList() {
         return pages.filter((note) => {
             const matchesSearch =
                 !query ||
-                `${note.title ?? ''} ${note.description ?? ''}`
+                `${note.title ?? ''}`
                     .toLowerCase()
                     .includes(query)
 
@@ -90,9 +90,7 @@ export default function NotesList() {
                 onSave={async (note) => {
                     await createMutation.mutateAsync({
                         title: note.title?.trim() || 'Untitled note',
-                        description: note.description?.trim() || null,
                         imageUrl: note.imageUrl ?? null,
-                        editorVersion: note.editorVersion ?? null,
                         blocks: (note.blocks ?? []).map((block) => ({
                             blockKey: block.blockKey ?? null,
                             type: block.type,

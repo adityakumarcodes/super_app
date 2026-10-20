@@ -26,6 +26,9 @@ export default function useFetchQuery<TData = unknown>({
 
             return res.json();
         },
+        staleTime: 1000 * 60 * 5,
+        gcTime: 1000 * 60 * 30,
+        refetchOnWindowFocus: false,
         ...queryOptions,
     });
 }

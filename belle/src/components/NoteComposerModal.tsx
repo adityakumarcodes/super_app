@@ -21,7 +21,6 @@ export default function NoteComposerModal({
     onSave,
 }: NoteComposerModalProps) {
     const [title, setTitle] = useState(note?.title ?? initialTitle)
-    const [description, setDescription] = useState(note?.description ?? '')
     const [coverFile, setCoverFile] = useState<File | null>(initialCoverFile)
     const [coverPreview, setCoverPreview] = useState<string | null>(() => (
         initialCoverFile ? URL.createObjectURL(initialCoverFile) : null
@@ -177,7 +176,7 @@ export default function NoteComposerModal({
                         )}
                         {coverError && <p className="-mt-5 mb-5 text-sm text-red-700" role="alert">{coverError}</p>}
                         <input id="note-title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Untitled" aria-label="Note title" className="w-full bg-transparent font-bodoni text-5xl leading-tight tracking-tight outline-none placeholder:text-stone-400 md:text-7xl" />
-                        <textarea id="note-description" value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Add a short description…" aria-label="Note description" rows={2} className="mt-6 w-full max-w-3xl resize-none bg-transparent text-lg leading-8 text-secondary outline-none placeholder:text-stone-400 md:text-xl" />
+
                     </header>
                     <div className="mx-auto max-w-4xl border-t border-subtle pt-8"><div id={holderId} /></div>
                     {saveError && <p className="mx-auto mt-6 max-w-4xl text-sm text-red-700" role="alert">{saveError}</p>}

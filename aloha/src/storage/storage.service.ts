@@ -40,8 +40,8 @@ export class StorageService {
         const originalName = file.originalname;
         const filenameWithoutExtension = parse(originalName).name;
         const extension = extname(originalName);
-
-        const filename = `${filenameWithoutExtension}_${randomUUID()}${extension}`;
+        const filename = `${filenameWithoutExtension}${extension}`;
+        // const filename = `${filenameWithoutExtension}_${randomUUID()}${extension}`;
         const path = `notes/${userId}/${filename}`;
         const { data, error } = await this.supabase.storage
             .from("superapp")
@@ -71,6 +71,13 @@ export class StorageService {
             path: data.path,
             url: signedData.signedUrl,
         };
+    }
+
+    async delete(path: string) {
+        const { error } = await this.supabase.storage.from(this.bucket).remove([path]);
+        if (error) {
+            throw new InternalServerErrorException(`Image delete failed: ${error.message}`);
+        }
     }
 
     // Generate a signed URL valid for one hour.

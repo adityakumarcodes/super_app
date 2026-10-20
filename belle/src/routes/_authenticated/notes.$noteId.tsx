@@ -21,11 +21,12 @@ function RouteComponent() {
   const [notice, setNotice] = useState<string | null>(null)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [draftTitle, setDraftTitle] = useState('')
-  const [draftDescription, setDraftDescription] = useState('')
+  const [coverFile, setCoverFile] = useState<File | null>(null)
+  const coverInputRef = useRef<HTMLInputElement | null>(null)
   const noteDetailsRef = useRef<NoteDetailsHandle | null>(null)
   const queryClient = useQueryClient()
   const { data: note, isLoading, isError, error, refetch } = useFetchQuery<Note>({ queryKey: ['note', noteId], queryLink: `${NOTES_API_BASE}/notes/${noteId}`, queryOptions: { enabled: !!noteId } })
-  const updateMutation = useMutation({ mutationFn: (updatedNote: NoteWriteInput) => updateNote(noteId, updatedNote) })
+  const updateMutation = useMutation({ mutationFn: ({ note, cover }: { note: NoteWriteInput; cover: File | null }) => updateNote(noteId, note, cover) })
   const deleteMutation = useMutation({ mutationFn: () => deleteNote(noteId) })
 
   const editorData = useMemo(() => ({
@@ -35,8 +36,7 @@ function RouteComponent() {
       type: block.type,
       data: block.data,
     })),
-    version: note?.editorVersion ?? undefined,
-  }), [note?.blocks, note?.editorVersion, note?.id, note?.updatedAt])
+  }), [note?.blocks, note?.id, note?.updatedAt])
 
   if (isLoading) return <Spinner />
 
@@ -54,7 +54,7 @@ function RouteComponent() {
 
   const beginEditing = () => {
     setDraftTitle(note.title ?? '')
-    setDraftDescription(note.description ?? '')
+    setCoverFile(null)
     setSaveError(null)
     setNotice(null)
     setIsEditing(true)
@@ -75,11 +75,11 @@ function RouteComponent() {
       }
 
       await updateMutation.mutateAsync({
-        title: draftTitle.trim() || 'Untitled note',
-        description: draftDescription.trim() || null,
-        imageUrl: note.imageUrl ?? null,
-        blocks: editorDataToBlocks(output),
-        editorVersion: output.version ?? null,
+        note: {
+          title: draftTitle.trim() || 'Untitled note',
+          imageUrl: note.imageUrl ?? null,
+          blocks: editorDataToBlocks(output),
+          }, cover: coverFile
       })
       setIsEditing(false)
       await Promise.all([
@@ -120,7 +120,8 @@ function RouteComponent() {
           <div className="max-w-4xl">
             {isEditing ? <>
               <input value={draftTitle} onChange={(event) => setDraftTitle(event.target.value)} placeholder="Untitled" aria-label="Note title" className="w-full bg-transparent font-bodoni text-5xl leading-tight tracking-tight outline-none placeholder:text-stone-400 md:text-7xl" />
-              <textarea value={draftDescription} onChange={(event) => setDraftDescription(event.target.value)} placeholder="Add a short description…" aria-label="Note description" rows={2} className="mt-6 w-full max-w-3xl resize-none bg-transparent text-lg leading-8 text-gray-500 outline-none placeholder:text-stone-400 md:text-xl" />
+              <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={(event) => setCoverFile(event.target.files?.[0] ?? null)} />
+              {coverFile && <p className="mt-2 text-sm text-secondary">{coverFile.name}</p>}
             </> : <>
               <h1 className="font-bodoni text-5xl leading-tight tracking-tight md:text-7xl">
                 {note.title || "Untitled note"}
@@ -130,11 +131,14 @@ function RouteComponent() {
           </div>
 
           {note.imageUrl && (
-            <div className="group mt-8 overflow-hidden rounded-4xl">
+            <div className="group relative mt-8 overflow-hidden rounded-4xl">
               <NoteCoverImage
                 value={note.imageUrl}
                 alt={note.title || "Note cover"}
                 className="h-75 w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 md:h-112.5" />
+              {isEditing && (
+                <button type="button" onClick={() => coverInputRef.current?.click()} className="absolute right-3 top-3 control-pill border border-strong bg-white/90 px-3 py-2 text-sm">Update cover</button>
+              )}
             </div>
           )}
         </header>

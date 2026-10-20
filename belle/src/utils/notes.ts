@@ -18,19 +18,15 @@ export type NoteBlockInput = {
 export type Note = {
     id: number | string
     title?: string | null
-    description?: string | null
     imageUrl?: string | null
     blocks?: NoteBlock[]
-    editorVersion?: string | null
     createdAt?: string
     updatedAt?: string
 }
 
 export type NoteWriteInput = {
     title: string
-    description: string | null
     imageUrl: string | null
-    editorVersion: string | null
     blocks: NoteBlockInput[]
 }
 

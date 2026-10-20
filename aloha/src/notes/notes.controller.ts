@@ -9,18 +9,21 @@ import {
     ParseIntPipe,
     Patch,
     Post,
+    UploadedFile,
+    UseInterceptors,
 } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 import { NotesService } from "./notes.service";
+import { StorageService } from "../storage/storage.service";
 import {
     Session,
     type UserSession,
 } from '@thallesp/nestjs-better-auth';
 import { parseCreateNoteInput, parseUpdateNoteInput } from "./notes.dto";
 
-
 @Controller("notes")
 export class NotesController {
-    constructor(private readonly notesService: NotesService) { }
+    constructor(private readonly notesService: NotesService, private readonly storageService: StorageService) { }
 
     @Get()
     getPages(@Session() session: UserSession) {
@@ -28,8 +31,28 @@ export class NotesController {
     }
 
     @Post()
-    createPage(@Body() body: unknown, @Session() session: UserSession) {
-        return this.notesService.createPage(session.user.id, parseCreateNoteInput(body));
+    @UseInterceptors(FileInterceptor('cover'))
+    async createPage(
+        @UploadedFile() file: Express.Multer.File,
+        @Body() body: Record<string, unknown>,
+        @Session() session: UserSession,
+    ) {
+        let imageUrl = body?.imageUrl;
+        if (file) {
+            const uploaded = await this.storageService.upload(file, session.user.id);
+            imageUrl = uploaded.path;
+        }
+
+        const payload: Record<string, unknown> = { ...body, imageUrl };
+        if (typeof payload.blocks === "string") {
+            try {
+                payload.blocks = JSON.parse(payload.blocks as string);
+            } catch {
+                // keep as-is; dto parser will reject invalid
+            }
+        }
+
+        return this.notesService.createPage(session.user.id, parseCreateNoteInput(payload));
     }
 
     @Get(":id")
@@ -43,12 +66,30 @@ export class NotesController {
     }
 
     @Patch(":id")
-    updatePage(
+    @UseInterceptors(FileInterceptor('cover'))
+    async updatePage(
         @Param("id", ParseIntPipe) id: number,
-        @Body() body: unknown,
+        @UploadedFile() file: Express.Multer.File,
+        @Body() body: Record<string, unknown>,
         @Session() session: UserSession,
     ) {
-        return this.notesService.updatePage(id, session.user.id, parseUpdateNoteInput(body));
+        let imageUrl = body?.imageUrl;
+        if (file) {
+            const uploaded = await this.storageService.upload(file, session.user.id);
+            imageUrl = uploaded.path;
+        }
+
+        const payload: Record<string, unknown> = { ...body };
+        if (file || body?.imageUrl !== undefined) payload.imageUrl = imageUrl;
+        if (typeof payload.blocks === "string") {
+            try {
+                payload.blocks = JSON.parse(payload.blocks as string);
+            } catch {
+                // keep as-is
+            }
+        }
+
+        return this.notesService.updatePage(id, session.user.id, parseUpdateNoteInput(payload));
     }
 
     @Delete(":id")

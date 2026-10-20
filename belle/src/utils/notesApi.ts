@@ -12,7 +12,7 @@ function getErrorMessage(body: unknown, fallback: string) {
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     const headers = new Headers(init.headers)
-    if (init.body) headers.set('Content-Type', 'application/json')
+    if (init.body && !(init.body instanceof FormData)) headers.set('Content-Type', 'application/json')
 
     const response = await fetch(`${NOTES_API_BASE}${path}`, {
         ...init,
@@ -36,7 +36,18 @@ export function createNote(note: NoteWriteInput) {
     })
 }
 
-export function updateNote(id: string | number, note: NoteWriteInput) {
+export function updateNote(id: string | number, note: NoteWriteInput, coverFile?: File | null) {
+    if (coverFile) {
+        const formData = new FormData()
+        formData.append('cover', coverFile)
+        formData.append('title', note.title ?? '')
+        formData.append('blocks', JSON.stringify(note.blocks ?? []))
+        return request<Note>(`/notes/${encodeURIComponent(String(id))}`, {
+            method: 'PATCH',
+            body: formData,
+        })
+    }
+
     return request<Note>(`/notes/${encodeURIComponent(String(id))}`, {
         method: 'PATCH',
         body: JSON.stringify(note),
