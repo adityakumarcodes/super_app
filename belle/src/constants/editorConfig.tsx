@@ -5,9 +5,7 @@ import EditorjsList from "@editorjs/list";
 import ImageTool from "@editorjs/image";
 import Delimiter from "@editorjs/delimiter";
 import Paragraph from "@editorjs/paragraph";
-
-const API_URL =
-  import.meta.env.VITE_API_URL ?? "http://localhost:3000/api";
+import { NOTES_API_BASE } from "../utils/notesApi";
 
 export const EDITOR_JS_TOOLS: ToolConfig = {
   paragraph: {
@@ -49,7 +47,7 @@ export const EDITOR_JS_TOOLS: ToolConfig = {
           const formData = new FormData();
           formData.append("file", file);
 
-          const response = await fetch(`${API_URL}/storage/upload`, {
+          const response = await fetch(`${NOTES_API_BASE}/storage/upload`, {
             method: "POST",
             credentials: "include",
             body: formData,

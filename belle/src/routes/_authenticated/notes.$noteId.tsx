@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Check, Pencil, Trash2, X } from 'lucide-react'
 import { useMemo, useRef, useState } from 'react'
 import NoteDetails, { type NoteDetailsHandle } from '../../components/NoteDetails'
+import NoteCoverImage from '../../components/NoteCoverImage'
 import useFetchQuery from '../../utils/useFetchQuery'
 import Spinner from '../../components/Spinner'
 import { deleteNote, NOTES_API_BASE, updateNote } from '../../utils/notesApi'
@@ -130,8 +131,8 @@ function RouteComponent() {
 
           {note.imageUrl && (
             <div className="group mt-8 overflow-hidden rounded-4xl">
-              <img
-                src={note.imageUrl}
+              <NoteCoverImage
+                value={note.imageUrl}
                 alt={note.title || "Note cover"}
                 className="h-75 w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 md:h-112.5" />
             </div>

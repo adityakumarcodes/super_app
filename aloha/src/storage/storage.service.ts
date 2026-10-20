@@ -74,11 +74,7 @@ export class StorageService {
     }
 
     // Generate a signed URL valid for one hour.
-    async getUrl(path: string) {
-        if (!path) {
-            throw new BadRequestException('Storage path is required');
-        }
-
+    async getSignedUrl(path: string) {
         const { data, error } = await this.supabase.storage
             .from(this.bucket)
             .createSignedUrl(path, 3600);
@@ -90,7 +86,6 @@ export class StorageService {
         }
 
         return {
-            path,
             url: data.signedUrl,
             expiresIn: 3600,
         };

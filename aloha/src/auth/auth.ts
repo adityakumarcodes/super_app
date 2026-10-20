@@ -27,13 +27,7 @@ export function createAuth(prisma: PrismaClient) {
             process.env.FRONTEND_URL!,
             // `http://localhost:${process.env.FRONTEND_PORT}`,
         ],
-        advanced: {
-            defaultCookieAttributes: {
-                sameSite: "none",
-                httpOnly: true,
-                secure: true
-            },
-        }
+
     };
 
     return betterAuth(options);

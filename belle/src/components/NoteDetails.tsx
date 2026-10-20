@@ -1,4 +1,5 @@
 import EditorJS, { type OutputData } from "@editorjs/editorjs";
+import { useQuery } from "@tanstack/react-query";
 import {
     forwardRef,
     useEffect,
@@ -7,6 +8,7 @@ import {
     useRef,
 } from "react";
 import { EDITOR_JS_TOOLS } from "../constants/editorConfig";
+import { isStoragePath, signedUrlQuery } from "../utils/storageApi";
 
 interface NoteDetailsProps {
     data: OutputData;
@@ -16,6 +18,22 @@ interface NoteDetailsProps {
 export type NoteDetailsHandle = {
     save: () => Promise<OutputData>;
 };
+
+const EMPTY_IMAGES: Record<string, string> = {};
+
+function getBlockImagePath(data: unknown) {
+    if (!data || typeof data !== "object") {
+        return undefined;
+    }
+
+    const file = (data as { file?: { path?: string; url?: string } }).file;
+
+    if (isStoragePath(file?.path)) {
+        return file.path;
+    }
+
+    return isStoragePath(file?.url) ? file.url : undefined;
+}
 
 const NoteDetails = forwardRef<NoteDetailsHandle, NoteDetailsProps>(function NoteDetails(
     { data, editable = false },
@@ -30,6 +48,32 @@ const NoteDetails = forwardRef<NoteDetailsHandle, NoteDetailsProps>(function Not
             import: "default",
         },
     ) as Record<string, string>, []);
+
+    // Signed image URLs expire, so resolve the stored storage paths again.
+    const imagePaths = useMemo(() => {
+        if (editable) {
+            return [];
+        }
+
+        const paths = new Set<string>();
+        data.blocks.forEach((block) => {
+            if (block.type !== "image") {
+                return;
+            }
+
+            const path = getBlockImagePath(block.data);
+            if (path) {
+                paths.add(path);
+            }
+        });
+
+        return [...paths];
+    }, [data, editable]);
+
+    const { data: signedImages = EMPTY_IMAGES } = useQuery({
+        ...signedUrlQuery(imagePaths),
+        enabled: imagePaths.length > 0,
+    });
 
     const editorData = useMemo<OutputData>(() => {
         if (editable) {
@@ -46,8 +90,27 @@ const NoteDetails = forwardRef<NoteDetailsHandle, NoteDetailsProps>(function Not
                 const imageData = block.data as {
                     file?: {
                         url?: string;
+                        path?: string;
                     };
                 };
+
+                const storagePath = getBlockImagePath(imageData);
+                const signedUrl = storagePath
+                    ? signedImages[storagePath]
+                    : undefined;
+
+                if (signedUrl) {
+                    return {
+                        ...block,
+                        data: {
+                            ...imageData,
+                            file: {
+                                ...imageData.file,
+                                url: signedUrl,
+                            },
+                        },
+                    };
+                }
 
                 const imageName = imageData.file?.url?.split("/").pop();
 
@@ -71,7 +134,7 @@ const NoteDetails = forwardRef<NoteDetailsHandle, NoteDetailsProps>(function Not
                 };
             }),
         };
-    }, [data, editable, images]);
+    }, [data, editable, images, signedImages]);
 
     useImperativeHandle(ref, () => ({
         async save() {

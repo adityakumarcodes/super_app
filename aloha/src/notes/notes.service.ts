@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import type { NoteInput } from "./notes.dto";
+import { StorageService } from "../storage/storage.service";
 
 @Injectable()
 export class NotesService {
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(private readonly prisma: PrismaService, private readonly storageService: StorageService) { }
 
     private readonly pageWithBlocks = {
         include: {

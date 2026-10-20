@@ -24,11 +24,11 @@ export class StorageController {
     }
 
     @Get('url')
-    async getUrl(@Query('path') path: string) {
+    async getSignedUrl(@Query('path') path: string) {
         if (!path) {
             throw new BadRequestException('Storage path is required');
         }
 
-        return this.storageService.getUrl(path);
+        return this.storageService.getSignedUrl(path);
     }
 }
