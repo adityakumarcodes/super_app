@@ -4,7 +4,6 @@ import { useState } from 'react'
 import IconButton from '../components/IconButton'
 import TodoWidget from '../components/Todo'
 import WordOfTheDay from '../components/WordOfTheDay'
-import WeatherWidget from '../components/Weather'
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -56,7 +55,6 @@ function Index() {
 
             <div className="space-y-4">
               <TodoWidget />
-              <WeatherWidget place="Noida" />
             </div>
           </aside>
         </>

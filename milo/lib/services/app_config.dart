@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 abstract final class AppConfig {
   static const _configuredApiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://192.168.1.11:3000/api',
+    defaultValue: 'https://aloha-qmfq.onrender.com/api',
   );
   static const requestTimeout = Duration(seconds: 15);
 
@@ -12,7 +12,7 @@ abstract final class AppConfig {
     if (configuredUrl.isNotEmpty) return _withoutTrailingSlash(configuredUrl);
 
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-      return 'http://192.168.1.11:3000/api';
+      return 'https://aloha-qmfq.onrender.com/api';
     }
     return 'http://localhost:3000/api';
   }
