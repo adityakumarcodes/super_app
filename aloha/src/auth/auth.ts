@@ -22,6 +22,7 @@ export function createAuth(prisma: PrismaClient) {
         ],
 
         trustedOrigins: [
+            process.env.FRONTEND_URL!,
             `http://localhost:${process.env.FRONTEND_PORT}`,
         ],
     };
