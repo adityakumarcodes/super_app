@@ -42,6 +42,7 @@
 - Migrate to Bloc state management
 - Explore single env use
 - delete image should delete from storage also
+- Build apk automatically on any changes in the milo
 
 https://medium.com/@balajibal/super-apps-the-operating-system-of-everyday-life-38706471a94b
 https://github.com/itsmbaqer/mini-programs-guidelines

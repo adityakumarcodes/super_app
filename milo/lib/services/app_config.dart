@@ -1,7 +1,10 @@
 import 'package:flutter/foundation.dart';
 
 abstract final class AppConfig {
-  static const _configuredApiBaseUrl = String.fromEnvironment('API_BASE_URL');
+  static const _configuredApiBaseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://192.168.1.11:3000/api',
+  );
   static const requestTimeout = Duration(seconds: 15);
 
   static String get apiBaseUrl {
