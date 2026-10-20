@@ -103,7 +103,7 @@ function RouteComponent() {
       <div className="mx-auto w-full max-w-5xl px-4 py-10 md:px-8">
         <header className="mb-12">
           <div className="mb-8 flex items-center justify-between gap-3">
-            <Link to="/notes" className="control-pill inline-flex items-center gap-2 border border-strong px-4 py-2 hover-surface-card"><ArrowLeft size={18} />All notes</Link>
+            <Link to="/notes" className="control-pill inline-flex items-center gap-2 border border-strong px-4 py-2 hover-surface-card"><ArrowLeft size={18} />Back</Link>
             <div className="flex gap-2">
               {isEditing ? <>
                 <button type="button" disabled={updateMutation.isPending} onClick={cancelEditing} className="control-pill border border-strong px-4 py-2 hover-surface-card disabled:opacity-70">Cancel</button>
@@ -125,9 +125,6 @@ function RouteComponent() {
                 {note.title || "Untitled note"}
               </h1>
 
-              <p className="mt-6 max-w-3xl text-lg leading-8 text-gray-500 md:text-xl">
-                {note.description || "No description provided."}
-              </p>
             </>}
           </div>
 

@@ -88,11 +88,9 @@ model NotesPage {
   userId        String
   user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   title         String?
-  description   String?
   imageUrl      String?
-  editorVersion String?
   createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  updatedAt     DateTime?     @updatedAt
   blocks        NotesBlock[]
 
   @@index([userId])
@@ -112,7 +110,7 @@ model NotesBlock {
   data          Json
   text          String?
   createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  updatedAt     DateTime?     @updatedAt
 
   @@unique([noteId, blockKey])
   @@index([noteId])

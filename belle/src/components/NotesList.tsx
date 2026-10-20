@@ -104,10 +104,6 @@ export default function NotesList() {
                                 <h2 className="mb-2 text-3xl">
                                     {note.title || `Note ${note.id}`}
                                 </h2>
-
-                                <p className="line-clamp-3">
-                                    {note.description || 'No description provided.'}
-                                </p>
                             </div>
                         )}
                     </Link>

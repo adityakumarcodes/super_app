@@ -1,23 +1,30 @@
 ## Architecture
 
-- **Aloha** (backend)
-	- NestJS application with PrismaORM and PostgresDB
-	- Authentication via `better-auth` + `@thallesp/nestjs-better-auth`
-	- `.env` loaded via `@nestjs/config`
+- **Aloha** (NestJS backend)
+	- NestJS with Prisma ORM.
+  	- Better Auth for authentication, integrated with NestJS using `@thallesp/nestjs-better-auth`.
+  	- Supabase PostgreSQL for database storage.
+  	- Supabase Storage for file and image storage.
+  	- Environment variables managed through `@nestjs/config`.
 		- DATABASE_URL=?
+		- DIRECT_URL=?
+		- SUPABASE_URL=?
+		- SUPABASE_SECRET_KEY=?
 		- BETTER_AUTH_SECRET=?
 		- BETTER_AUTH_URL=http://localhost:3000
 		- BACKEND_PORT=3000
 		- FRONTEND_PORT=5173
 
-- **Belle** (frontend)
+- **Belle** (Web frontend)
 	- Vite + React (TSX) app in `belle/`
-	- `.env` uses `VITE_` prefixed variables
+	- Communicates with Aloha through its API.
+	- Uses `VITE_`-prefixed environment variables.
 		- VITE_FRONTEND_PORT=5173
 		- VITE_BACKEND_PORT=3000
 
-- **Milo** (mobile)
-	- Flutter framework
+- **Milo** (Mobile application)
+	- Built with Flutter.
+  	- Communicates with Aloha through its API.
 
 ## TODO
 
@@ -34,6 +41,7 @@
 - Adaptive widgets
 - Migrate to Bloc state management
 - Explore single env use
+- delete image should delete from storage also
 
 https://medium.com/@balajibal/super-apps-the-operating-system-of-everyday-life-38706471a94b
 https://github.com/itsmbaqer/mini-programs-guidelines

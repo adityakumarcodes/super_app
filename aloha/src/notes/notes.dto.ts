@@ -1,7 +1,7 @@
 import { BadRequestException } from "@nestjs/common";
 import type { Prisma } from "../generated/prisma/client";
 
-const noteFields = ["title", "description", "imageUrl", "editorVersion", "blocks"] as const;
+const noteFields = ["title", "imageUrl", "blocks"] as const;
 
 export type NoteBlockInput = {
     blockKey?: string | null;
@@ -11,9 +11,7 @@ export type NoteBlockInput = {
 
 export type NoteInput = {
     title?: string | null;
-    description?: string | null;
     imageUrl?: string | null;
-    editorVersion?: string | null;
     blocks?: NoteBlockInput[];
 };
 
@@ -68,9 +66,7 @@ function parseNoteInput(body: unknown, requireChange: boolean): NoteInput {
 
     return {
         title: nullableString(input.title, "title"),
-        description: nullableString(input.description, "description"),
         imageUrl: nullableString(input.imageUrl, "imageUrl"),
-        editorVersion: nullableString(input.editorVersion, "editorVersion"),
         blocks: "blocks" in input ? parseBlocks(input.blocks) : undefined,
     };
 }

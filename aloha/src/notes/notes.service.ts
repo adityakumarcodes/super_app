@@ -1,4 +1,3 @@
-
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import type { NoteInput } from "./notes.dto";
@@ -17,29 +16,22 @@ export class NotesService {
 
     async findAllPages(userId: string) {
         return this.prisma.notesPage.findMany({
-            where: {
-                userId,
-            },
+            where: { userId },
             orderBy: { updatedAt: "desc" },
             select: {
                 id: true,
                 userId: true,
                 title: true,
-                description: true,
                 imageUrl: true,
-                editorVersion: true,
                 createdAt: true,
                 updatedAt: true,
             },
         });
     }
 
-    async findPageWithBlocks(id: number, userId: string,) {
+    async findPageWithBlocks(id: number, userId: string) {
         const page = await this.prisma.notesPage.findFirst({
-            where: {
-                id,
-                userId,
-            },
+            where: { id, userId },
             ...this.pageWithBlocks,
         });
 
@@ -50,20 +42,22 @@ export class NotesService {
         return page;
     }
 
-    async findBlocksByPage(id: number, userId: string,) {
+    async findBlocksByPage(id: number, userId: string) {
         const page = await this.findPageWithBlocks(id, userId);
         return page.blocks;
     }
 
     async createPage(userId: string, input: NoteInput) {
-        const blocks = input.blocks?.map((block, order) => ({ ...block, order }));
+        const blocks = input.blocks?.map((block, order) => ({
+            ...block,
+            order,
+        }));
+
         return this.prisma.notesPage.create({
             data: {
                 userId,
                 title: input.title,
-                description: input.description,
                 imageUrl: input.imageUrl,
-                editorVersion: input.editorVersion,
                 blocks: blocks ? { create: blocks } : undefined,
             },
             ...this.pageWithBlocks,
@@ -71,7 +65,11 @@ export class NotesService {
     }
 
     async updatePage(id: number, userId: string, input: NoteInput) {
-        const blocks = input.blocks?.map((block, order) => ({ ...block, order }));
+        const blocks = input.blocks?.map((block, order) => ({
+            ...block,
+            order,
+        }));
+
         return this.prisma.$transaction(async (tx) => {
             const page = await tx.notesPage.findFirst({
                 where: { id, userId },
@@ -86,9 +84,7 @@ export class NotesService {
                 where: { id: page.id },
                 data: {
                     title: input.title,
-                    description: input.description,
                     imageUrl: input.imageUrl,
-                    editorVersion: input.editorVersion,
                     blocks: blocks === undefined
                         ? undefined
                         : {
@@ -111,5 +107,3 @@ export class NotesService {
         }
     }
 }
-
-
