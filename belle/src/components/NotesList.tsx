@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Search, X } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 import useFetchQuery from '../utils/useFetchQuery'
 import { createNote, NOTES_API_BASE } from '../utils/notesApi'
@@ -43,26 +43,24 @@ export default function NotesList() {
         queryLink: `${NOTES_API_BASE}/notes`,
     })
 
-    const notes = useMemo(() => {
-        const query = search.trim().toLowerCase()
+    const query = search.trim().toLowerCase()
 
-        return pages.filter((note) => {
-            const matchesSearch =
-                !query ||
-                `${note.title ?? ''}`
-                    .toLowerCase()
-                    .includes(query)
+    const notes = pages.filter((note) => {
+        const matchesSearch =
+            !query ||
+            `${note.title ?? ''}`
+                .toLowerCase()
+                .includes(query)
 
-            const matchesFilter =
-                filter === 'All' ||
-                (filter === 'With cover' && Boolean(note.imageUrl)) ||
-                (filter === 'Text only' && !note.imageUrl) ||
-                (filter === 'Recent' &&
-                    Boolean(note.updatedAt ?? note.createdAt))
+        const matchesFilter =
+            filter === 'All' ||
+            (filter === 'With cover' && Boolean(note.imageUrl)) ||
+            (filter === 'Text only' && !note.imageUrl) ||
+            (filter === 'Recent' &&
+                Boolean(note.updatedAt ?? note.createdAt))
 
-            return matchesSearch && matchesFilter
-        })
-    }, [filter, pages, search])
+        return matchesSearch && matchesFilter
+    })
 
     const handleNewNote = (draft: NewNoteDraft) => {
         setNewNoteDraft(draft)

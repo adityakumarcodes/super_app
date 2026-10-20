@@ -60,8 +60,7 @@ export default function NoteComposerModal({
                 id: block.blockKey ?? String(block.id),
                 type: block.type,
                 data: block.data,
-            })),
-            version: note?.editorVersion ?? undefined,
+            }))
         }
 
         const editor = new EditorJS({
@@ -108,10 +107,8 @@ export default function NoteComposerModal({
                 ...note,
                 id: note?.id ?? `draft-${crypto.randomUUID()}`,
                 title: title.trim() || 'Untitled note',
-                description: description.trim(),
                 imageUrl,
                 blocks: editorDataToBlocks(output),
-                editorVersion: output.version,
                 isLocal: note?.isLocal ?? !note,
                 createdAt: note?.createdAt ?? new Date().toISOString(),
             })

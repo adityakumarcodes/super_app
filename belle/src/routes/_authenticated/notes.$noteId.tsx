@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Check, Pencil, Trash2, X } from 'lucide-react'
-import { useMemo, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import NoteDetails, { type NoteDetailsHandle } from '../../components/NoteDetails'
 import NoteCoverImage from '../../components/NoteCoverImage'
 import useFetchQuery from '../../utils/useFetchQuery'
@@ -29,14 +29,14 @@ function RouteComponent() {
   const updateMutation = useMutation({ mutationFn: ({ note, cover }: { note: NoteWriteInput; cover: File | null }) => updateNote(noteId, note, cover) })
   const deleteMutation = useMutation({ mutationFn: () => deleteNote(noteId) })
 
-  const editorData = useMemo(() => ({
+  const editorData = {
     time: note?.updatedAt ? new Date(note.updatedAt).getTime() : 0,
     blocks: (note?.blocks ?? []).map((block) => ({
       id: block.blockKey ?? String(block.id),
       type: block.type,
       data: block.data,
     })),
-  }), [note?.blocks, note?.id, note?.updatedAt])
+  }
 
   if (isLoading) return <Spinner />
 
