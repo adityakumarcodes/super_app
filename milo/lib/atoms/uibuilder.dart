@@ -357,11 +357,12 @@ class UIBuilder extends StatelessWidget {
       case 'image':
         final file = _asMap(data['file']);
         final storagePath = extractStoragePath(file);
-        final url = storagePath ?? file['url']?.toString() ?? file['path']?.toString() ?? '';
-        return ImageWidget(
-          imageUrl: url,
-          caption: _plainText(data['caption']),
-        );
+        final url =
+            storagePath ??
+            file['url']?.toString() ??
+            file['path']?.toString() ??
+            '';
+        return ImageWidget(imageUrl: url, caption: _plainText(data['caption']));
       case 'list':
         final items = _asList(data['items']);
         if (data['style'] == 'checklist') {

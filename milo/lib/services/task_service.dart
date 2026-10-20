@@ -20,7 +20,11 @@ class TaskService {
         if (note is! Map) {
           throw const FormatException('Invalid note response.');
         }
-        tasks.add(await _resolveTaskImages(Task.fromApi(Map<String, dynamic>.from(note))));
+        tasks.add(
+          await _resolveTaskImages(
+            Task.fromApi(Map<String, dynamic>.from(note)),
+          ),
+        );
       }
 
       return tasks;
@@ -68,26 +72,30 @@ class TaskService {
 
     if (pathsToResolve.isEmpty) return task;
 
-    final signedMap = await _storageService.fetchSignedUrls(pathsToResolve.toList());
+    final signedMap = await _storageService.fetchSignedUrls(
+      pathsToResolve.toList(),
+    );
 
-    final resolvedBlocks = task.blocks.map((block) {
-      final blockData = Map<String, dynamic>.from(block);
-      final type = blockData['type']?.toString().toLowerCase() ?? '';
-      if (type != 'image') return blockData;
-      final data = blockData['data'];
-      if (data is! Map) return blockData;
-      final file = Map<String, dynamic>.from(data['file'] as Map? ?? {});
-      final path = extractStoragePath(file);
-      if (path != null && signedMap.containsKey(path)) {
-        file['url'] = signedMap[path];
-        // keep path for reference
-        final newData = Map<String, dynamic>.from(data);
-        newData['file'] = file;
-        blockData['data'] = newData;
-        return blockData;
-      }
-      return blockData;
-    }).toList(growable: false);
+    final resolvedBlocks = task.blocks
+        .map((block) {
+          final blockData = Map<String, dynamic>.from(block);
+          final type = blockData['type']?.toString().toLowerCase() ?? '';
+          if (type != 'image') return blockData;
+          final data = blockData['data'];
+          if (data is! Map) return blockData;
+          final file = Map<String, dynamic>.from(data['file'] as Map? ?? {});
+          final path = extractStoragePath(file);
+          if (path != null && signedMap.containsKey(path)) {
+            file['url'] = signedMap[path];
+            // keep path for reference
+            final newData = Map<String, dynamic>.from(data);
+            newData['file'] = file;
+            blockData['data'] = newData;
+            return blockData;
+          }
+          return blockData;
+        })
+        .toList(growable: false);
 
     return Task(
       id: task.id,
