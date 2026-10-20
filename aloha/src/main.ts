@@ -6,7 +6,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       `http://localhost:${process.env.FRONTEND_PORT!}`,
-      'https://belle-wnc4.onrender.com',
+      process.env.FRONTEND_URL,
     ],
     credentials: true,
   });
