@@ -16,7 +16,9 @@ export function createAuth(prisma: PrismaClient) {
         plugins: [
             emailOTP({
                 async sendVerificationOTP({ email, otp, type }) {
-                    console.log(`[OTP] ${type} → ${email}: ${otp}`);
+                    if (type === "sign-in") {
+                        console.log(`[OTP] ${type} → ${email}: ${otp}`);
+                    }
                 },
             }),
         ],
@@ -25,6 +27,13 @@ export function createAuth(prisma: PrismaClient) {
             process.env.FRONTEND_URL!,
             // `http://localhost:${process.env.FRONTEND_PORT}`,
         ],
+        advanced: {
+            defaultCookieAttributes: {
+                sameSite: "none",
+                httpOnly: true,
+                secure: true
+            },
+        }
     };
 
     return betterAuth(options);
