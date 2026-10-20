@@ -27,9 +27,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       centerTitle: true,
       elevation: 2,
-      shape: const Border(
-        bottom: BorderSide(color: Colors.black, width: 2),
-      ),
+      shape: const Border(bottom: BorderSide(color: Colors.black, width: 2)),
       actions: actions,
     );
   }

@@ -21,8 +21,7 @@ class PreferencesService {
 
   String? get savedThemeMode => _preferences.getString(_themeModeKey);
 
-  String? get savedNavigationView =>
-      _preferences.getString(_navigationViewKey);
+  String? get savedNavigationView => _preferences.getString(_navigationViewKey);
 
   List<String> get savedNavigationTabOrder =>
       _preferences.getStringList(_navigationTabOrderKey) ?? const [];
