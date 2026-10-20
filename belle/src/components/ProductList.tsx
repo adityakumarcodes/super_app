@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { ShoppingCart } from 'lucide-react';
-import products from "../../assets/data/shops.json";
+import products from "../../public/shops.json";
 import { useCart } from './CartContext';
 
 export default function ProductList() {

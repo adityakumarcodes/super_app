@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ShieldCheck, ShoppingCart, Star } from 'lucide-react';
 import { useState } from 'react';
-import products from '../../../assets/data/shops.json';
+import products from '../../../public/shops.json';
 import QuantityStepper from '../../components/QuantityStepper';
 import { useCart } from '../../components/CartContext';
 
