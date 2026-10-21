@@ -1,8 +1,221 @@
-import 'package:cached_network_image/cached_network_image.dart';
+// ignore_for_file: unused_field
+
+import 'dart:convert';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:milo/models/note_image_resolver.dart';
 import 'package:milo/services/storage_service.dart';
+
+class ImageWidget extends StatefulWidget {
+  final String imageUrl;
+  final String caption;
+  final double borderRadius;
+
+  const ImageWidget({
+    super.key,
+    required this.imageUrl,
+    this.caption = '',
+    this.borderRadius = 12,
+  });
+
+  @override
+  State<ImageWidget> createState() => _ImageWidgetState();
+}
+
+class _ImageWidgetState extends State<ImageWidget> {
+  static final Map<String, String> _urlCache = {};
+  static final Map<String, Future<String?>> _pendingRequests = {};
+
+  final StorageService _storageService = StorageService();
+
+  String? _resolvedUrl;
+  bool _isResolving = true;
+  bool _hasError = false;
+  bool _retried = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _resolve();
+  }
+
+  @override
+  void didUpdateWidget(covariant ImageWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.imageUrl != widget.imageUrl) {
+      _resolvedUrl = null;
+      _isResolving = true;
+      _hasError = false;
+      _retried = false;
+      _resolve();
+    }
+  }
+
+  Future<void> _resolve({bool refresh = false}) async {
+    final url = widget.imageUrl.trim();
+
+    if (url.isEmpty) {
+      _setError();
+      return;
+    }
+
+    // Public URLs do not require signed URL resolution.
+    if (!isStoragePath(url)) {
+      if (!mounted) return;
+
+      setState(() {
+        _resolvedUrl = url;
+        _isResolving = false;
+        _hasError = false;
+      });
+      return;
+    }
+
+    if (refresh) {
+      _urlCache.remove(url);
+    }
+
+    final cachedUrl = refresh ? null : _urlCache[url];
+
+    if (cachedUrl != null) {
+      if (!mounted) return;
+
+      setState(() {
+        _resolvedUrl = cachedUrl;
+        _isResolving = false;
+        _hasError = false;
+      });
+      return;
+    }
+
+    try {
+      final signedUrl = await _pendingRequests.putIfAbsent(url, () async {
+        try {
+          return await _storageService.fetchSignedUrl(url);
+        } finally {
+          _pendingRequests.remove(url);
+        }
+      });
+
+      if (!mounted) return;
+
+      if (signedUrl == null || signedUrl.isEmpty) {
+        _setError();
+        return;
+      }
+
+      _urlCache[url] = signedUrl;
+
+      setState(() {
+        _resolvedUrl = signedUrl;
+        _isResolving = false;
+        _hasError = false;
+      });
+    } catch (error) {
+      debugPrint('Image URL resolution failed: $error');
+      _setError();
+    }
+  }
+
+  void _setError() {
+    if (!mounted) return;
+
+    setState(() {
+      _isResolving = false;
+      _hasError = true;
+    });
+  }
+
+  Future<void> _retryExpiredUrl() async {
+    if (_retried || !isStoragePath(widget.imageUrl.trim())) {
+      _setError();
+      return;
+    }
+
+    _retried = true;
+
+    setState(() {
+      _resolvedUrl = null;
+      _isResolving = true;
+      _hasError = false;
+    });
+
+    await _resolve(refresh: true);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    final Widget content;
+
+    if (_isResolving) {
+      content = _loadingPlaceholder();
+    } else {
+      content = CachedNetworkImage(
+        imageUrl: _resolvedUrl!,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        placeholder: (_, _) => _loadingPlaceholder(),
+        errorWidget: (_, _, error) {
+          debugPrint('Image loading failed: $error');
+
+          // Retry once with a fresh URL for private storage images.
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && !_retried) {
+              _retryExpiredUrl();
+            } else if (mounted) {
+              _setError();
+            }
+          });
+
+          return _loadingPlaceholder();
+        },
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(widget.borderRadius),
+          child: SizedBox(
+            width: double.infinity,
+            child: AspectRatio(aspectRatio: 1, child: content),
+          ),
+        ),
+        if (widget.caption.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              widget.caption,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _loadingPlaceholder() {
+    return SizedBox.expand(
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        period: const Duration(milliseconds: 1500),
+        direction: ShimmerDirection.ltr,
+        child: const ColoredBox(color: Colors.white),
+      ),
+    );
+  }
+}
 
 class ChecklistWidget extends StatefulWidget {
   final List<dynamic> items;
@@ -34,8 +247,8 @@ class _ChecklistWidgetState extends State<ChecklistWidget> {
                         meta['checked'] = value ?? false;
                       });
                     },
-                    // dense: true,
-                    // contentPadding: EdgeInsets.zero,
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
                     title: SelectableText(
                       _plainText(itemData['content'] ?? item),
                     ),
@@ -69,124 +282,6 @@ class DelimiterWidget extends StatelessWidget {
           Icon(LucideIcons.asterisk, size: 15),
           Icon(LucideIcons.asterisk, size: 15),
         ],
-      ),
-    );
-  }
-}
-
-class ImageWidget extends StatefulWidget {
-  final String imageUrl;
-  final String caption;
-  final double borderRadius;
-
-  const ImageWidget({
-    super.key,
-    required this.imageUrl,
-    this.caption = '',
-    this.borderRadius = 12,
-  });
-
-  @override
-  State<ImageWidget> createState() => _ImageWidgetState();
-}
-
-class _ImageWidgetState extends State<ImageWidget> {
-  final StorageService _storageService = StorageService();
-  String? _resolvedUrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _resolve();
-  }
-
-  @override
-  void didUpdateWidget(covariant ImageWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.imageUrl != widget.imageUrl) {
-      _resolvedUrl = null;
-      _resolve();
-    }
-  }
-
-  Future<void> _resolve() async {
-    final url = widget.imageUrl;
-    if (url.isEmpty || !isStoragePath(url)) {
-      setState(() {
-        _resolvedUrl = url;
-      });
-      return;
-    }
-
-    try {
-      final signed = await _storageService.fetchSignedUrl(url);
-      if (!mounted) return;
-      setState(() {
-        _resolvedUrl = signed ?? url;
-      });
-    } catch (_) {
-      if (!mounted) return;
-      setState(() {
-        _resolvedUrl = url;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final displayUrl = _resolvedUrl ?? widget.imageUrl;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(widget.borderRadius),
-            child: displayUrl.isEmpty
-                ? _ImageFallback(colorScheme: colorScheme)
-                : CachedNetworkImage(
-                    imageUrl: displayUrl,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => const AspectRatio(
-                      aspectRatio: 16 / 9,
-                      child: Center(
-                        child: CircularProgressIndicator.adaptive(),
-                      ),
-                    ),
-                    errorWidget: (context, url, error) =>
-                        _ImageFallback(colorScheme: colorScheme),
-                  ),
-          ),
-          if (widget.caption.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Text(
-                widget.caption,
-                style: Theme.of(context).textTheme.bodySmall
-                    ?.copyWith(color: colorScheme.onSurfaceVariant),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ImageFallback extends StatelessWidget {
-  final ColorScheme colorScheme;
-
-  const _ImageFallback({required this.colorScheme});
-
-  @override
-  Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 16 / 9,
-      child: ColoredBox(
-        color: colorScheme.surfaceContainerHighest,
-        child: Icon(LucideIcons.imageOff, color: colorScheme.onSurfaceVariant),
       ),
     );
   }
@@ -322,14 +417,14 @@ class UIBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     final resolvedBlocks = blocks ?? _asList(json?['blocks']);
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+    return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
-      itemCount: resolvedBlocks.length,
-      itemBuilder: (context, index) {
-        return _buildBlock(context, resolvedBlocks[index]);
-      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (final block in resolvedBlocks) _buildBlock(context, block),
+        ],
+      ),
     );
   }
 
@@ -390,20 +485,19 @@ class _UnsupportedBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final text = _plainText(data['text'] ?? data['content']);
-    if (text.isNotEmpty) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: SelectableText(text),
-      );
-    }
-
     return Card.outlined(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Text(
-          type.isEmpty ? 'Unsupported note block' : 'Unsupported block: $type',
-        ),
+      child: ExpansionTile(
+        title: const Text('Unsupported block'),
+        subtitle: Text(type.isEmpty ? 'Unknown type' : type),
+        childrenPadding: const EdgeInsets.all(12),
+        expandedCrossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Type: ${type.isEmpty ? 'Unknown' : type}'),
+          const SizedBox(height: 8),
+          const Text('Data', style: TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          SelectableText(const JsonEncoder.withIndent('  ').convert(data)),
+        ],
       ),
     );
   }

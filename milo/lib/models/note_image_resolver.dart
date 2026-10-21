@@ -8,7 +8,7 @@ bool isStoragePath(String? value) {
       lower.startsWith('/')) {
     return false;
   }
-  return value.contains('/');
+  return true;
 }
 
 String? extractStoragePath(Map<String, dynamic>? fileData) {

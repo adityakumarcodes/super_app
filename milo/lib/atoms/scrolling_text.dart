@@ -27,8 +27,8 @@ class ScrollingText extends StatefulWidget {
 class _ScrollingTextState extends State<ScrollingText> {
   final ScrollController _scrollController = ScrollController();
 
-  bool _needsScrolling = false;
   int _loopId = 0;
+  bool _needsScrolling = false;
 
   @override
   void initState() {
@@ -40,7 +40,12 @@ class _ScrollingTextState extends State<ScrollingText> {
   void didUpdateWidget(covariant ScrollingText oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.text != widget.text) {
+    if (oldWidget.text != widget.text ||
+        oldWidget.style != widget.style ||
+        oldWidget.initialDelay != widget.initialDelay ||
+        oldWidget.endDelay != widget.endDelay ||
+        oldWidget.startDelay != widget.startDelay ||
+        oldWidget.scrollDuration != widget.scrollDuration) {
       _scheduleScrolling();
     }
   }
@@ -49,56 +54,70 @@ class _ScrollingTextState extends State<ScrollingText> {
     final loopId = ++_loopId;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
+      if (!mounted || loopId != _loopId) return;
 
       _startScrollingLoop(loopId);
     });
   }
 
   Future<void> _startScrollingLoop(int loopId) async {
-    await Future.delayed(widget.initialDelay);
+    await Future<void>.delayed(widget.initialDelay);
 
     while (mounted && loopId == _loopId) {
       if (!_scrollController.hasClients) {
-        await Future.delayed(const Duration(milliseconds: 200));
+        await Future<void>.delayed(const Duration(milliseconds: 200));
         continue;
       }
 
-      final maxExtent = _scrollController.position.maxScrollExtent;
+      final position = _scrollController.position;
+
+      if (!position.hasContentDimensions) {
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+        continue;
+      }
+
+      final maxExtent = position.maxScrollExtent;
 
       if (maxExtent <= 0) {
-        if (_needsScrolling) {
-          setState(() => _needsScrolling = false);
-        }
+        _needsScrolling = false;
 
-        await Future.delayed(const Duration(seconds: 2));
-        continue;
+        // No repeated polling while the text fits.
+        return;
       }
 
-      if (!_needsScrolling) {
-        setState(() => _needsScrolling = true);
+      _needsScrolling = true;
+
+      try {
+        await _scrollController.animateTo(
+          maxExtent,
+          duration: widget.scrollDuration,
+          curve: Curves.linear,
+        );
+
+        if (!_isCurrentLoop(loopId)) return;
+
+        await Future<void>.delayed(widget.endDelay);
+
+        if (!_isCurrentLoop(loopId)) return;
+
+        await _scrollController.animateTo(
+          0,
+          duration: widget.scrollDuration,
+          curve: Curves.linear,
+        );
+
+        if (!_isCurrentLoop(loopId)) return;
+
+        await Future<void>.delayed(widget.startDelay);
+      } on TickerCanceled {
+        // Animation was cancelled; the next loop owns the controller.
+        return;
       }
-
-      await _scrollController.animateTo(
-        maxExtent,
-        duration: widget.scrollDuration,
-        curve: Curves.linear,
-      );
-
-      if (!mounted || loopId != _loopId) return;
-
-      await Future.delayed(widget.endDelay);
-
-      if (!mounted || loopId != _loopId) return;
-
-      await _scrollController.animateTo(
-        0,
-        duration: widget.scrollDuration,
-        curve: Curves.linear,
-      );
-
-      await Future.delayed(widget.startDelay);
     }
+  }
+
+  bool _isCurrentLoop(int loopId) {
+    return mounted && loopId == _loopId;
   }
 
   @override

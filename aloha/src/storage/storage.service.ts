@@ -6,12 +6,19 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { randomUUID } from 'node:crypto';
-import { basename, extname, parse } from 'node:path';
+import { extname } from 'node:path';
+
+interface CachedSignedUrl {
+    url: string;
+    expiresAt: number;
+}
 
 @Injectable()
 export class StorageService {
     private readonly supabase: SupabaseClient;
     private readonly bucket = 'superapp';
+    private readonly signedUrlTtl = 3600;
+    private readonly urlCache = new Map<string, CachedSignedUrl>();
 
     constructor(private readonly config: ConfigService) {
         this.supabase = createClient(
@@ -27,24 +34,23 @@ export class StorageService {
         );
     }
 
-    // Upload a file and return its signed url path.
     async upload(file: Express.Multer.File, userId: string) {
         if (!userId) {
-            throw new BadRequestException("Authenticated user is required");
+            throw new BadRequestException(
+                'Authenticated user is required',
+            );
         }
 
-        if (!file.mimetype.startsWith("image/")) {
-            throw new BadRequestException("Only image files are allowed");
+        if (!file?.buffer || !file.mimetype.startsWith('image/')) {
+            throw new BadRequestException('A valid image file is required');
         }
 
-        const originalName = file.originalname;
-        const filenameWithoutExtension = parse(originalName).name;
-        const extension = extname(originalName);
-        const filename = `${filenameWithoutExtension}${extension}`;
-        // const filename = `${filenameWithoutExtension}_${randomUUID()}${extension}`;
+        const extension = extname(file.originalname).toLowerCase();
+        const filename = `${randomUUID()}${extension}`;
         const path = `notes/${userId}/${filename}`;
+
         const { data, error } = await this.supabase.storage
-            .from("superapp")
+            .from(this.bucket)
             .upload(path, file.buffer, {
                 contentType: file.mimetype,
                 upsert: false,
@@ -56,35 +62,32 @@ export class StorageService {
             );
         }
 
-        const { data: signedData, error: signedError } =
-            await this.supabase.storage
-                .from(this.bucket)
-                .createSignedUrl(data.path, 3600);
-
-        if (signedError) {
-            throw new InternalServerErrorException(
-                `Could not generate image URL: ${signedError.message}`,
-            );
-        }
-
         return {
             path: data.path,
-            url: signedData.signedUrl,
+            ...(await this.getSignedUrl(data.path)),
         };
     }
 
-    async delete(path: string) {
-        const { error } = await this.supabase.storage.from(this.bucket).remove([path]);
-        if (error) {
-            throw new InternalServerErrorException(`Image delete failed: ${error.message}`);
-        }
-    }
-
-    // Generate a signed URL valid for one hour.
     async getSignedUrl(path: string) {
+        if (!path || path.startsWith('/') || path.includes('..')) {
+            throw new BadRequestException('Invalid storage path');
+        }
+
+        const cached = this.urlCache.get(path);
+
+        // Refresh one minute before expiration.
+        if (cached && cached.expiresAt > Date.now() + 60_000) {
+            return {
+                url: cached.url,
+                expiresIn: Math.floor(
+                    (cached.expiresAt - Date.now()) / 1000,
+                ),
+            };
+        }
+
         const { data, error } = await this.supabase.storage
             .from(this.bucket)
-            .createSignedUrl(path, 3600);
+            .createSignedUrl(path, this.signedUrlTtl);
 
         if (error) {
             throw new InternalServerErrorException(
@@ -92,9 +95,34 @@ export class StorageService {
             );
         }
 
+        const expiresAt = Date.now() + this.signedUrlTtl * 1000;
+
+        this.urlCache.set(path, {
+            url: data.signedUrl,
+            expiresAt,
+        });
+
         return {
             url: data.signedUrl,
-            expiresIn: 3600,
+            expiresIn: this.signedUrlTtl,
         };
+    }
+
+    async delete(path: string) {
+        if (!path || path.startsWith('/') || path.includes('..')) {
+            throw new BadRequestException('Invalid storage path');
+        }
+
+        const { error } = await this.supabase.storage
+            .from(this.bucket)
+            .remove([path]);
+
+        if (error) {
+            throw new InternalServerErrorException(
+                `Image delete failed: ${error.message}`,
+            );
+        }
+
+        this.urlCache.delete(path);
     }
 }

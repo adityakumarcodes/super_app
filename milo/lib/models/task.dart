@@ -3,6 +3,7 @@ class Task {
   final String title;
   final String description;
   final String deltaJson;
+  final String? imageUrl;
   final int? folderId;
   final bool isPinned;
   final String createdOn;
@@ -14,6 +15,7 @@ class Task {
     required this.title,
     required this.description,
     required this.deltaJson,
+    this.imageUrl,
     required this.folderId,
     required this.isPinned,
     required this.createdOn,
@@ -27,6 +29,7 @@ class Task {
       title: (row['title'] as String?) ?? '',
       description: (row['description'] as String?) ?? '',
       deltaJson: (row['delta_json'] as String?) ?? '[]',
+      imageUrl: null,
       folderId: row['folder_id'] as int?,
       isPinned: (row['is_pinned'] as int? ?? 0) == 1,
       createdOn: (row['created_at'] as String?) ?? '',
@@ -41,6 +44,7 @@ class Task {
       title: json['title'] as String? ?? '',
       description: json['description'] as String? ?? '',
       deltaJson: '[]',
+      imageUrl: json['imageUrl'] as String?,
       folderId: null,
       isPinned: false,
       createdOn: json['createdAt'] as String? ?? '',

@@ -69,7 +69,6 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final createdDate = DateTime.tryParse(task.createdOn);
     final hasDescription = task.description.trim().isNotEmpty;
     final hasBlocks = task.blocks.isNotEmpty;
 
@@ -83,6 +82,7 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
+            // centerTitle: true,
             actions: [
               IconButton(
                 tooltip: 'Search',
@@ -94,37 +94,34 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
                 icon: const Icon(Icons.more_vert),
                 onPressed: () {},
               ),
-
               const SizedBox(width: 4),
             ],
           ),
-
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(24, 28, 24, 40),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                if (createdDate != null)
-                  Row(
-                    children: [
-                      Icon(
-                        LucideIcons.clock,
-                        size: 15,
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        DateFormat.yMMMd().add_jm().format(createdDate),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
+                // if (createdDate != null)
+                //   Row(
+                //     children: [
+                //       Icon(
+                //         LucideIcons.clock,
+                //         size: 15,
+                //         color: colorScheme.onSurfaceVariant,
+                //       ),
+                //       const SizedBox(width: 8),
+                //       Text(
+                //         DateFormat.yMMMd().add_jm().format(createdDate),
+                //         style: theme.textTheme.bodySmall?.copyWith(
+                //           color: colorScheme.onSurfaceVariant,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
 
                 const SizedBox(height: 28),
-
-                Divider(color: colorScheme.outline, thickness: 1.5),
-
+                if (task.imageUrl != null)
+                  ImageWidget(imageUrl: task.imageUrl!),
                 const SizedBox(height: 24),
 
                 if (isLoading)
@@ -143,18 +140,9 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
                         color: colorScheme.onSurface,
                       ),
                     ),
-
                   if (hasDescription && hasBlocks) const SizedBox(height: 24),
 
                   if (hasBlocks) UIBuilder(blocks: task.blocks),
-
-                  if (!hasDescription && !hasBlocks)
-                    Text(
-                      'No content yet.',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                    ),
                 ],
 
                 const SizedBox(height: 40),
