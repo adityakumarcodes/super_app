@@ -2,8 +2,9 @@ import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import type { PrismaClient } from "../generated/prisma/client";
 import { emailOTP } from "better-auth/plugins";
+import { EmailService } from "../email/email.service";
 
-export function createAuth(prisma: PrismaClient) {
+export function createAuth(prisma: PrismaClient, emailService: EmailService,) {
     const options: BetterAuthOptions = {
         database: prismaAdapter(prisma, {
             provider: "postgresql",
@@ -16,9 +17,7 @@ export function createAuth(prisma: PrismaClient) {
         plugins: [
             emailOTP({
                 async sendVerificationOTP({ email, otp, type }) {
-                    if (type === "sign-in") {
-                        console.log(`[OTP] ${type} → ${email}: ${otp}`);
-                    }
+                    await emailService.sendOtp(email, otp);
                 },
             }),
         ],

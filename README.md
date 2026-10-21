@@ -11,9 +11,10 @@
 		- SUPABASE_URL=?
 		- SUPABASE_SECRET_KEY=?
 		- BETTER_AUTH_SECRET=?
-		- BETTER_AUTH_URL=http://localhost:3000
+		- BETTER_AUTH_URL=frontend_url
 		- BACKEND_PORT=3000
 		- FRONTEND_PORT=5173
+		- RESEND_API_KEY=?
 
 - **Belle** (Web frontend)
 	- Vite + React (TSX) app in `belle/`
