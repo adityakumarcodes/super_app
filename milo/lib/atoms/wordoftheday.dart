@@ -19,15 +19,14 @@ class _WordOfTheDayState extends State<WordOfTheDay> {
     return BlocBuilder<WordCubit, WordState>(
       builder: (context, wordState) {
         final data = wordState.words;
-
+        final index = data.isEmpty ? 0 : currentWordIndex % data.length;
         return Padding(
           padding: const EdgeInsets.only(top: 30),
           child: GestureDetector(
             onTap: data.isEmpty
                 ? null
                 : () => setState(
-                    () =>
-                        currentWordIndex = (currentWordIndex + 1) % data.length,
+                    () => currentWordIndex = (index + 1) % data.length,
                   ),
             child: Container(
               margin: const EdgeInsets.all(8),
@@ -66,7 +65,7 @@ class _WordOfTheDayState extends State<WordOfTheDay> {
                         children: [
                           const SizedBox(height: 30),
                           Text(
-                            data[currentWordIndex]['word']!,
+                            data[index]['word']!,
                             textAlign: TextAlign.center,
                             style: GoogleFonts.dancingScript(
                               fontSize: 40,
@@ -75,7 +74,7 @@ class _WordOfTheDayState extends State<WordOfTheDay> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            data[currentWordIndex]['meaning']!,
+                            data[index]['meaning']!,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 18,
