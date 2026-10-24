@@ -7,8 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-// import 'package:supabase_flutter/supabase_flutter.dart';
-
 class FolderList extends StatefulWidget {
   final String folderName;
 

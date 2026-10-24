@@ -9,9 +9,7 @@ import 'package:milo/features/chat/presentation/bloc/chat_cubit.dart';
 part 'chat_details/chat_widgets.dart';
 
 class ChatDetails extends StatefulWidget {
-  final ChatUsers user;
-
-  const ChatDetails({super.key, required this.user});
+  const ChatDetails({super.key});
 
   @override
   State<ChatDetails> createState() => _ChatDetailsState();

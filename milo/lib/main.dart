@@ -7,7 +7,6 @@ import 'package:flutter_better_auth/flutter_better_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:milo/atoms/constants.dart';
 import 'package:milo/atoms/folder_list.dart';
 import 'package:milo/core/routing/cubit_router_refresh.dart';
 import 'package:milo/features/auth/presentation/bloc/auth_cubit.dart';
@@ -16,6 +15,7 @@ import 'package:milo/features/home/presentation/bloc/word_cubit.dart';
 import 'package:milo/features/notes/presentation/bloc/task_cubit.dart';
 import 'package:milo/features/settings/presentation/bloc/navigation_cubit.dart';
 import 'package:milo/features/settings/presentation/bloc/theme_cubit.dart';
+import 'package:milo/screens/error404.dart';
 import 'package:milo/services/app_config.dart';
 import 'package:milo/models/task.dart';
 import 'package:milo/screens/add_task.dart';
@@ -75,6 +75,7 @@ GoRouter _createRouter(AuthCubit authCubit) {
   return GoRouter(
     initialLocation: '/',
     refreshListenable: CubitRouterRefresh(authCubit),
+    errorBuilder: (context, state) => const Error404Screen(),
     redirect: (context, state) {
       final isLogin = state.matchedLocation == '/login';
       final isAuthLoading = state.matchedLocation == '/auth-loading';
@@ -152,15 +153,7 @@ GoRouter _createRouter(AuthCubit authCubit) {
 
       GoRoute(
         path: '/chat/details',
-        builder: (context, state) => ChatDetails(
-          user: ChatUsers(
-            name: "Jane Russel",
-            location: 'London, UK',
-            messageText: "Awesome Setup",
-            imageURL: "assets/profiles/userImage1.png",
-            time: "Now",
-          ),
-        ),
+        builder: (context, state) => const ChatDetails(),
       ),
       // GoRoute(
       //   path: '/calculator',

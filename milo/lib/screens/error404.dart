@@ -31,9 +31,7 @@ class Error404Screen extends StatelessWidget {
                 description: "The page you are looking for seems to be missing. Please go back or visit the homepage.",
                 // button: you can pass your custom button,
                 btnText: "Back to home",
-                press: () {
-                  context.push('/');
-                },
+                press: () => context.go('/'),
               ),
             ],
           ),
