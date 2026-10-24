@@ -142,10 +142,12 @@ GoRouter _createRouter(AuthCubit authCubit) {
       ),
       GoRoute(
         path: '/notebook/note/:id/edit',
-        redirect: (context, state) => state.extra is Task
-            ? null
-            : '/notebook/note/${state.pathParameters['id']}',
-        builder: (context, state) => const AddTaskScreen(),
+        builder: (context, state) {
+          final id = int.tryParse(state.pathParameters['id'] ?? '');
+          if (id == null) return const _MissingNotePage();
+          final note = state.extra;
+          return AddTaskScreen(noteId: id, note: note is Task ? note : null);
+        },
       ),
 
       GoRoute(

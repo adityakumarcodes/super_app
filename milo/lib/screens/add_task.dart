@@ -8,7 +8,9 @@ import 'package:milo/models/note_body.dart';
 import 'package:milo/models/task.dart';
 
 class AddTaskScreen extends StatefulWidget {
-  const AddTaskScreen({super.key, this.note});
+  const AddTaskScreen({super.key, this.note, this.noteId});
+
+  final int? noteId;
 
   /// The note to edit, or null to create a new one.
   final Task? note;
@@ -23,9 +25,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   );
   final FocusNode _taskFocus = FocusNode();
   // Null when the note has rich content that this editor cannot change.
-  late final String? _initialBody = widget.note == null
-      ? ''
-      : NoteBody.toText(widget.note!.blocks);
+  final String _initialBody = '';
   late final TextEditingController _description = TextEditingController(
     text: _initialBody,
   );
@@ -50,19 +50,19 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   Future<void> _save() async {
     final title = _task.text.trim();
     final body = _description.text;
+    final noteId = widget.noteId;
     if (title.isEmpty && body.trim().isEmpty) {
       _showMessage('Add a title or some text first.');
       return;
     }
 
     final tasks = context.read<TaskCubit>();
-    final blocks = _initialBody == null ? null : NoteBody.toBlocks(body);
-    final note = widget.note;
+    final blocks = NoteBody.toBlocks(body);
     setState(() => _isSaving = true);
     try {
-      final saved = note == null
-          ? await tasks.createTask(title: title, blocks: blocks ?? const [])
-          : await tasks.updateTask(note.id, title: title, blocks: blocks);
+      final saved = noteId == null
+          ? await tasks.createTask(title: title, blocks: blocks)
+          : await tasks.updateTask(noteId, title: title, blocks: blocks);
       if (mounted) context.pop(saved);
     } catch (error) {
       if (!mounted) return;
@@ -123,7 +123,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                         enabled: canEditBody,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: canEditBody ? 'Enter description here...' : 'This note has rich content. Edit it on the web.',
+                          hintText: 'Enter description here...',
                           hintStyle: const TextStyle(
                             fontSize: 20,
                             color: Colors.grey,
