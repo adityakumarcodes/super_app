@@ -18,6 +18,11 @@ import { StorageService } from '../storage/storage.service';
 import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 import { parseCreateNoteInput, parseUpdateNoteInput } from './notes.dto';
 
+/**
+ * Notes API shared by web and mobile. Bodies may be JSON or multipart (with an
+ * optional `cover` image); content is sent as Editor.js `blocks` or `content`
+ * text. Responses are display-ready (see NotesService.presentWithBlocks).
+ */
 @Controller('notes')
 export class NotesController {
   constructor(
@@ -33,25 +38,11 @@ export class NotesController {
   @Post()
   @UseInterceptors(FileInterceptor('cover'))
   async createPage(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File | undefined,
     @Body() body: Record<string, unknown>,
     @Session() session: UserSession,
   ) {
-    let imageUrl = body?.imageUrl;
-    if (file) {
-      const uploaded = await this.storageService.upload(file, session.user.id);
-      imageUrl = uploaded.path;
-    }
-
-    const payload: Record<string, unknown> = { ...body, imageUrl };
-    if (typeof payload.blocks === 'string') {
-      try {
-        payload.blocks = JSON.parse(payload.blocks as string);
-      } catch {
-        // keep as-is; dto parser will reject invalid
-      }
-    }
-
+    const payload = await this.toPayload(body, file, session.user.id);
     return this.notesService.createPage(
       session.user.id,
       parseCreateNoteInput(payload),
@@ -78,26 +69,11 @@ export class NotesController {
   @UseInterceptors(FileInterceptor('cover'))
   async updatePage(
     @Param('id', ParseIntPipe) id: number,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File | undefined,
     @Body() body: Record<string, unknown>,
     @Session() session: UserSession,
   ) {
-    let imageUrl = body?.imageUrl;
-    if (file) {
-      const uploaded = await this.storageService.upload(file, session.user.id);
-      imageUrl = uploaded.path;
-    }
-
-    const payload: Record<string, unknown> = { ...body };
-    if (file || body?.imageUrl !== undefined) payload.imageUrl = imageUrl;
-    if (typeof payload.blocks === 'string') {
-      try {
-        payload.blocks = JSON.parse(payload.blocks as string);
-      } catch {
-        // keep as-is
-      }
-    }
-
+    const payload = await this.toPayload(body, file, session.user.id);
     return this.notesService.updatePage(
       id,
       session.user.id,
@@ -112,5 +88,31 @@ export class NotesController {
     @Session() session: UserSession,
   ) {
     await this.notesService.deletePage(id, session.user.id);
+  }
+
+  /**
+   * Normalises create/update bodies: uploads an optional `cover` file (its
+   * storage path becomes `imageUrl`) and parses `blocks` sent as a JSON
+   * string in multipart forms. Validation happens in notes.dto.
+   */
+  private async toPayload(
+    body: Record<string, unknown> | undefined,
+    file: Express.Multer.File | undefined,
+    userId: string,
+  ) {
+    const payload: Record<string, unknown> = { ...body };
+    if (file) {
+      payload.imageUrl = (await this.storageService.upload(file, userId)).path;
+    }
+
+    if (typeof payload.blocks === 'string') {
+      try {
+        payload.blocks = JSON.parse(payload.blocks);
+      } catch {
+        // Leave as-is; the DTO parser rejects invalid blocks.
+      }
+    }
+
+    return payload;
   }
 }

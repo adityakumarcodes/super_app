@@ -16,16 +16,24 @@ export function createAuth(prisma: PrismaClient, emailService: EmailService) {
 
     plugins: [
       emailOTP({
-        async sendVerificationOTP({ email, otp, type }) {
+        async sendVerificationOTP({ email, otp }) {
           await emailService.sendOtp(email, otp);
         },
       }),
     ],
 
-    trustedOrigins: [
-      process.env.FRONTEND_URL!,
-      // `http://localhost:${process.env.FRONTEND_PORT}`,
-    ],
+    // The web app and this API run on different sites (e.g. Vercel + Render).
+    // Browsers only attach cookies to cross-site fetch() calls when the cookie
+    // is SameSite=None, and SameSite=None is only accepted with Secure. The
+    // default (Lax) makes the session cookie disappear, so web login "fails".
+    advanced: {
+      defaultCookieAttributes: {
+        sameSite: 'none',
+        secure: true,
+        httpOnly: true,
+      },
+    },
+    trustedOrigins: [process.env.FRONTEND_URL!],
   };
 
   return betterAuth(options);
