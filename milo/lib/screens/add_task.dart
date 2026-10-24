@@ -78,7 +78,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final canEditBody = _initialBody != null;
+    final canEditBody = true;
 
     return Scaffold(
       appBar: MyAppBar(
