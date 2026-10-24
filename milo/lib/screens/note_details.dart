@@ -82,10 +82,7 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
     required bool isLoading,
     required Object? error,
   }) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final hasDescription = task.description.trim().isNotEmpty;
-    final hasBlocks = task.blocks.isNotEmpty;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -133,21 +130,8 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
               )
             else if (error != null)
               _DetailsError(onRetry: _retry)
-            else ...[
-              if (hasDescription)
-                Text(
-                  task.description,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.7,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-
-              if (hasDescription && hasBlocks) const SizedBox(height: 24),
-
-              if (hasBlocks) UIBuilder(blocks: task.blocks),
-            ],
-
+            else if(task.blocks.isNotEmpty)
+              UIBuilder(blocks:task.blocks),
             const SizedBox(height: 40),
 
             Row(

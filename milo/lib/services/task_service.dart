@@ -97,16 +97,6 @@ class TaskService {
         })
         .toList(growable: false);
 
-    return Task(
-      id: task.id,
-      title: task.title,
-      description: task.description,
-      deltaJson: task.deltaJson,
-      folderId: task.folderId,
-      isPinned: task.isPinned,
-      createdOn: task.createdOn,
-      updatedOn: task.updatedOn,
-      blocks: resolvedBlocks,
-    );
+    return task.copyWith(blocks:resolvedBlocks);
   }
 }

@@ -165,7 +165,6 @@ class _NotebookPageState extends State<NotebookPage> {
           text: task.displayTitle,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
         ),
-        // subtitle: task.preview.isEmpty ? null : Text(task.preview),
         onTap: () {
           context.push('/notebook/note/${task.id}', extra: task);
         },

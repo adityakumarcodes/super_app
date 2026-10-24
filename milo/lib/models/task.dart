@@ -1,11 +1,9 @@
+
+
 class Task {
   final int id;
   final String title;
-  final String description;
-  final String deltaJson;
   final String? imageUrl;
-  final int? folderId;
-  final bool isPinned;
   final String createdOn;
   final String updatedOn;
   final List<Map<String, dynamic>> blocks;
@@ -13,43 +11,31 @@ class Task {
   const Task({
     required this.id,
     required this.title,
-    required this.description,
-    required this.deltaJson,
     this.imageUrl,
-    required this.folderId,
-    required this.isPinned,
-    required this.createdOn,
-    required this.updatedOn,
+    this.createdOn = '',
+    this.updatedOn = '',
     this.blocks = const [],
   });
-
-  factory Task.fromDatabase(Map<String, Object?> row) {
-    return Task(
-      id: row['id'] as int,
-      title: (row['title'] as String?) ?? '',
-      description: (row['description'] as String?) ?? '',
-      deltaJson: (row['delta_json'] as String?) ?? '[]',
-      imageUrl: null,
-      folderId: row['folder_id'] as int?,
-      isPinned: (row['is_pinned'] as int? ?? 0) == 1,
-      createdOn: (row['created_at'] as String?) ?? '',
-      updatedOn: (row['updated_at'] as String?) ?? '',
-      blocks: const [],
-    );
-  }
 
   factory Task.fromApi(Map<String, dynamic> json) {
     return Task(
       id: (json['id'] as num).toInt(),
       title: json['title'] as String? ?? '',
-      description: json['description'] as String? ?? '',
-      deltaJson: '[]',
       imageUrl: json['imageUrl'] as String?,
-      folderId: null,
-      isPinned: false,
       createdOn: json['createdAt'] as String? ?? '',
       updatedOn: json['updatedAt'] as String? ?? '',
       blocks: _parseBlocks(json['blocks']),
+    );
+  }
+
+  Task copyWith({List<Map<String, dynamic>>? blocks}) {
+    return Task(
+      id: id,
+      title: title,
+      imageUrl: imageUrl,
+      createdOn: createdOn,
+      updatedOn: updatedOn,
+      blocks: blocks ?? this.blocks,
     );
   }
 
@@ -66,6 +52,4 @@ class Task {
     final trimmedTitle = title.trim();
     return trimmedTitle.isEmpty ? 'Untitled note' : trimmedTitle;
   }
-
-  String get preview => description.replaceAll(RegExp(r'\s+'), ' ').trim();
 }
