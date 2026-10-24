@@ -157,11 +157,7 @@ class _FolderListState extends State<FolderList> {
                                     overflow: TextOverflow.visible,
                                     textAlign: TextAlign.center,
                                   ),
-                                  Text(
-                                    DateFormat.yMMMd().add_jm().format(
-                                      DateTime.parse(data[index]['createdOn']),
-                                    ),
-                                  ),
+                                  Text(_formatDate(data[index['createdOn']])),
                                   const SizedBox(height: 15),
                                   // SelectableText(
                                   //   jsonEncode(
@@ -255,6 +251,12 @@ class _FolderListState extends State<FolderList> {
             _showFeatureComingSoon(context, 'Upload files & photos'),
       ),
     );
+  }
+
+  String _formatDate(Object? value) {
+    final date = DateTime.tryParse(value?.toString() ?? '');
+    if (date == null) return '';
+    return DateFormat.yMMMd().add_jm().format(date.toLocal());
   }
 
   void _showFeatureComingSoon(BuildContext context, String feature) {
