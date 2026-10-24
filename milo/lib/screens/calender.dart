@@ -31,7 +31,7 @@ class _CalendarPageState extends State<CalendarPage> {
   ];
 
   // Indian Holidays for 2026
-  final Map<String, String> indianHolidays2026 = {
+  static const Map<String, String> indianHolidays = {
     "2026-01-26": "Republic Day",
     "2026-03-03": "Holi",
     "2026-08-15": "Independence Day",
@@ -204,7 +204,7 @@ class _CalendarPageState extends State<CalendarPage> {
             now.year == year && now.month == monthIndex && now.day == day;
         String dateKey =
             "$year-${monthIndex.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}";
-        String? holidayName = indianHolidays2026[dateKey];
+        String? holidayName = indianHolidays[dateKey];
 
         // Standardized Cell Content
         Widget cell = Container(
