@@ -67,7 +67,7 @@ class TaskService {
       final response = await _dio
           .patch<Map<String, dynamic>>(
             '${AppConfig.notesUrl}$id',
-            data: {'title': title, if (content != null) 'content': content},
+            data: {'title': title, 'content': content??''},
           )
           .timeout(AppConfig.requestTimeout);
       return Task.fromApi(response.data!);
