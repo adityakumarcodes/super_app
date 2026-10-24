@@ -1,7 +1,7 @@
-import { Module } from "@nestjs/common";
-import { AppController } from "./app.controller";
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
 import { PrismaModule } from './prisma/prisma.module';
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule } from '@nestjs/config';
 import { WotdModule } from './wotd/wotd.module';
 import { AuthModule } from './auth/auth.module';
 import { NotesModule } from './notes/notes.module';
@@ -22,4 +22,4 @@ import { EmailModule } from './email/email.module';
   controllers: [AppController],
   providers: [EmailService],
 })
-export class AppModule { }
+export class AppModule {}

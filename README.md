@@ -58,7 +58,7 @@ pnpm web
 Start mobile:
 
 ```bash
-adb connect <ip> && flutter run
+adb connect <ip> && flutter run --dart-define=API_BASE_URL=http://192.168.1.11:3000/api
 ```
 
 Optional: Build a production APK and install it with one command

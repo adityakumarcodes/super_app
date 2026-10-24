@@ -7,6 +7,6 @@ import { StorageService } from '../storage/storage.service';
 @Module({
   imports: [PrismaModule],
   providers: [NotesService, StorageService],
-  controllers: [NotesController]
+  controllers: [NotesController],
 })
-export class NotesModule { }
+export class NotesModule {}

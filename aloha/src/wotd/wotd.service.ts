@@ -1,23 +1,23 @@
-import { Injectable } from "@nestjs/common";
-import { PrismaService } from "../prisma/prisma.service";
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class WotdService {
-    constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-    async findAll() {
-        return this.prisma.wordOfTheDay.findMany({
-            orderBy: {
-                id: "asc",
-            },
-        });
-    }
+  async findAll() {
+    return this.prisma.wordOfTheDay.findMany({
+      orderBy: {
+        id: 'asc',
+      },
+    });
+  }
 
-    async findById(id: number) {
-        return this.prisma.wordOfTheDay.findUnique({
-            where: {
-                id,
-            },
-        });
-    }
+  async findById(id: number) {
+    return this.prisma.wordOfTheDay.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
 }

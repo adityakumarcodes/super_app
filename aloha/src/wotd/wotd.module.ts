@@ -4,6 +4,6 @@ import { WotdController } from './wotd.controller';
 
 @Module({
   providers: [WotdService],
-  controllers: [WotdController]
+  controllers: [WotdController],
 })
-export class WotdModule { }
+export class WotdModule {}
