@@ -3,16 +3,37 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:milo/features/auth/presentation/bloc/auth_cubit.dart';
 
+
 class AuthLoadingScreen extends StatelessWidget {
   const AuthLoadingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: CircularProgressIndicator.adaptive()),
+    final error = context.select((AuthCubit cubit) => cubit.state.error);
+
+    return Scaffold(
+      body: Center(
+        child: error == null
+            ? const CircularProgressIndicator.adaptive()
+            : Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(error, textAlign: TextAlign.center),
+                    const SizedBox(height: 12),
+                    FilledButton(
+                      onPressed: context.read<AuthCubit>().restoreSession,
+                      child: const Text('Try again'),
+                    ),
+                  ],
+                ),
+              ),
+      ),
     );
   }
 }
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

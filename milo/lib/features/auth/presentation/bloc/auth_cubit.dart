@@ -45,6 +45,7 @@ class AuthCubit extends Cubit<AuthState> {
   late final StreamSubscription<User?> _authSubscription;
 
   Future<void> restoreSession() async {
+    if (state.error != null) emit(const AuthState());
     try {
       final result = await _client.getSession().timeout(
         AppConfig.requestTimeout,
@@ -57,9 +58,10 @@ class AuthCubit extends Cubit<AuthState> {
         ),
       );
     } catch (_) {
+      //stay in restoring state so user can retry instead of being signedout due to unreachable server
       emit(
         const AuthState(
-          isRestoring: false,
+          // isRestoring: false,
           error: 'Could not connect to the server. Check your connection.',
         ),
       );
