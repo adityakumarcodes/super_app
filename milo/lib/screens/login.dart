@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:milo/features/auth/presentation/bloc/auth_cubit.dart';
 
-
 class AuthLoadingScreen extends StatelessWidget {
   const AuthLoadingScreen({super.key});
 
@@ -33,7 +32,6 @@ class AuthLoadingScreen extends StatelessWidget {
     );
   }
 }
-
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

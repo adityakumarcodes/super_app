@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_better_auth/flutter_better_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -37,6 +38,14 @@ Future<void> main() async {
 
   final preferences = await PreferencesService.load();
   final authCubit = AuthCubit(FlutterBetterAuth.client);
+  FlutterBetterAuth.dioClient.interceptors.add(
+    InterceptorsWrapper(
+      onError: (error, handler) {
+        if (error.response?.statusCode == 401) authCubit.restoreSession();
+        handler.next(error);
+      },
+    ),
+  );
   final router = _createRouter(authCubit);
   unawaited(authCubit.restoreSession());
 
@@ -124,7 +133,7 @@ GoRouter _createRouter(AuthCubit authCubit) {
           final task = state.extra;
           if (task is! Task) return const _MissingNotePage();
 
-          return NoteDetailsPage(noteId: id,initialTask: task,);
+          return NoteDetailsPage(noteId: id, initialTask: task);
         },
       ),
       GoRoute(

@@ -423,7 +423,8 @@ class SettingsPage extends StatelessWidget {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(
-                                      authCubit.state.error ?? 'Could not sign out.',
+                                      authCubit.state.error ??
+                                          'Could not sign out.',
                                     ),
                                   ),
                                 );

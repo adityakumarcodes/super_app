@@ -97,6 +97,6 @@ class TaskService {
         })
         .toList(growable: false);
 
-    return task.copyWith(blocks:resolvedBlocks);
+    return task.copyWith(blocks: resolvedBlocks);
   }
 }

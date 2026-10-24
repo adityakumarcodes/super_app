@@ -104,6 +104,16 @@ class AuthCubit extends Cubit<AuthState> {
 
   void clearError() => emit(state.copyWith(clearError: true));
 
+  void sessionExpired() {
+    if (!state.isAuthenticated) return;
+    emit(
+      const AuthState(
+        isRestoring: false,
+        error: 'Your session expired. Please sign in again.',
+      ),
+    );
+  }
+
   Future<bool> _runRequest(Future<String?> Function() request) async {
     emit(state.copyWith(isLoading: true, clearError: true));
     try {

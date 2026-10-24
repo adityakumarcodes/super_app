@@ -130,8 +130,8 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
               )
             else if (error != null)
               _DetailsError(onRetry: _retry)
-            else if(task.blocks.isNotEmpty)
-              UIBuilder(blocks:task.blocks),
+            else if (task.blocks.isNotEmpty)
+              UIBuilder(blocks: task.blocks),
             const SizedBox(height: 40),
 
             Row(
