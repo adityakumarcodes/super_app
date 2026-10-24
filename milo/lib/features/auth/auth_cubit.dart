@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter_better_auth/plugins/email_otp/email_otp_extension.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_better_auth/flutter_better_auth.dart';
-import 'package:milo/services/app_config.dart';
+import 'package:milo/core/app_config.dart';
 
 class AuthState {
   const AuthState({
@@ -36,35 +36,47 @@ class AuthState {
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit(this._client) : super(const AuthState()) {
-    _authSubscription = _client.onAuthChange.listen(
-      (user) => emit(AuthState(user: user, isRestoring: false)),
-    );
+    _authSubscription = _client.onAuthChange.listen(_onAuthChange);
   }
+
+  static const _offlineMessage =
+      'Could not connect to the server. Check your connection.';
 
   final BetterAuthClient _client;
   late final StreamSubscription<User?> _authSubscription;
 
+  /// The auth package emits `null` on sign-out and on any HTTP 401 from the
+  /// API. Losing a live session shows a message; otherwise the current state
+  /// (e.g. a retry error while restoring) is kept.
+  void _onAuthChange(User? user) {
+    if (user != null) {
+      emit(AuthState(user: user, isRestoring: false));
+    } else if (state.isAuthenticated) {
+      emit(
+        const AuthState(
+          isRestoring: false,
+          error: 'Your session expired. Please sign in again.',
+        ),
+      );
+    }
+  }
+
+  /// Checks the stored session. Any failure (the package returns network
+  /// errors as `result.error`, our timeout throws) keeps the restoring state
+  /// so the user can retry instead of being sent to login.
   Future<void> restoreSession() async {
     if (state.error != null) emit(const AuthState());
     try {
       final result = await _client.getSession().timeout(
         AppConfig.requestTimeout,
       );
-      emit(
-        AuthState(
-          user: result.data?.user,
-          isRestoring: false,
-          error: result.error?.message,
-        ),
-      );
+      if (result.error != null) {
+        emit(const AuthState(error: _offlineMessage));
+        return;
+      }
+      emit(AuthState(user: result.data?.user, isRestoring: false));
     } catch (_) {
-      //stay in restoring state so user can retry instead of being signedout due to unreachable server
-      emit(
-        const AuthState(
-          // isRestoring: false,
-          error: 'Could not connect to the server. Check your connection.',
-        ),
-      );
+      emit(const AuthState(error: _offlineMessage));
     }
   }
 
@@ -103,16 +115,6 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   void clearError() => emit(state.copyWith(clearError: true));
-
-  void sessionExpired() {
-    if (!state.isAuthenticated) return;
-    emit(
-      const AuthState(
-        isRestoring: false,
-        error: 'Your session expired. Please sign in again.',
-      ),
-    );
-  }
 
   Future<bool> _runRequest(Future<String?> Function() request) async {
     emit(state.copyWith(isLoading: true, clearError: true));

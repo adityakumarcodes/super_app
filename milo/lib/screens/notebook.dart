@@ -2,8 +2,8 @@ import 'package:milo/atoms/scrolling_text.dart';
 import 'package:milo/atoms/speed_fab.dart';
 import 'package:milo/screens/home.dart';
 import 'package:milo/atoms/icon_tile.dart';
-import 'package:milo/models/task.dart';
-import 'package:milo/features/notes/presentation/bloc/task_cubit.dart';
+import 'package:milo/core/task.dart';
+import 'package:milo/features/notes/task_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 // ignore: unused_import

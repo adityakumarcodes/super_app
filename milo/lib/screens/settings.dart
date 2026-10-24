@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:milo/features/auth/presentation/bloc/auth_cubit.dart';
-import 'package:milo/features/settings/presentation/bloc/navigation_cubit.dart';
-import 'package:milo/features/settings/presentation/bloc/theme_cubit.dart';
+import 'package:milo/features/auth/auth_cubit.dart';
+import 'package:milo/features/settings/navigation_cubit.dart';
+import 'package:milo/features/settings/theme_cubit.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});

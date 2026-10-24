@@ -1,7 +1,15 @@
+/// A note as returned by the unified notes API. The backend already resolves
+/// image URLs and provides [content], so the app only renders.
 class Task {
   final int id;
   final String title;
-  final String? imageUrl;
+
+  /// Signed, display-ready cover image URL.
+  final String? coverUrl;
+
+  /// The note as editable text (see aloha/src/notes/notes.format.ts), or null
+  /// when it has content that cannot be edited as text.
+  final String? content;
   final String createdOn;
   final String updatedOn;
   final List<Map<String, dynamic>> blocks;
@@ -9,7 +17,8 @@ class Task {
   const Task({
     required this.id,
     required this.title,
-    this.imageUrl,
+    this.coverUrl,
+    this.content,
     this.createdOn = '',
     this.updatedOn = '',
     this.blocks = const [],
@@ -19,21 +28,11 @@ class Task {
     return Task(
       id: (json['id'] as num).toInt(),
       title: json['title'] as String? ?? '',
-      imageUrl: json['imageUrl'] as String?,
+      coverUrl: json['coverUrl'] as String?,
+      content: json['content'] as String?,
       createdOn: json['createdAt'] as String? ?? '',
       updatedOn: json['updatedAt'] as String? ?? '',
       blocks: _parseBlocks(json['blocks']),
-    );
-  }
-
-  Task copyWith({List<Map<String, dynamic>>? blocks}) {
-    return Task(
-      id: id,
-      title: title,
-      imageUrl: imageUrl,
-      createdOn: createdOn,
-      updatedOn: updatedOn,
-      blocks: blocks ?? this.blocks,
     );
   }
 

@@ -19,7 +19,7 @@ export class EmailService {
     const { error } = await this.resend.emails.send({
       from: 'Milo <onboarding@resend.dev>',
       to: email,
-      subject: otp + 'is your Milo verification code.',
+      subject: otp + ' is your Milo verification code.',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 480px; margin: auto;">
           <p>Welcome to Milo</p>

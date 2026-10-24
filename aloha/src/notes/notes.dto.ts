@@ -1,7 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
 import type { Prisma } from '../generated/prisma/client';
+import { contentToBlocks } from './notes.format';
 
-const noteFields = ['title', 'imageUrl', 'blocks'] as const;
+const noteFields = ['title', 'imageUrl', 'blocks', 'content'] as const;
 
 export type NoteBlockInput = {
   blockKey?: string | null;
@@ -70,6 +71,11 @@ function parseBlocks(value: unknown): NoteBlockInput[] {
   });
 }
 
+/**
+ * Validates a create/update body. Content can be sent either as Editor.js
+ * `blocks` (web editor) or as `content` text (see notes.format.ts); text is
+ * converted to blocks here so the rest of the service only sees blocks.
+ */
 function parseNoteInput(body: unknown, requireChange: boolean): NoteInput {
   const input = asObject(body);
   if (!input) {
@@ -80,10 +86,21 @@ function parseNoteInput(body: unknown, requireChange: boolean): NoteInput {
     throw new BadRequestException('Provide at least one note field to update.');
   }
 
+  if (input.content !== undefined && typeof input.content !== 'string') {
+    throw new BadRequestException('content must be a string.');
+  }
+
+  let blocks: NoteBlockInput[] | undefined;
+  if ('blocks' in input) {
+    blocks = parseBlocks(input.blocks);
+  } else if (typeof input.content === 'string') {
+    blocks = parseBlocks(contentToBlocks(input.content));
+  }
+
   return {
     title: nullableString(input.title, 'title'),
     imageUrl: nullableString(input.imageUrl, 'imageUrl'),
-    blocks: 'blocks' in input ? parseBlocks(input.blocks) : undefined,
+    blocks,
   };
 }
 

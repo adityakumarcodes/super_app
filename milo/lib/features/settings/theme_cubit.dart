@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:milo/services/preferences_service.dart';
+import 'package:milo/core/preferences_service.dart';
 
 class ThemeState {
   const ThemeState(this.color, this.mode);

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:milo/features/settings/presentation/bloc/navigation_cubit.dart';
+import 'package:milo/features/settings/navigation_cubit.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});

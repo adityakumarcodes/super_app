@@ -5,10 +5,11 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:milo/atoms/blocks/image.dart';
 import 'package:milo/atoms/uibuilder.dart';
-import 'package:milo/models/task.dart';
+import 'package:milo/core/task.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:milo/features/notes/presentation/bloc/task_cubit.dart';
+import 'package:milo/features/notes/task_cubit.dart';
 
 class NoteDetailsPage extends StatefulWidget {
   final int noteId;
@@ -120,7 +121,7 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
 
             const SizedBox(height: 28),
 
-            if (task.imageUrl != null) ImageWidget(imageUrl: task.imageUrl!),
+            if(task.coverUrl!=null) ImageWidget(imageUrl: task.coverUrl!),
 
             const SizedBox(height: 24),
 

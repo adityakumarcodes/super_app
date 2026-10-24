@@ -1,16 +1,17 @@
-import 'dart:convert';
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:shimmer/shimmer.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:milo/models/note_image_resolver.dart';
-import 'package:milo/services/storage_service.dart';
+import 'package:milo/atoms/blocks/callout.dart';
+import 'package:milo/atoms/blocks/checklist.dart';
+import 'package:milo/atoms/blocks/delimiter.dart';
+import 'package:milo/atoms/blocks/editorjs_utils.dart';
+import 'package:milo/atoms/blocks/header.dart';
+import 'package:milo/atoms/blocks/image.dart';
+import 'package:milo/atoms/blocks/list.dart';
+import 'package:milo/atoms/blocks/paragraph.dart';
+import 'package:milo/atoms/blocks/unsupported.dart';
 
-part 'uibuilder/image_widget.dart';
-part 'uibuilder/block_widgets.dart';
+export 'package:milo/atoms/blocks/image.dart';
 
+/// Renders a list of Editor.js blocks by picking one widget per block type.
 class UIBuilder extends StatelessWidget {
   final List<dynamic>? blocks;
   final Map<String, dynamic>? json;
@@ -19,51 +20,40 @@ class UIBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final resolvedBlocks = blocks ?? _asList(json?['blocks']);
+    final resolvedBlocks = blocks ?? asList(json?['blocks']);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (final block in resolvedBlocks) _buildBlock(context, block),
-        ],
+        children: [for (final block in resolvedBlocks) _buildBlock(block)],
       ),
     );
   }
 
-  Widget _buildBlock(BuildContext context, dynamic block) {
-    final blockData = _asMap(block);
+  Widget _buildBlock(dynamic block) {
+    final blockData = asMap(block);
     final type = blockData['type']?.toString().toLowerCase() ?? '';
-    final data = _asMap(blockData['data']);
+    final data = asMap(blockData['data']);
 
     switch (type) {
       case 'header':
         return HeadingWidget(
-          text: _plainText(data['text']),
+          text: plainText(data['text']),
           level: data['level'] is num ? (data['level'] as num).toInt() : 1,
         );
       case 'paragraph':
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          child: SelectableText(
-            _plainText(data['text']),
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.7),
-          ),
-        );
+        return ParagraphWidget(text: plainText(data['text']));
       case 'delimiter':
         return const DelimiterWidget();
       case 'image':
-        final file = _asMap(data['file']);
-        final storagePath = extractStoragePath(file);
-        final url =
-            storagePath ??
-            file['url']?.toString() ??
-            file['path']?.toString() ??
-            '';
-        return ImageWidget(imageUrl: url, caption: _plainText(data['caption']));
+        final file = asMap(data['file']);
+        return ImageWidget(
+          imageUrl: file['url']?.toString() ?? '',
+          caption: plainText(data['caption']),
+        );
       case 'list':
-        final items = _asList(data['items']);
+        final items = asList(data['items']);
         if (data['style'] == 'checklist') {
           return ChecklistWidget(items: items);
         }
@@ -72,62 +62,11 @@ class UIBuilder extends StatelessWidget {
           ordered: data['style'] == 'ordered',
         );
       case 'checklist':
-        return ChecklistWidget(items: _asList(data['items']));
+        return ChecklistWidget(items: asList(data['items']));
       case 'callout':
-        return CalloutWidget(text: _plainText(data['text']));
+        return CalloutWidget(text: plainText(data['text']));
       default:
-        return _UnsupportedBlock(type: type, data: data);
+        return UnsupportedBlockWidget(type: type, data: data);
     }
   }
-}
-
-class _UnsupportedBlock extends StatelessWidget {
-  final String type;
-  final Map<String, dynamic> data;
-
-  const _UnsupportedBlock({required this.type, required this.data});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card.outlined(
-      child: ExpansionTile(
-        title: const Text('Unsupported block'),
-        subtitle: Text(type.isEmpty ? 'Unknown type' : type),
-        childrenPadding: const EdgeInsets.all(12),
-        expandedCrossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Type: ${type.isEmpty ? 'Unknown' : type}'),
-          const SizedBox(height: 8),
-          const Text('Data', style: TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 4),
-          SelectableText(const JsonEncoder.withIndent('  ').convert(data)),
-        ],
-      ),
-    );
-  }
-}
-
-Map<String, dynamic> _asMap(dynamic value) {
-  if (value is! Map) return const {};
-  return Map<String, dynamic>.from(value);
-}
-
-List<dynamic> _asList(dynamic value) => value is List ? value : const [];
-
-String _plainText(dynamic value) {
-  if (value == null) return '';
-
-  return value
-      .toString()
-      .replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n')
-      .replaceAll(RegExp(r'</p\s*>', caseSensitive: false), '\n')
-      .replaceAll(RegExp(r'<[^>]*>'), '')
-      .replaceAll('&nbsp;', ' ')
-      .replaceAll('&lt;', '<')
-      .replaceAll('&gt;', '>')
-      .replaceAll('&quot;', '"')
-      .replaceAll('&#39;', "'")
-      .replaceAll('&apos;', "'")
-      .replaceAll('&amp;', '&')
-      .trim();
 }

@@ -19,7 +19,6 @@ abstract final class AppConfig {
 
   static String get authBaseUrl => '$apiBaseUrl/auth';
   static String get notesUrl => '$apiBaseUrl/notes/';
-  static String get storageUrl => '$apiBaseUrl/storage/';
 
   static String _withoutTrailingSlash(String value) =>
       value.endsWith('/') ? value.substring(0, value.length - 1) : value;

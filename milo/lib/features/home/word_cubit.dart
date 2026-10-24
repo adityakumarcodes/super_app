@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:milo/services/app_config.dart';
+import 'package:milo/core/app_config.dart';
 
 class WordState {
   const WordState({this.words = const [], this.isLoading = true, this.error});

@@ -7,7 +7,7 @@ import 'package:milo/atoms/my_app_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:milo/features/chat/presentation/bloc/chat_cubit.dart';
+import 'package:milo/features/chat/chat_cubit.dart';
 
 class ChatPage extends StatelessWidget {
   const ChatPage({super.key});

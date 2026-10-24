@@ -2,26 +2,25 @@
 
 import 'dart:async';
 
-import 'package:dio/dio.dart';
 import 'package:flutter_better_auth/flutter_better_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:milo/atoms/folder_list.dart';
-import 'package:milo/core/routing/cubit_router_refresh.dart';
-import 'package:milo/features/auth/presentation/bloc/auth_cubit.dart';
-import 'package:milo/features/chat/presentation/bloc/chat_cubit.dart';
-import 'package:milo/features/home/presentation/bloc/word_cubit.dart';
-import 'package:milo/features/notes/presentation/bloc/task_cubit.dart';
-import 'package:milo/features/settings/presentation/bloc/navigation_cubit.dart';
-import 'package:milo/features/settings/presentation/bloc/theme_cubit.dart';
-import 'package:milo/screens/error404.dart';
-import 'package:milo/services/app_config.dart';
-import 'package:milo/models/task.dart';
+import 'package:milo/core/cubit_router_refresh.dart';
+import 'package:milo/features/auth/auth_cubit.dart';
+import 'package:milo/features/chat/chat_cubit.dart';
+import 'package:milo/features/home/word_cubit.dart';
+import 'package:milo/features/notes/task_cubit.dart';
+import 'package:milo/features/settings/navigation_cubit.dart';
+import 'package:milo/features/settings/theme_cubit.dart';
+import 'package:milo/core/app_config.dart';
+import 'package:milo/core/task.dart';
 import 'package:milo/screens/add_task.dart';
 import 'package:milo/screens/calender.dart';
 import 'package:milo/screens/chat.dart';
 import 'package:milo/screens/chat_details.dart';
+import 'package:milo/screens/error404.dart';
 import 'package:milo/screens/home.dart';
 import 'package:milo/screens/login.dart';
 import 'package:milo/screens/note_details.dart';
@@ -29,7 +28,7 @@ import 'package:milo/screens/notebook.dart';
 import 'package:milo/screens/settings.dart';
 import 'package:milo/screens/shop.dart';
 import 'package:milo/screens/social.dart';
-import 'package:milo/services/preferences_service.dart';
+import 'package:milo/core/preferences_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 Future<void> main() async {
@@ -38,14 +37,6 @@ Future<void> main() async {
 
   final preferences = await PreferencesService.load();
   final authCubit = AuthCubit(FlutterBetterAuth.client);
-  FlutterBetterAuth.dioClient.interceptors.add(
-    InterceptorsWrapper(
-      onError: (error, handler) {
-        if (error.response?.statusCode == 401) authCubit.restoreSession();
-        handler.next(error);
-      },
-    ),
-  );
   final router = _createRouter(authCubit);
   unawaited(authCubit.restoreSession());
 
@@ -89,7 +80,7 @@ GoRouter _createRouter(AuthCubit authCubit) {
     routes: [
       GoRoute(
         path: '/auth-loading',
-        builder: (context, state) => const AuthLoadingScreen(),
+        builder: (context, state) =>  AuthLoadingScreen(),
       ),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       ShellRoute(
@@ -131,10 +122,12 @@ GoRouter _createRouter(AuthCubit authCubit) {
         builder: (context, state) {
           final id = int.tryParse(state.pathParameters['id'] ?? '');
           if (id == null) return const _MissingNotePage();
-          final task = state.extra;
-          if (task is! Task) return const _MissingNotePage();
 
-          return NoteDetailsPage(noteId: id, initialTask: task);
+          final task = state.extra;
+          return NoteDetailsPage(
+            noteId: id,
+            initialTask: task is Task ? task : null,
+          );
         },
       ),
       GoRoute(
@@ -143,28 +136,20 @@ GoRouter _createRouter(AuthCubit authCubit) {
       ),
       GoRoute(
         path: '/notebook/note/:id/edit',
-        builder: (context, state) {
-          final id = int.tryParse(state.pathParameters['id'] ?? '');
-          if (id == null) return const _MissingNotePage();
-          final note = state.extra;
-          return AddTaskScreen(noteId: id, note: note is Task ? note : null);
-        },
+        redirect: (context, state) => state.extra is Task
+            ? null
+            : '/notebook/note/${state.pathParameters['id']}',
+        builder: (context, state) => AddTaskScreen(note: state.extra as Task),
       ),
-
       GoRoute(
         path: '/chat/details',
         builder: (context, state) => const ChatDetails(),
       ),
-      // GoRoute(
-      //   path: '/calculator',
-      //   builder: (context, state) => const CalculatorPage(),
-      // ),
       GoRoute(
         path: '/calendar',
         builder: (context, state) => const CalendarPage(),
       ),
       GoRoute(path: '/settings', builder: (context, state) => SettingsPage()),
-      // GoRoute(path: '/schedule', builder: (context, state) => CalendarPage()),
     ],
   );
 }
@@ -212,7 +197,7 @@ class _MissingNotePage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                'This note link is not valid',
+                'This note link is not valid.',
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
@@ -227,34 +212,3 @@ class _MissingNotePage extends StatelessWidget {
     );
   }
 }
-
-// class CirclePainter extends CustomPainter {
-//   @override
-//   void paint(Canvas canvas, Size size) {
-//     final paint =
-//         Paint()
-//           ..color = Colors.redAccent
-//           ..strokeWidth = 2
-//           ..style = PaintingStyle.stroke
-//           ..strokeCap = StrokeCap.round;
-
-//     var path = Path();
-//     path.moveTo(0, size.height / 2);
-//     path.lineTo(size.width, size.height / 2);
-//     canvas.drawPath(path, paint);
-
-//     Offset s = Offset(size.width / 2, 0);
-//     Offset e = Offset(size.width / 2, size.height);
-//     canvas.drawLine(s, e, paint);
-
-//     Offset center = Offset(size.width / 2, size.height / 2);
-//     canvas.drawCircle(center, 100, paint);
-
-//   }
-
-//   @override
-//   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-//     // TODO: implement shouldRepaint
-//     throw UnimplementedError();
-//   }
-// }

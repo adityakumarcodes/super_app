@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:milo/models/task.dart';
-import 'package:milo/services/task_service.dart';
+import 'package:milo/core/task.dart';
+import 'package:milo/core/task_service.dart';
 
 class _CachedTask {
   const _CachedTask(this.task, this.expiresAt);
@@ -74,9 +74,9 @@ class TaskCubit extends Cubit<TaskState> {
 
   Future<Task> createTask({
     required String title,
-    required List<Map<String, dynamic>> blocks,
+    required String content,
   }) async {
-    final task = await _taskService.createTask(title: title, blocks: blocks);
+    final task = await _taskService.createTask(title: title, content: content);
     emit(state.copyWith(tasks: [task, ...state.tasks]));
     return task;
   }
@@ -84,12 +84,12 @@ class TaskCubit extends Cubit<TaskState> {
   Future<Task> updateTask(
     int id, {
     required String title,
-    List<Map<String, dynamic>>? blocks,
+    String? content,
   }) async {
     final task = await _taskService.updateTask(
       id,
       title: title,
-      blocks: blocks,
+      content: content,
     );
     _details.remove(id);
     emit(state.copyWith(tasks: [task, ..._tasksWithout(id)]));
