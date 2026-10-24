@@ -34,21 +34,14 @@ class _FolderListState extends State<FolderList> {
     const CategoryItem(icon: LucideIcons.folder, text: 'TODOS', route: '/code'),
   ];
 
-  // Future<List<Map<String, dynamic>>> fetchTasks() async {
-  //   final response = await Supabase.instance.client
-  //       .from('notes')
-  //       .select()
-  //       .eq('status_flag', 'active')
-  //       .like('category', widget.folderName.toLowerCase())
-  //       .order('id');
-  //   return List<Map<String, dynamic>>.from(response);
+  late final Future<List<Map<String, dynamic>>> _taskFuture = fetchTasks();
+  @override
+  void dispose() {
+    _folderController.dispose();
+    super.dispose();
+  }
 
-  // }
   Future<List<Map<String, dynamic>>> fetchTasks() async {
-    // Mock delay to simulate network latency
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    // Placeholder data matching expected List<Map<String, dynamic>> return type
     return [
       {
         'id': 1,
@@ -80,7 +73,7 @@ class _FolderListState extends State<FolderList> {
         shape: Border(bottom: BorderSide(color: Colors.black, width: 2)),
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: fetchTasks(),
+        future: _taskFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator.adaptive());
@@ -157,7 +150,7 @@ class _FolderListState extends State<FolderList> {
                                     overflow: TextOverflow.visible,
                                     textAlign: TextAlign.center,
                                   ),
-                                  Text(_formatDate(data[index['createdOn']])),
+                                  Text(_formatDate(data[index]['createdOn'])),
                                   const SizedBox(height: 15),
                                   // SelectableText(
                                   //   jsonEncode(

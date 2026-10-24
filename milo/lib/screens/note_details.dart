@@ -1,6 +1,7 @@
 // ignore_for_file: unused_import
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:milo/atoms/uibuilder.dart';
@@ -63,6 +64,7 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
     );
   }
 
+
   Widget _buildPage(
     BuildContext context,
     Task task, {
@@ -75,123 +77,112 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
     final hasBlocks = task.blocks.isNotEmpty;
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar.large(
-            pinned: true,
-            title: Text(
-              task.displayTitle,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            // centerTitle: true,
-            actions: [
-              IconButton(
-                tooltip: 'Search',
-                icon: const Icon(Icons.search),
-                onPressed: () {},
-              ),
-              IconButton(
-                tooltip: 'More options',
-                icon: const Icon(Icons.more_vert),
-                onPressed: () {},
-              ),
-              const SizedBox(width: 4),
-            ],
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            tooltip: 'Search',
+            icon: const Icon(Icons.search),
+            onPressed: () {},
           ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(24, 28, 24, 40),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                // if (createdDate != null)
-                //   Row(
-                //     children: [
-                //       Icon(
-                //         LucideIcons.clock,
-                //         size: 15,
-                //         color: colorScheme.onSurfaceVariant,
-                //       ),
-                //       const SizedBox(width: 8),
-                //       Text(
-                //         DateFormat.yMMMd().add_jm().format(createdDate),
-                //         style: theme.textTheme.bodySmall?.copyWith(
-                //           color: colorScheme.onSurfaceVariant,
-                //         ),
-                //       ),
-                //     ],
-                //   ),
+          IconButton(
+            tooltip: 'More options',
+            icon: const Icon(Icons.more_vert),
+            onPressed: () {},
+          ),
+          const SizedBox(width: 4),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Large multiline heading
+            Text(
+              task.displayTitle,
+              style: GoogleFonts.bodoniModa(
+                fontSize: 45,
+                height: 1.15,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+              softWrap: true,
+            ),
 
-                const SizedBox(height: 28),
-                if (task.imageUrl != null)
-                  ImageWidget(imageUrl: task.imageUrl!),
+            const SizedBox(height: 28),
+
+            if (task.imageUrl != null)
+              ImageWidget(imageUrl: task.imageUrl!),
+
+            const SizedBox(height: 24),
+
+            if (isLoading)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 24),
+                child: Center(
+                  child: CircularProgressIndicator.adaptive(),
+                ),
+              )
+            else if (error != null)
+              _DetailsError(onRetry: _retry)
+            else ...[
+              if (hasDescription)
+                Text(
+                  task.description,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    height: 1.7,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+
+              if (hasDescription && hasBlocks)
                 const SizedBox(height: 24),
 
-                if (isLoading)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 24),
-                    child: Center(child: CircularProgressIndicator.adaptive()),
-                  )
-                else if (error != null)
-                  _DetailsError(onRetry: _retry)
-                else ...[
-                  if (hasDescription)
-                    Text(
-                      task.description,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        height: 1.7,
-                        color: colorScheme.onSurface,
+              if (hasBlocks) UIBuilder(blocks: task.blocks),
+            ],
+
+            const SizedBox(height: 40),
+
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      // TODO: Navigate to the existing note editor.
+                    },
+                    icon: const Icon(LucideIcons.pen),
+                    label: const Text('Edit'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: colorScheme.primary,
+                      side: BorderSide(
+                        color: colorScheme.outline,
+                        width: 1.5,
                       ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
-                  if (hasDescription && hasBlocks) const SizedBox(height: 24),
-
-                  if (hasBlocks) UIBuilder(blocks: task.blocks),
-                ],
-
-                const SizedBox(height: 40),
-
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          // TODO: Navigate to the existing note editor.
-                        },
-                        icon: const Icon(LucideIcons.pen),
-                        label: const Text('Edit'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: colorScheme.primary,
-                          side: BorderSide(
-                            color: colorScheme.outline,
-                            width: 1.5,
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(width: 12),
-
-                    Expanded(
-                      child: FilledButton.icon(
-                        onPressed: () => _confirmDelete(context),
-                        icon: const Icon(LucideIcons.trash2),
-                        label: const Text('Delete'),
-                        style: FilledButton.styleFrom(
-                          backgroundColor: colorScheme.primary,
-                          foregroundColor: colorScheme.onPrimary,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ]),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: () => _confirmDelete(context),
+                    icon: const Icon(LucideIcons.trash2),
+                    label: const Text('Delete'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: colorScheme.primary,
+                      foregroundColor: colorScheme.onPrimary,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+
 
   Future<void> _confirmDelete(BuildContext context) async {
     final theme = Theme.of(context);
