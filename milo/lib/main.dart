@@ -138,8 +138,16 @@ GoRouter _createRouter(AuthCubit authCubit) {
       ),
       GoRoute(
         path: '/notebook/addTask',
-        builder: (context, state) => AddTaskScreen(),
+        builder: (context, state) => const AddTaskScreen(),
       ),
+      GoRoute(
+        path: '/notebook/note/:id/edit',
+        redirect: (context, state) => state.extra is Task
+            ? null
+            : '/notebook/note/${state.pathParameters['id']}',
+        builder: (context, state) => const AddTaskScreen(),
+      ),
+
       GoRoute(
         path: '/chat/details',
         builder: (context, state) => ChatDetails(

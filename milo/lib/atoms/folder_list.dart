@@ -1,3 +1,4 @@
+import 'package:milo/atoms/my_app_bar.dart';
 import 'package:milo/atoms/speed_fab.dart';
 import 'package:milo/screens/home.dart';
 import 'package:milo/atoms/uibuilder.dart';
@@ -20,20 +21,6 @@ class FolderList extends StatefulWidget {
 
 class _FolderListState extends State<FolderList> {
   final TextEditingController _folderController = TextEditingController();
-  final List<CategoryItem> folderList = [
-    const CategoryItem(
-      icon: LucideIcons.folder,
-      text: 'My Notes',
-      route: '/home',
-    ),
-    const CategoryItem(
-      icon: LucideIcons.folder,
-      text: 'My Skills',
-      route: '/play',
-    ),
-    const CategoryItem(icon: LucideIcons.folder, text: 'TODOS', route: '/code'),
-  ];
-
   late final Future<List<Map<String, dynamic>>> _taskFuture = fetchTasks();
   @override
   void dispose() {
@@ -61,17 +48,7 @@ class _FolderListState extends State<FolderList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          widget.folderName.replaceAll('-', ' '),
-          style: const TextStyle(fontSize: 20),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-        centerTitle: true,
-        elevation: 2,
-        shape: Border(bottom: BorderSide(color: Colors.black, width: 2)),
-      ),
+      appBar: MyAppBar(title: widget.folderName.replaceAll('-', '')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _taskFuture,
         builder: (context, snapshot) {

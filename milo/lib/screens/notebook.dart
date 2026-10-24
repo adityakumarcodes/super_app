@@ -21,19 +21,16 @@ class NotebookPage extends StatefulWidget {
 class _NotebookPageState extends State<NotebookPage> {
   final TextEditingController _folderController = TextEditingController();
   final List<CategoryItem> folders = [
-    const CategoryItem(
-      icon: LucideIcons.folder,
-      text: 'My Notes',
-      route: '/home',
-    ),
-    const CategoryItem(
-      icon: LucideIcons.folder,
-      text: 'My Skills',
-      route: '/play',
-    ),
-    const CategoryItem(icon: LucideIcons.folder, text: 'TODOS', route: '/code'),
+    _folder("My Notes"),
+    _folder("My Skills"),
+    _folder("TODOS"),
   ];
 
+  static CategoryItem _folder(String name) => CategoryItem(
+    icon: LucideIcons.folder,
+    text: name,
+    route: '/notebook/folder/${Uri.encodeComponent(name.replaceAll('', '-'))}',
+  );
   @override
   void initState() {
     super.initState();
@@ -105,9 +102,7 @@ class _NotebookPageState extends State<NotebookPage> {
                   children: folders.map((item) {
                     return IconTile(
                       item: item,
-                      onTap: () => context.push(
-                        '/notebook/folder/${item.text.replaceAll(' ', '-')}',
-                      ),
+                      onTap: () => context.push(item.route),
                     );
                   }).toList(),
                 ),
@@ -207,15 +202,7 @@ class _NotebookPageState extends State<NotebookPage> {
               onPressed: () {
                 final folderName = _folderController.text.trim();
                 if (folderName.isNotEmpty) {
-                  setState(() {
-                    folders.add(
-                      CategoryItem(
-                        icon: LucideIcons.folder,
-                        text: folderName,
-                        route: '/home',
-                      ),
-                    );
-                  });
+                  setState(() => folders.add(_folder(folderName)));
                 }
                 Navigator.of(context).pop();
               },

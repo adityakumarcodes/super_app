@@ -1,6 +1,7 @@
 // ignore_for_file: unused_import
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -138,9 +139,9 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () {
-                      // TODO: Navigate to the existing note editor.
-                    },
+                    onPressed: isLoading || error != null
+                        ? null
+                        : () => _edit(task),
                     icon: const Icon(LucideIcons.pen),
                     label: const Text('Edit'),
                     style: OutlinedButton.styleFrom(
@@ -198,10 +199,32 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
       },
     );
 
-    if (shouldDelete == true && context.mounted) {
-      // TODO: Dispatch the delete use case after the write API is available.
-      Navigator.pop(context);
+    if (shouldDelete != true || !context.mounted) return;
+    try {
+      await context.read<TaskCubit>().deleteTask(widget.noteId);
+      if (!context.mounted) return;
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go('/notebook');
+      }
+    } catch (error) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.toString().replaceFirst('Exception: ', '')),
+        ),
+      );
     }
+  }
+
+  Future<void> _edit(Task task) async {
+    final updated = await context.push<Task>(
+      '/notebook/note/${task.id}/edit',
+      extra: task,
+    );
+    if (updated == null || !mounted) return;
+    setState(() => _details = _fetchDetails(forceRefresh: true));
   }
 }
 

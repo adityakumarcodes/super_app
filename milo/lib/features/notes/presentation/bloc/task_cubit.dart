@@ -72,6 +72,39 @@ class TaskCubit extends Cubit<TaskState> {
     return task;
   }
 
+  Future<Task> createTask({
+    required String title,
+    required List<Map<String, dynamic>> blocks,
+  }) async {
+    final task = await _taskService.createTask(title: title, blocks: blocks);
+    emit(state.copyWith(tasks: [task, ...state.tasks]));
+    return task;
+  }
+
+  Future<Task> updateTask(
+    int id, {
+    required String title,
+    List<Map<String, dynamic>>? blocks,
+  }) async {
+    final task = await _taskService.updateTask(
+      id,
+      title: title,
+      blocks: blocks,
+    );
+    _details.remove(id);
+    emit(state.copyWith(tasks: [task, ..._tasksWithout(id)]));
+    return task;
+  }
+
+  Future<void> deleteTask(int id) async {
+    await _taskService.deleteTask(id);
+    _details.remove(id);
+    emit(state.copyWith(tasks: _tasksWithout(id)));
+  }
+
+  List<Task> _tasksWithout(int id) =>
+      state.tasks.where((task) => task.id != id).toList(growable: false);
+
   void clear() {
     _requestGeneration++;
     _details.clear();

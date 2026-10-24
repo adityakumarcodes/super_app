@@ -1,18 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:milo/atoms/my_app_bar.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:milo/features/notes/presentation/bloc/task_cubit.dart';
+import 'package:milo/models/note_body.dart';
+import 'package:milo/models/task.dart';
 
 class AddTaskScreen extends StatefulWidget {
-  const AddTaskScreen({super.key});
+  const AddTaskScreen({super.key, this.note});
+
+  /// The note to edit, or null to create a new one.
+  final Task? note;
 
   @override
   State<AddTaskScreen> createState() => _AddTaskScreenState();
 }
 
 class _AddTaskScreenState extends State<AddTaskScreen> {
-  final TextEditingController _task = TextEditingController();
+  late final TextEditingController _task = TextEditingController(
+    text: widget.note?.title,
+  );
   final FocusNode _taskFocus = FocusNode();
-  final TextEditingController _description = TextEditingController();
+  // Null when the note has rich content that this editor cannot change.
+  late final String? _initialBody = widget.note == null
+      ? ''
+      : NoteBody.toText(widget.note!.blocks);
+  late final TextEditingController _description = TextEditingController(
+    text: _initialBody,
+  );
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -30,16 +47,47 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     super.dispose();
   }
 
+  Future<void> _save() async {
+    final title = _task.text.trim();
+    final body = _description.text;
+    if (title.isEmpty && body.trim().isEmpty) {
+      _showMessage('Add a title or some text first.');
+      return;
+    }
+
+    final tasks = context.read<TaskCubit>();
+    final blocks = _initialBody == null ? null : NoteBody.toBlocks(body);
+    final note = widget.note;
+    setState(() => _isSaving = true);
+    try {
+      final saved = note == null
+          ? await tasks.createTask(title: title, blocks: blocks ?? const [])
+          : await tasks.updateTask(note.id, title: title, blocks: blocks);
+      if (mounted) context.pop(saved);
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _isSaving = false);
+      _showMessage(error.toString().replaceFirst('Exception: ', ''));
+    }
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
+
   @override
   Widget build(BuildContext context) {
+    final canEditBody = _initialBody != null;
+
     return Scaffold(
       appBar: MyAppBar(
-        title: 'Add Task',
+        title: widget.note == null ? 'Add Task' : 'Edit Task',
         actions: [
           IconButton(
             tooltip: 'Save',
             icon: const Icon(LucideIcons.save),
-            onPressed: () {},
+            onPressed: _isSaving ? null : _save,
           ),
         ],
       ),
@@ -72,10 +120,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     SizedBox(
                       height: 150,
                       child: TextFormField(
-                        decoration: const InputDecoration(
+                        enabled: canEditBody,
+                        decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Enter description here...',
-                          hintStyle: TextStyle(
+                          hintText: canEditBody ? 'Enter description here...' : 'This note has rich content. Edit it on the web.',
+                          hintStyle: const TextStyle(
                             fontSize: 20,
                             color: Colors.grey,
                           ),

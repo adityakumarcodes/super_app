@@ -54,6 +54,52 @@ class TaskService {
     }
   }
 
+  Future<Task> createTask({
+    required String title,
+    required List<Map<String, dynamic>> blocks,
+  }) async {
+    try {
+      final response = await FlutterBetterAuth.dioClient
+          .post<Map<String, dynamic>>(
+            AppConfig.notesUrl,
+            data: {'title': title, 'blocks': blocks},
+          )
+          .timeout(AppConfig.requestTimeout);
+      return Task.fromApi(response.data!);
+    } catch (_) {
+      throw Exception('Could not save the note. Try again.');
+    }
+  }
+
+  /// Leave [blocks] null to keep the note's existing content.
+  Future<Task> updateTask(
+    int id, {
+    required String title,
+    List<Map<String, dynamic>>? blocks,
+  }) async {
+    try {
+      final response = await FlutterBetterAuth.dioClient
+          .patch<Map<String, dynamic>>(
+            '${AppConfig.notesUrl}$id',
+            data: {'title': title, if (blocks != null) 'blocks': blocks},
+          )
+          .timeout(AppConfig.requestTimeout);
+      return Task.fromApi(response.data!);
+    } catch (_) {
+      throw Exception('Could not save the note. Try again.');
+    }
+  }
+
+  Future<void> deleteTask(int id) async {
+    try {
+      await FlutterBetterAuth.dioClient
+          .delete<void>('${AppConfig.notesUrl}$id')
+          .timeout(AppConfig.requestTimeout);
+    } catch (_) {
+      throw Exception('Could not delete the note. Try again.');
+    }
+  }
+
   Future<Task> _resolveTaskImages(Task task) async {
     if (task.blocks.isEmpty) return task;
 
