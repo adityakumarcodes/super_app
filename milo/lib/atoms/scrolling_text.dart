@@ -64,8 +64,8 @@ class _ScrollingTextState extends State<ScrollingText> {
 
   Future<void> _startScrollingLoop(int loopId) async {
     await Future<void>.delayed(widget.initialDelay);
-
-    while (mounted && loopId == _loopId) {
+    var loop = 0;
+    while (mounted && loopId == _loopId && loop < 3) {
       if (!_scrollController.hasClients) {
         await Future<void>.delayed(const Duration(milliseconds: 200));
         continue;
@@ -109,7 +109,7 @@ class _ScrollingTextState extends State<ScrollingText> {
         );
 
         if (!_isCurrentLoop(loopId)) return;
-
+        loop++;
         await Future<void>.delayed(widget.startDelay);
       } on TickerCanceled {
         // Animation was cancelled; the next loop owns the controller.

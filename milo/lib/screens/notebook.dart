@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer/shimmer.dart';
 
 class NotebookPage extends StatefulWidget {
   const NotebookPage({super.key});
@@ -55,12 +56,7 @@ class _NotebookPageState extends State<NotebookPage> {
 
           // Once notes are shown, refreshing keeps them on screen.
           if (isLoading && tasks.isEmpty) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(20),
-                child: CircularProgressIndicator.adaptive(),
-              ),
-            );
+            return const _NotesSkeleton();
           }
 
           if (error != null && tasks.isEmpty) {
@@ -185,5 +181,40 @@ class _NotebookPageState extends State<NotebookPage> {
     final name = await showNewFolderDialog(context);
     if (name == null || !mounted) return;
     setState(() => folders.add(_folder(name)));
+  }
+}
+
+/// Placeholder tiles shown while the first list of notes loads.
+class _NotesSkeleton extends StatelessWidget {
+  const _NotesSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Semantics(
+      label: 'Loading notes',
+      child: Shimmer.fromColors(
+        baseColor: colorScheme.surfaceContainerHighest,
+        highlightColor: colorScheme.surfaceContainerLow,
+        child: ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          itemCount: 6,
+          itemBuilder: (_, _) => const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+            child: SizedBox(
+              height: 68,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
