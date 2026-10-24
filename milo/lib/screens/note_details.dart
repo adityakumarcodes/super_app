@@ -10,9 +10,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:milo/features/notes/presentation/bloc/task_cubit.dart';
 
 class NoteDetailsPage extends StatefulWidget {
-  final Task task;
+  final int noteId;
+  final Task? initialTask;
 
-  const NoteDetailsPage({super.key, required this.task});
+  const NoteDetailsPage({super.key, required this.noteId, this.initialTask});
 
   @override
   State<NoteDetailsPage> createState() => _NoteDetailsPageState();
@@ -30,14 +31,14 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
   @override
   void didUpdateWidget(covariant NoteDetailsPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.task.id != widget.task.id) {
+    if (oldWidget.noteId != widget.noteId) {
       _details = _fetchDetails();
     }
   }
 
   Future<Task> _fetchDetails({bool forceRefresh = false}) {
     return context.read<TaskCubit>().fetchTask(
-      widget.task.id,
+      widget.noteId,
       forceRefresh: forceRefresh,
     );
   }
@@ -53,17 +54,27 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
     return FutureBuilder<Task>(
       future: _details,
       builder: (context, snapshot) {
-        final task = snapshot.data ?? widget.task;
+        final task = snapshot.data ?? widget.initialTask;
+        final isLoading = snapshot.connectionState == ConnectionState.waiting;
+        if (task == null) {
+          return Scaffold(
+            appBar: AppBar(),
+            body: Center(
+              child: isLoading
+                  ? const CircularProgressIndicator.adaptive()
+                  : _DetailsError(onRetry: _retry),
+            ),
+          );
+        }
         return _buildPage(
           context,
           task,
-          isLoading: snapshot.connectionState == ConnectionState.waiting,
+          isLoading: isLoading,
           error: snapshot.error,
         );
       },
     );
   }
-
 
   Widget _buildPage(
     BuildContext context,
@@ -111,17 +122,14 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
 
             const SizedBox(height: 28),
 
-            if (task.imageUrl != null)
-              ImageWidget(imageUrl: task.imageUrl!),
+            if (task.imageUrl != null) ImageWidget(imageUrl: task.imageUrl!),
 
             const SizedBox(height: 24),
 
             if (isLoading)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 24),
-                child: Center(
-                  child: CircularProgressIndicator.adaptive(),
-                ),
+                child: Center(child: CircularProgressIndicator.adaptive()),
               )
             else if (error != null)
               _DetailsError(onRetry: _retry)
@@ -135,8 +143,7 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
                   ),
                 ),
 
-              if (hasDescription && hasBlocks)
-                const SizedBox(height: 24),
+              if (hasDescription && hasBlocks) const SizedBox(height: 24),
 
               if (hasBlocks) UIBuilder(blocks: task.blocks),
             ],
@@ -154,10 +161,7 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
                     label: const Text('Edit'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: colorScheme.primary,
-                      side: BorderSide(
-                        color: colorScheme.outline,
-                        width: 1.5,
-                      ),
+                      side: BorderSide(color: colorScheme.outline, width: 1.5),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                   ),
@@ -182,7 +186,6 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
       ),
     );
   }
-
 
   Future<void> _confirmDelete(BuildContext context) async {
     final theme = Theme.of(context);

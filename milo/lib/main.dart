@@ -51,10 +51,12 @@ Future<void> main() async {
           BlocProvider(create: (_) => WordCubit()),
           BlocProvider(create: (_) => TaskCubit()),
         ],
-        child: BlocListener<AuthCubit,AuthState>(
-          listenWhen:(previous,current)=>previous.isAuthenticated && !current.isAuthenticated,
-          listener:(context,_) =>context.read<TaskCubit>().clear(),
-          child: MyApp(router: router)),
+        child: BlocListener<AuthCubit, AuthState>(
+          listenWhen: (previous, current) =>
+              previous.isAuthenticated && !current.isAuthenticated,
+          listener: (context, _) => context.read<TaskCubit>().clear(),
+          child: MyApp(router: router),
+        ),
       ),
     ),
   );
@@ -117,10 +119,12 @@ GoRouter _createRouter(AuthCubit authCubit) {
       GoRoute(
         path: '/notebook/note/:id',
         builder: (context, state) {
+          final id = int.tryParse(state.pathParameters['id'] ?? '');
+          if (id == null) return const _MissingNotePage();
           final task = state.extra;
           if (task is! Task) return const _MissingNotePage();
 
-          return NoteDetailsPage(task: task);
+          return NoteDetailsPage(noteId: id,initialTask: task,);
         },
       ),
       GoRoute(
@@ -196,7 +200,7 @@ class _MissingNotePage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                'Open this note from the notes list so its details can load.',
+                'This note link is not valid',
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
