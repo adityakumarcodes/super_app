@@ -414,18 +414,16 @@ class SettingsPage extends StatelessWidget {
                         onPressed: auth.isLoading
                             ? null
                             : () async {
+                                final authCubit = buttonContext
+                                    .read<AuthCubit>();
                                 Navigator.pop(sheetContext);
-
-                                final signedOut = await buttonContext
-                                    .read<AuthCubit>()
-                                    .signOut();
-                                if (signedOut) return;
+                                if (await authCubit.signOut()) return;
 
                                 if (!context.mounted) return;
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(
-                                      auth.error ?? 'Could not sign out.',
+                                      authCubit.state.error ?? 'Could not sign out.',
                                     ),
                                   ),
                                 );
