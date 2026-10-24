@@ -199,7 +199,6 @@ class _LoginScreenState extends State<LoginScreen> {
       ],
       decoration: const InputDecoration(
         labelText: 'Verification code',
-        hintText: '000000',
         border: OutlineInputBorder(),
         counterText: '',
       ),

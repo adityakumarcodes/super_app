@@ -1,4 +1,3 @@
-import 'package:milo/atoms/my_app_bar.dart';
 import 'package:milo/atoms/speed_fab.dart';
 import 'package:milo/atoms/uibuilder.dart';
 import 'package:flutter/material.dart';
@@ -17,15 +16,12 @@ class FolderList extends StatefulWidget {
 }
 
 class _FolderListState extends State<FolderList> {
-  final TextEditingController _folderController = TextEditingController();
-  late final Future<List<Map<String, dynamic>>> _taskFuture = fetchTasks();
-  @override
-  void dispose() {
-    _folderController.dispose();
-    super.dispose();
-  }
+  late final Future<List<Map<String, dynamic>>> _tasksFuture = fetchTasks();
 
+  // Mock data until folders exist in the backend.
   Future<List<Map<String, dynamic>>> fetchTasks() async {
+    await Future.delayed(const Duration(milliseconds: 500));
+
     return [
       {
         'id': 1,
@@ -45,9 +41,19 @@ class _FolderListState extends State<FolderList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(title: widget.folderName.replaceAll('-', '')),
+      appBar: AppBar(
+        title: Text(
+          widget.folderName.replaceAll('-', ' '),
+          style: const TextStyle(fontSize: 20),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        centerTitle: true,
+        elevation: 2,
+        shape: Border(bottom: BorderSide(color: Colors.black, width: 2)),
+      ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: _taskFuture,
+        future: _tasksFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator.adaptive());
@@ -76,22 +82,13 @@ class _FolderListState extends State<FolderList> {
                 child: ListTile(
                   title: Text(
                     data[index]['title'],
-                    style: TextStyle(
-                      fontSize: 18,
-                      // decoration:
-                      //     data[index]['status_flag'] == 'active'
-                      //         ? TextDecoration.lineThrough
-                      //         : null,
-                      // decorationThickness: 2,
-                    ),
+                    style: const TextStyle(fontSize: 18),
                   ),
                   leading: const Icon(LucideIcons.asterisk),
                   shape: RoundedRectangleBorder(
                     side: BorderSide(width: 2),
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  // shape: Border.all(color: Colors.black, width: 2),
-                  tileColor: Colors.white,
                   contentPadding: const EdgeInsets.symmetric(
                     vertical: 5,
                     horizontal: 15,
@@ -126,14 +123,6 @@ class _FolderListState extends State<FolderList> {
                                   ),
                                   Text(_formatDate(data[index]['createdOn'])),
                                   const SizedBox(height: 15),
-                                  // SelectableText(
-                                  //   jsonEncode(
-                                  //     data[index]['content'],
-                                  //   ),
-                                  //   style: const TextStyle(
-                                  //     fontSize: 25,
-                                  //   ),
-                                  // ),
                                   UIBuilder(json: data[index]['content']),
                                   const SizedBox(height: 40),
                                   Wrap(
@@ -213,7 +202,7 @@ class _FolderListState extends State<FolderList> {
         onNewNote: () => context.push('/notebook/addTask'),
         onTranscribeAudio: () =>
             _showFeatureComingSoon(context, 'Transcribe Audio'),
-        onNewFolder: () => _dialogBuilder(context),
+        onNewFolder: () => _showFeatureComingSoon(context, 'New folder'),
         onUpload: () =>
             _showFeatureComingSoon(context, 'Upload files & photos'),
       ),
@@ -230,51 +219,5 @@ class _FolderListState extends State<FolderList> {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text('$feature will be available soon.')));
-  }
-
-  Future<void> _dialogBuilder(BuildContext context) {
-    _folderController.clear();
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('New folder'),
-          content: TextField(
-            controller: _folderController,
-            decoration: const InputDecoration(
-              hintText: 'Enter folder name',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(12)),
-              ),
-            ),
-            autofocus: true,
-          ),
-          actions: <Widget>[
-            TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            FilledButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Create'),
-              onPressed: () {
-                final folderName = _folderController.text.trim();
-                if (folderName.isNotEmpty) {
-                  // TODO: implement new folder creation logic here
-                }
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 }

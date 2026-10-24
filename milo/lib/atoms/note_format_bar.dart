@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 /// Formatting shortcuts for the note editor. They write the text syntax that
 /// the backend turns into Editor.js blocks (aloha/src/notes/notes.format.ts),
@@ -56,23 +57,23 @@ class NoteFormatBar extends StatelessWidget {
     return Wrap(
       spacing: 4,
       children: [
-        _button(Icons.title, 'Heading', (v) => togglePrefix(v, '# ')),
+        _button(LucideIcons.heading1, 'Heading', (v) => togglePrefix(v, '# ')),
         _button(
-          Icons.format_list_bulleted,
+          LucideIcons.list,
           'Bulleted list',
           (v) => togglePrefix(v, '- '),
         ),
         _button(
-          Icons.format_list_numbered,
+          LucideIcons.listOrdered,
           'Numbered list',
           (v) => togglePrefix(v, '1. '),
         ),
         _button(
-          Icons.checklist,
+          LucideIcons.listCheck,
           'Checklist',
           (v) => togglePrefix(v, '- [ ] '),
         ),
-        _button(Icons.horizontal_rule, 'Divider', insertDivider),
+        _button(LucideIcons.separatorHorizontal, 'Divider', insertDivider),
       ],
     );
   }

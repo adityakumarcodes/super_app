@@ -80,7 +80,7 @@ GoRouter _createRouter(AuthCubit authCubit) {
     routes: [
       GoRoute(
         path: '/auth-loading',
-        builder: (context, state) =>  AuthLoadingScreen(),
+        builder: (context, state) => AuthLoadingScreen(),
       ),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       ShellRoute(

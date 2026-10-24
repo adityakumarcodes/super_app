@@ -2,12 +2,11 @@ import 'package:milo/atoms/scrolling_text.dart';
 import 'package:milo/atoms/speed_fab.dart';
 import 'package:milo/screens/home.dart';
 import 'package:milo/atoms/icon_tile.dart';
+import 'package:milo/atoms/new_folder_dialog.dart';
 import 'package:milo/core/task.dart';
 import 'package:milo/features/notes/task_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-// ignore: unused_import
-import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -19,30 +18,24 @@ class NotebookPage extends StatefulWidget {
 }
 
 class _NotebookPageState extends State<NotebookPage> {
-  final TextEditingController _folderController = TextEditingController();
   final List<CategoryItem> folders = [
-    _folder("My Notes"),
-    _folder("My Skills"),
-    _folder("TODOS"),
+    _folder('My Notes'),
+    _folder('My Skills'),
+    _folder('TODOS'),
   ];
 
   static CategoryItem _folder(String name) => CategoryItem(
     icon: LucideIcons.folder,
     text: name,
-    route: '/notebook/folder/${Uri.encodeComponent(name.replaceAll('', '-'))}',
+    route: '/notebook/folder/${Uri.encodeComponent(name.replaceAll(' ', '-'))}',
   );
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<TaskCubit>().fetchTasks();
     });
-  }
-
-  @override
-  void dispose() {
-    _folderController.dispose();
-    super.dispose();
   }
 
   @override
@@ -60,7 +53,8 @@ class _NotebookPageState extends State<NotebookPage> {
           final isLoading = taskState.isLoading;
           final error = taskState.error;
 
-          if (isLoading) {
+          // Once notes are shown, refreshing keeps them on screen.
+          if (isLoading && tasks.isEmpty) {
             return const Center(
               child: Padding(
                 padding: EdgeInsets.all(20),
@@ -69,7 +63,7 @@ class _NotebookPageState extends State<NotebookPage> {
             );
           }
 
-          if (error != null) {
+          if (error != null && tasks.isEmpty) {
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
@@ -89,42 +83,60 @@ class _NotebookPageState extends State<NotebookPage> {
             );
           }
 
-          return CustomScrollView(
-            slivers: [
-              const SliverToBoxAdapter(child: SizedBox(height: 12)),
-              SliverPadding(
-                padding: const EdgeInsets.all(8.0),
-                sliver: SliverGrid.count(
-                  crossAxisCount: 2,
-                  childAspectRatio: 3,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  children: folders.map((item) {
-                    return IconTile(
-                      item: item,
-                      onTap: () => context.push(item.route),
-                    );
-                  }).toList(),
-                ),
-              ),
-              if (tasks.isEmpty)
-                const SliverToBoxAdapter(
-                  child: Center(
+          return RefreshIndicator(
+            onRefresh: () => context.read<TaskCubit>().refreshTasks(),
+            child: CustomScrollView(
+              // Lets pull-to-refresh work when the list is short.
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                if (error != null)
+                  SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Text('No tasks found'),
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                      child: Text(
+                        error,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
                     ),
                   ),
-                )
-              else
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) => _buildTaskItem(context, tasks[index]),
-                    childCount: tasks.length,
+                const SliverToBoxAdapter(child: SizedBox(height: 12)),
+                SliverPadding(
+                  padding: const EdgeInsets.all(8.0),
+                  sliver: SliverGrid.count(
+                    crossAxisCount: 2,
+                    childAspectRatio: 3,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    children: folders.map((item) {
+                      return IconTile(
+                        item: item,
+                        onTap: () => context.push(item.route),
+                      );
+                    }).toList(),
                   ),
                 ),
-              const SliverToBoxAdapter(child: SizedBox(height: 30)),
-            ],
+                if (tasks.isEmpty)
+                  const SliverToBoxAdapter(
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Text('No notes yet. Tap + to write one.'),
+                      ),
+                    ),
+                  )
+                else
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) => _buildTaskItem(context, tasks[index]),
+                      childCount: tasks.length,
+                    ),
+                  ),
+                const SliverToBoxAdapter(child: SizedBox(height: 30)),
+              ],
+            ),
           );
         },
       ),
@@ -132,7 +144,7 @@ class _NotebookPageState extends State<NotebookPage> {
         onNewNote: () => context.push('/notebook/addTask'),
         onTranscribeAudio: () =>
             _showFeatureComingSoon(context, 'Transcribe Audio'),
-        onNewFolder: () => _dialogBuilder(context),
+        onNewFolder: _createFolder,
         onUpload: () =>
             _showFeatureComingSoon(context, 'Upload files & photos'),
       ),
@@ -149,11 +161,13 @@ class _NotebookPageState extends State<NotebookPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
       child: ListTile(
-        tileColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: Colors.black, width: 2),
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
         ),
         leading: const Icon(LucideIcons.asterisk),
         title: ScrollingText(
@@ -167,49 +181,9 @@ class _NotebookPageState extends State<NotebookPage> {
     );
   }
 
-  Future<void> _dialogBuilder(BuildContext context) {
-    _folderController.clear();
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('New folder'),
-          content: TextField(
-            controller: _folderController,
-            decoration: const InputDecoration(
-              hintText: 'Enter folder name',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(12)),
-              ),
-            ),
-            autofocus: true,
-          ),
-          actions: <Widget>[
-            TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            FilledButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Create'),
-              onPressed: () {
-                final folderName = _folderController.text.trim();
-                if (folderName.isNotEmpty) {
-                  setState(() => folders.add(_folder(folderName)));
-                }
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+  Future<void> _createFolder() async {
+    final name = await showNewFolderDialog(context);
+    if (name == null || !mounted) return;
+    setState(() => folders.add(_folder(name)));
   }
 }

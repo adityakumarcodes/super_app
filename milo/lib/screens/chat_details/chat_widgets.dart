@@ -1,9 +1,14 @@
 part of '../chat_details.dart';
 
+/// Message composer modelled on WhatsApp / Google Messages: a rounded field
+/// that grows up to six lines with attach and camera icons inside, and one
+/// round action button that is a mic while empty and Send once there is text.
 class ChatInputBar extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
   final VoidCallback onAttach;
+  final VoidCallback onCamera;
+  final VoidCallback onVoice;
   final bool canSend;
 
   const ChatInputBar({
@@ -11,54 +16,74 @@ class ChatInputBar extends StatelessWidget {
     required this.controller,
     required this.onSend,
     required this.onAttach,
+    required this.onCamera,
+    required this.onVoice,
     required this.canSend,
   });
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return SafeArea(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(8, 6, 8, 8),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Expanded(
-              child: Container(
+              child: DecoratedBox(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: Colors.grey.shade300),
+                  color: colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(24),
                 ),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    IconButton(
-                      icon: const Icon(LucideIcons.paperclip),
-                      onPressed: onAttach,
-                    ),
                     Expanded(
                       child: TextField(
                         controller: controller,
                         keyboardType: TextInputType.multiline,
                         textCapitalization: TextCapitalization.sentences,
                         minLines: 1,
-                        maxLines: 5,
+                        maxLines: 6,
                         decoration: const InputDecoration(
-                          hintText: 'Write a message...',
-                          hintStyle: TextStyle(color: Colors.black54),
+                          hintText: 'Message',
                           border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 10,
-                          ),
+                          contentPadding: EdgeInsets.fromLTRB(18, 12, 4, 12),
                         ),
                       ),
                     ),
+                    IconButton(
+                      tooltip: 'Attach',
+                      icon: const Icon(LucideIcons.paperclip),
+                      onPressed: onAttach,
+                    ),
+                    if (!canSend)
+                      IconButton(
+                        tooltip: 'Camera',
+                        icon: const Icon(Icons.photo_camera_outlined),
+                        onPressed: onCamera,
+                      ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 6),
             IconButton.filled(
-              onPressed: canSend ? () {} : null,
-              icon: const Icon(Icons.send),
+              tooltip: canSend ? 'Send' : 'Voice message',
+              iconSize: 22,
+              style: IconButton.styleFrom(minimumSize: const Size(48, 48)),
+              onPressed: canSend ? onSend : onVoice,
+              icon: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 150),
+                transitionBuilder: (child, animation) =>
+                    ScaleTransition(scale: animation, child: child),
+                child: Icon(
+                  canSend ? Icons.send : Icons.mic,
+                  key: ValueKey(canSend),
+                ),
+              ),
             ),
           ],
         ),

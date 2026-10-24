@@ -1,11 +1,10 @@
 // ignore_for_file: unused_import
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:milo/atoms/blocks/image.dart';
 import 'package:milo/atoms/uibuilder.dart';
 import 'package:milo/core/task.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -56,15 +55,15 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
     return FutureBuilder<Task>(
       future: _details,
       builder: (context, snapshot) {
-        final task = snapshot.data ?? widget.initialTask;
         final isLoading = snapshot.connectionState == ConnectionState.waiting;
+        final task = snapshot.data ?? widget.initialTask;
         if (task == null) {
           return Scaffold(
             appBar: AppBar(),
             body: Center(
               child: isLoading
                   ? const CircularProgressIndicator.adaptive()
-                  : _DetailsError(onRetry: _retry),
+                  : _DetailsError(error: snapshot.error, onRetry: _retry),
             ),
           );
         }
@@ -87,88 +86,110 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            tooltip: 'Search',
-            icon: const Icon(Icons.search),
-            onPressed: () {},
-          ),
-          IconButton(
-            tooltip: 'More options',
-            icon: const Icon(Icons.more_vert),
-            onPressed: () {},
-          ),
-          const SizedBox(width: 4),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Large multiline heading
-            Text(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar.large(
+            pinned: true,
+            title: Text(
               task.displayTitle,
-              style: GoogleFonts.bodoniModa(
-                fontSize: 45,
-                height: 1.15,
-                fontWeight: FontWeight.w500,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            // centerTitle: true,
+            actions: [
+              IconButton(
+                tooltip: 'Search',
+                icon: const Icon(Icons.search),
+                onPressed: () {},
               ),
-              textAlign: TextAlign.center,
-              softWrap: true,
-            ),
+              IconButton(
+                tooltip: 'More options',
+                icon: const Icon(Icons.more_vert),
+                onPressed: () {},
+              ),
+              const SizedBox(width: 4),
+            ],
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(24, 28, 24, 40),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                // if (createdDate != null)
+                //   Row(
+                //     children: [
+                //       Icon(
+                //         LucideIcons.clock,
+                //         size: 15,
+                //         color: colorScheme.onSurfaceVariant,
+                //       ),
+                //       const SizedBox(width: 8),
+                //       Text(
+                //         DateFormat.yMMMd().add_jm().format(createdDate),
+                //         style: theme.textTheme.bodySmall?.copyWith(
+                //           color: colorScheme.onSurfaceVariant,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
 
-            const SizedBox(height: 28),
+                const SizedBox(height: 28),
+                if (task.coverUrl != null)
+                  ImageWidget(imageUrl: task.coverUrl!),
+                const SizedBox(height: 24),
 
-            if(task.coverUrl!=null) ImageWidget(imageUrl: task.coverUrl!),
+                if (isLoading)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 24),
+                    child: Center(child: CircularProgressIndicator.adaptive()),
+                  )
+                else if (error != null)
+                  _DetailsError(error: error, onRetry: _retry)
+                else if (task.blocks.isNotEmpty)
+                  UIBuilder(blocks: task.blocks),
 
-            const SizedBox(height: 24),
+                const SizedBox(height: 40),
 
-            if (isLoading)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 24),
-                child: Center(child: CircularProgressIndicator.adaptive()),
-              )
-            else if (error != null)
-              _DetailsError(onRetry: _retry)
-            else if (task.blocks.isNotEmpty)
-              UIBuilder(blocks: task.blocks),
-            const SizedBox(height: 40),
-
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: isLoading || error != null
-                        ? null
-                        : () => _edit(task),
-                    icon: const Icon(LucideIcons.pen),
-                    label: const Text('Edit'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: colorScheme.primary,
-                      side: BorderSide(color: colorScheme.outline, width: 1.5),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        // Editing needs the full note, not the list preview.
+                        onPressed: isLoading || error != null
+                            ? null
+                            : () => _edit(task),
+                        icon: const Icon(LucideIcons.pen),
+                        label: const Text('Edit'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: colorScheme.primary,
+                          side: BorderSide(
+                            color: colorScheme.outline,
+                            width: 1.5,
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: FilledButton.icon(
-                    onPressed: () => _confirmDelete(context),
-                    icon: const Icon(LucideIcons.trash2),
-                    label: const Text('Delete'),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: colorScheme.primary,
-                      foregroundColor: colorScheme.onPrimary,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+
+                    const SizedBox(width: 12),
+
+                    Expanded(
+                      child: FilledButton.icon(
+                        onPressed: () => _confirmDelete(context),
+                        icon: const Icon(LucideIcons.trash2),
+                        label: const Text('Delete'),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: colorScheme.primary,
+                          foregroundColor: colorScheme.onPrimary,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ]),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -225,18 +246,23 @@ class _NoteDetailsPageState extends State<NoteDetailsPage> {
       extra: task,
     );
     if (updated == null || !mounted) return;
-    setState(() => _details = _fetchDetails(forceRefresh: true));
+    // The save response is the full note, so show it without refetching.
+    setState(() => _details = SynchronousFuture(updated));
   }
 }
 
 class _DetailsError extends StatelessWidget {
+  final Object? error;
   final VoidCallback onRetry;
 
-  const _DetailsError({required this.onRetry});
+  const _DetailsError({required this.error, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final message =
+        error?.toString().replaceFirst('Exception: ', '') ??
+        'Could not load note details.';
 
     return Container(
       width: double.infinity,
@@ -248,7 +274,8 @@ class _DetailsError extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            'Could not load note details.',
+            message,
+            textAlign: TextAlign.center,
             style: TextStyle(color: colorScheme.onErrorContainer),
           ),
           const SizedBox(height: 12),

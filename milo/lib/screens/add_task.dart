@@ -72,9 +72,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -118,16 +117,14 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       textCapitalization: TextCapitalization.sentences,
                     ),
                     const SizedBox(height: 30.0),
-                    if(canEditBody)NoteFormatBar(controller: _description),
+                    if (canEditBody) NoteFormatBar(controller: _description),
                     SizedBox(
                       height: 150,
                       child: TextFormField(
                         enabled: canEditBody,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: canEditBody
-                              ? 'Enter description here...'
-                              : 'This note has rich content. Edit it on the web.',
+                          hintText: canEditBody ? 'Enter description here...' : 'This note has rich content. Edit it on the web.',
                           hintStyle: const TextStyle(
                             fontSize: 20,
                             color: Colors.grey,

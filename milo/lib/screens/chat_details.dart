@@ -55,6 +55,12 @@ class _ChatDetailsState extends State<ChatDetails> {
     });
   }
 
+  void _showComingSoon(String feature) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('$feature will be available soon.')));
+  }
+
   void _showAttachmentSheet() {
     showModalBottomSheet(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
@@ -70,14 +76,14 @@ class _ChatDetailsState extends State<ChatDetails> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   CircularIconButton(
-                    label: 'Document',
-                    icon: LucideIcons.file,
+                    label: 'Files',
+                    icon: LucideIcons.folder,
                     color: Colors.purple,
                     onPress: () {},
                   ),
                   CircularIconButton(
                     label: 'Camera',
-                    icon: Icons.photo_camera,
+                    icon: LucideIcons.camera,
                     color: Colors.red,
                     onPress: () {},
                   ),
@@ -144,7 +150,6 @@ class _ChatDetailsState extends State<ChatDetails> {
   Widget build(BuildContext context) {
     final selectedIndex = context.watch<ChatCubit>().state.selectedIndex;
     final selectedUser = chatUsers[selectedIndex];
-    final isOnline = (selectedIndex % 3 != 0);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -176,7 +181,7 @@ class _ChatDetailsState extends State<ChatDetails> {
                     ),
                   ),
                 ),
-                if (isOnline)
+                if (selectedIndex % 3 == 0)
                   Positioned(
                     right: -2,
                     bottom: -2,
@@ -274,6 +279,8 @@ class _ChatDetailsState extends State<ChatDetails> {
             controller: _messageController,
             onSend: _handleSend,
             onAttach: _showAttachmentSheet,
+            onCamera: () => _showComingSoon('Camera'),
+            onVoice: () => _showComingSoon('Voice messages'),
             canSend: _canSend,
           ),
         ],
@@ -301,7 +308,7 @@ class _ChatDetailsState extends State<ChatDetails> {
                 onTap: () {},
               ),
               ListTile(
-                leading: const Icon(Icons.block),
+                leading: const Icon(LucideIcons.ban),
                 title: const Text('Block'),
                 onTap: () {},
               ),
@@ -311,7 +318,7 @@ class _ChatDetailsState extends State<ChatDetails> {
                 onTap: () {},
               ),
               ListTile(
-                leading: const Icon(Icons.thumb_down),
+                leading: const Icon(LucideIcons.thumbsDown),
                 title: const Text('Report'),
                 onTap: () {},
               ),

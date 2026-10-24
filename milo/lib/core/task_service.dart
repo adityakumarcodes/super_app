@@ -17,8 +17,9 @@ class TaskService {
           .whereType<Map>()
           .map((note) => Task.fromApi(Map<String, dynamic>.from(note)))
           .toList(growable: false);
-    } catch (_) {
-      throw Exception(
+    } catch (error) {
+      throw _error(
+        error,
         'Could not load notes. Check your connection and try again.',
       );
     }
@@ -30,8 +31,9 @@ class TaskService {
           .get<Map<String, dynamic>>('${AppConfig.notesUrl}$id')
           .timeout(AppConfig.requestTimeout);
       return Task.fromApi(response.data!);
-    } catch (_) {
-      throw Exception(
+    } catch (error) {
+      throw _error(
+        error,
         'Could not load note details. Check your connection and try again.',
       );
     }
@@ -50,8 +52,8 @@ class TaskService {
           )
           .timeout(AppConfig.requestTimeout);
       return Task.fromApi(response.data!);
-    } catch (_) {
-      throw Exception('Could not save the note. Try again.');
+    } catch (error) {
+      throw _error(error, 'Could not save the note. Try again.');
     }
   }
 
@@ -69,8 +71,8 @@ class TaskService {
           )
           .timeout(AppConfig.requestTimeout);
       return Task.fromApi(response.data!);
-    } catch (_) {
-      throw Exception('Could not save the note. Try again.');
+    } catch (error) {
+      throw _error(error, 'Could not save the note. Try again.');
     }
   }
 
@@ -79,8 +81,21 @@ class TaskService {
       await _dio
           .delete<void>('${AppConfig.notesUrl}$id')
           .timeout(AppConfig.requestTimeout);
-    } catch (_) {
-      throw Exception('Could not delete the note. Try again.');
+    } catch (error) {
+      throw _error(error, 'Could not delete the note. Try again.');
     }
+  }
+
+  /// Uses the API's message for request errors (e.g. "Note not found."), so
+  /// the user sees why; network and server failures get [fallback].
+  static Exception _error(Object error, String fallback) {
+    final response = error is DioException ? error.response : null;
+    final status = response?.statusCode ?? 0;
+    final data = response?.data;
+    final message = data is Map ? data['message'] : null;
+    if (status >= 400 && status < 500 && status != 401 && message is String) {
+      return Exception(message);
+    }
+    return Exception(fallback);
   }
 }
