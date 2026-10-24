@@ -6,7 +6,6 @@ import { WotdModule } from './wotd/wotd.module';
 import { AuthModule } from './auth/auth.module';
 import { NotesModule } from './notes/notes.module';
 import { StorageModule } from './storage/storage.module';
-import { EmailService } from './email/email.service';
 import { EmailModule } from './email/email.module';
 
 @Module({
@@ -20,6 +19,5 @@ import { EmailModule } from './email/email.module';
     EmailModule,
   ],
   controllers: [AppController],
-  providers: [EmailService],
 })
 export class AppModule {}
