@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:milo/features/auth/presentation/bloc/auth_cubit.dart';
-import 'package:milo/features/notes/presentation/bloc/task_cubit.dart';
 import 'package:milo/features/settings/presentation/bloc/navigation_cubit.dart';
 import 'package:milo/features/settings/presentation/bloc/theme_cubit.dart';
 
@@ -415,16 +414,12 @@ class SettingsPage extends StatelessWidget {
                         onPressed: auth.isLoading
                             ? null
                             : () async {
-                                final tasks = buttonContext.read<TaskCubit>();
                                 Navigator.pop(sheetContext);
 
                                 final signedOut = await buttonContext
                                     .read<AuthCubit>()
                                     .signOut();
-                                if (signedOut) {
-                                  tasks.clear();
-                                  return;
-                                }
+                                if (signedOut) return;
 
                                 if (!context.mounted) return;
                                 ScaffoldMessenger.of(context).showSnackBar(

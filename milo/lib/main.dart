@@ -51,7 +51,10 @@ Future<void> main() async {
           BlocProvider(create: (_) => WordCubit()),
           BlocProvider(create: (_) => TaskCubit()),
         ],
-        child: MyApp(router: router),
+        child: BlocListener<AuthCubit,AuthState>(
+          listenWhen:(previous,current)=>previous.isAuthenticated && !current.isAuthenticated,
+          listener:(context,_) =>context.read<TaskCubit>().clear(),
+          child: MyApp(router: router)),
       ),
     ),
   );
