@@ -3,28 +3,28 @@ import 'package:milo/services/app_config.dart';
 
 class StorageService {
   Future<Map<String, String>> fetchSignedUrls(List<String> paths) async {
-    final result = <String, String>{};
-    for (final path in paths) {
-      try {
-        final response = await FlutterBetterAuth.dioClient
-            .get<Map<String, dynamic>>(
-              '${AppConfig.storageUrl}url',
-              queryParameters: {'path': path},
-            )
-            .timeout(AppConfig.requestTimeout);
-        final data = response.data;
-        if (data != null && data['url'] is String) {
-          result[path] = data['url'] as String;
-        }
-      } catch (_) {
-        // Skip failed URLs, fallback will handle
-      }
-    }
-    return result;
+    final entries = await Future.wait(
+      paths.map((path) async => MapEntry(path, await fetchSignedUrl(path))),
+    );
+    return {
+      for (final entry in entries)
+        if (entry.value != null) entry.key: entry.value!,
+    };
   }
 
   Future<String?> fetchSignedUrl(String path) async {
-    final urls = await fetchSignedUrls([path]);
-    return urls[path];
+    try {
+      final response = await FlutterBetterAuth.dioClient
+          .get<Map<String, dynamic>>(
+            '${AppConfig.storageUrl}url',
+            queryParameters: {'path': path},
+          )
+          .timeout(AppConfig.requestTimeout);
+      final url = response.data?['url'];
+      return url is String ? url : null;
+    } catch (_) {
+      // Callers fall back to a placeholder when a URL cannot be resolved.
+      return null;
+    }
   }
 }
