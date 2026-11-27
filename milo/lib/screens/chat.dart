@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:milo/atoms/action_button.dart';
+import 'package:milo/atoms/chat_fab.dart';
 import 'package:milo/atoms/constants.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:milo/atoms/my_app_bar.dart';
@@ -49,26 +50,7 @@ class ChatPage extends StatelessWidget {
           final selectedIndex = chatState.selectedIndex;
           return Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: actions
-                        .map(
-                          (action) => Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: ActionButton(
-                              label: action.label,
-                              icon: action.icon,
-                              onPressed: action.onPressed,
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ),
-              ),
+              const SizedBox(height: 16),
               Expanded(
                 child: ListView.builder(
                   physics: const BouncingScrollPhysics(),
@@ -146,10 +128,18 @@ class ChatPage extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        tooltip: 'New chat',
-        child: const Icon(LucideIcons.messageSquarePlus),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {},
+      //   tooltip: 'New chat',
+      //   child: const Icon(LucideIcons.messageSquarePlus),
+      // ),
+      floatingActionButton: ChatFab(
+        onNewChat: () => _showComingSoon(context, 'New chat'),
+        onScheduleMeeting: () => _showComingSoon(context, 'Schedule meeting'),
+        onCalendar: () => context.push('/calendar'),
+        onSendFile: () => _showComingSoon(context, 'File sharing'),
+        onShareLocation: () => _showComingSoon(context, 'Location sharing'),
+        onCreateGroup: () => _showComingSoon(context, 'Group creation'),
       ),
     );
   }

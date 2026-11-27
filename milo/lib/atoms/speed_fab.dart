@@ -1,13 +1,8 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class SpeedFab extends StatelessWidget {
-  final VoidCallback? onNewNote;
-  final VoidCallback? onTranscribeAudio;
-  final VoidCallback? onNewFolder;
-  final VoidCallback? onUpload;
-
   const SpeedFab({
     super.key,
     this.onNewNote,
@@ -16,44 +11,55 @@ class SpeedFab extends StatelessWidget {
     this.onUpload,
   });
 
+  final VoidCallback? onNewNote;
+  final VoidCallback? onTranscribeAudio;
+  final VoidCallback? onNewFolder;
+  final VoidCallback? onUpload;
+
   @override
   Widget build(BuildContext context) {
-    return SpeedDial(
-      icon: LucideIcons.plus,
-      activeIcon: LucideIcons.x,
-      spacing: 3,
-      childPadding: const EdgeInsets.all(5),
-      spaceBetweenChildren: 4,
-      renderOverlay: true,
-      overlayColor: Colors.black,
-      overlayOpacity: 0.5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      children: [
-        if (onNewNote != null)
-          SpeedDialChild(
-            child: const Icon(LucideIcons.filePlus),
-            label: 'New Note',
-            onTap: onNewNote,
-          ),
-        if (onTranscribeAudio != null)
-          SpeedDialChild(
-            child: const Icon(LucideIcons.mic),
-            label: 'Record',
-            onTap: onTranscribeAudio,
-          ),
-        if (onUpload != null)
-          SpeedDialChild(
-            child: const Icon(LucideIcons.upload),
-            label: 'Upload',
-            onTap: onUpload,
-          ),
-        if (onNewFolder != null)
-          SpeedDialChild(
-            child: const Icon(LucideIcons.folderPlus),
-            label: 'New Folder',
-            onTap: onNewFolder,
-          ),
-      ],
+    final items = <M3EFabMenuItem>[
+      if (onNewNote != null)
+        M3EFabMenuItem(
+          icon: const Icon(LucideIcons.filePlus),
+          label: 'New Note',
+          onPressed: onNewNote,
+        ),
+      if (onTranscribeAudio != null)
+        M3EFabMenuItem(
+          icon: const Icon(LucideIcons.mic),
+          label: 'Record',
+          onPressed: onTranscribeAudio,
+        ),
+      if (onUpload != null)
+        M3EFabMenuItem(
+          icon: const Icon(LucideIcons.upload),
+          label: 'Upload',
+          onPressed: onUpload,
+        ),
+      if (onNewFolder != null)
+        M3EFabMenuItem(
+          icon: const Icon(LucideIcons.folderPlus),
+          label: 'New Folder',
+          onPressed: onNewFolder,
+        ),
+    ];
+
+    if (items.isEmpty) return const SizedBox.shrink();
+
+    // M3EFabMenu supports 2–6 items.
+    if (items.length == 1) {
+      return M3EFab(icon: items.first.icon, onPressed: items.first.onPressed);
+    }
+
+    return M3EFabMenu(
+      position: M3EFabMenuPosition.right,
+      size: M3EFabSize.regular,
+      color: M3EFabColor.primary,
+      expandIcon: const Icon(LucideIcons.plus),
+      collapseIcon: const Icon(LucideIcons.x),
+      closeOnItemTap: true,
+      items: items,
     );
   }
 }

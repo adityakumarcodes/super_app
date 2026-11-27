@@ -1,6 +1,8 @@
+import 'package:google_fonts/google_fonts.dart';
+import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:milo/atoms/circle_text.dart';
 import 'package:milo/features/auth/auth_cubit.dart';
 import 'package:milo/features/settings/navigation_cubit.dart';
 import 'package:milo/features/settings/theme_cubit.dart';
@@ -8,7 +10,7 @@ import 'package:milo/features/settings/theme_cubit.dart';
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
-  final List<Color> accentColors = const [
+  static const List<Color> accentColors = [
     Colors.deepPurple,
     Colors.blue,
     Colors.green,
@@ -24,38 +26,117 @@ class SettingsPage extends StatelessWidget {
         centerTitle: false,
         shape: const Border(bottom: BorderSide(color: Colors.black, width: 2)),
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      body: Column(
         children: [
-          _settingsTile(
-            context: context,
-            icon: Icons.person_outline,
-            title: 'Profile',
-            subtitle: 'View your account details',
-            onTap: () => _showProfileSheet(context),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              children: [
+                _settingsTile(
+                  context: context,
+                  icon: Icons.person_outline,
+                  title: 'Personal Profile',
+                  subtitle: 'Manage your personal information',
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => const ProfilePage(),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                _appearanceTile(context),
+
+                const SizedBox(height: 16),
+
+                _settingsTile(
+                  context: context,
+                  icon: Icons.storefront_outlined,
+                  title: 'App Store',
+                  subtitle: 'Discover and explore available apps',
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => const AppStoreScreen(),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                _settingsTile(
+                  context: context,
+                  icon: Icons.delete_outline,
+                  title: 'Recently Deleted',
+                  subtitle: 'View and restore deleted items',
+                  onTap: () => Navigator.of(
+                    context,
+                  ).push(MaterialPageRoute<void>(builder: (_) => _trashPage())),
+                ),
+                const SizedBox(height: 16),
+
+                _settingsTile(
+                  context: context,
+                  icon: Icons.info_outline,
+                  title: 'About Milo',
+                  subtitle: 'App information, version and credits',
+                  onTap: () => _showAboutDialog(context),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 16),
-          _appearanceTile(context),
-          const SizedBox(height: 16),
-          _settingsTile(
-            context: context,
-            icon: Icons.info_outline,
-            title: 'About',
-            subtitle: 'About Milo',
-            onTap: () => _showAboutDialog(context),
+
+          // Sign out
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              child: BlocBuilder<AuthCubit, AuthState>(
+                builder: (buttonContext, auth) => ListTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  tileColor: Theme.of(context)
+                      .colorScheme
+                      .surfaceContainerHighest
+                      .withValues(alpha: 0.2),
+                  leading: auth.isLoading
+                      ? const SizedBox.square(
+                          dimension: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.logout),
+                  title: Text(auth.isLoading ? 'Signing Out...' : 'Sign Out'),
+                  onTap: auth.isLoading
+                      ? null
+                      : () async {
+                          final authCubit = buttonContext.read<AuthCubit>();
+
+                          if (await authCubit.signOut()) return;
+                          if (!buttonContext.mounted) return;
+
+                          ScaffoldMessenger.of(buttonContext).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                authCubit.state.error ?? 'Could not sign out.',
+                              ),
+                            ),
+                          );
+                        },
+                ),
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  /// Expandable "Appearance" card: theme mode, accent color, navigation style
-  /// and the order/visibility of navigation items.
+  // Appearance and navigation preferences
   Widget _appearanceTile(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final themeState = context.watch<ThemeCubit>().state;
     final navigationState = context.watch<NavigationCubit>().state;
+
     final sectionGap = [
       const SizedBox(height: 24),
       Divider(color: colorScheme.outlineVariant),
@@ -66,9 +147,9 @@ class SettingsPage extends StatelessWidget {
       data: theme.copyWith(dividerColor: Colors.transparent),
       child: ExpansionTile(
         leading: Icon(Icons.palette_outlined, color: colorScheme.primary),
-        title: const Text('Appearance'),
+        title: const Text('Appearance & Navigation'),
         subtitle: Text(
-          'Theme, accent color, navigation menu & items',
+          'Customize your theme and navigation preferences',
           style: theme.textTheme.bodySmall,
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -86,20 +167,27 @@ class SettingsPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _sectionTitle(context, 'Theme mode'),
+                _sectionTitle(context, 'Display Theme'),
                 const SizedBox(height: 16),
                 _themeModePicker(context, themeState.mode),
+
                 ...sectionGap,
-                _sectionTitle(context, 'Accent Color'),
+
+                _sectionTitle(context, 'Accent Colour'),
                 const SizedBox(height: 16),
                 _accentColorPicker(context, themeState.color),
+
                 ...sectionGap,
-                _sectionTitle(context, 'Navigation menu'),
+
+                _sectionTitle(context, 'Navigation Layout'),
                 const SizedBox(height: 16),
                 _navigationViewPicker(context, navigationState.view),
+
                 ...sectionGap,
-                _sectionTitle(context, 'Navigation items'),
+
+                _sectionTitle(context, 'Customize Navigation'),
                 _navigationItems(context, navigationState),
+
                 const SizedBox(height: 8),
               ],
             ),
@@ -111,6 +199,7 @@ class SettingsPage extends StatelessWidget {
 
   Widget _sectionTitle(BuildContext context, String title) {
     final theme = Theme.of(context);
+
     return Text(
       title,
       style: theme.textTheme.titleSmall?.copyWith(
@@ -125,19 +214,14 @@ class SettingsPage extends StatelessWidget {
       child: SegmentedButton<ThemeMode>(
         segments: const [
           ButtonSegment(
-            value: ThemeMode.system,
-            icon: Icon(Icons.brightness_auto_outlined),
-            label: Text('System'),
-          ),
-          ButtonSegment(
             value: ThemeMode.light,
             icon: Icon(Icons.light_mode_outlined),
-            label: Text('Light'),
+            label: Text('Light Mode'),
           ),
           ButtonSegment(
             value: ThemeMode.dark,
             icon: Icon(Icons.dark_mode_outlined),
-            label: Text('Dark'),
+            label: Text('Dark Mode'),
           ),
         ],
         selected: {mode},
@@ -197,12 +281,12 @@ class SettingsPage extends StatelessWidget {
           ButtonSegment(
             value: NavigationView.navbar,
             icon: Icon(Icons.view_week_outlined),
-            label: Text('Navbar'),
+            label: Text('Nav Bar'),
           ),
           ButtonSegment(
             value: NavigationView.gridView,
             icon: Icon(Icons.grid_view_outlined),
-            label: Text('Grid'),
+            label: Text('Grid View'),
           ),
         ],
         selected: {view},
@@ -214,7 +298,7 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  /// Drag to reorder navigation tabs; optional tabs can be hidden.
+  // Reorder and manage navigation items
   Widget _navigationItems(BuildContext context, NavigationState state) {
     return ReorderableListView.builder(
       shrinkWrap: true,
@@ -227,12 +311,13 @@ class SettingsPage extends StatelessWidget {
       ),
       itemBuilder: (context, index) {
         final tab = state.tabOrder[index];
+
         return ListTile(
           key: ValueKey(tab),
           contentPadding: EdgeInsets.zero,
           leading: Icon(tab.icon),
           title: Text(tab.label),
-          subtitle: tab.isRequired ? const Text('Required') : null,
+          subtitle: tab.isRequired ? const Text('Always Visible') : null,
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -269,14 +354,15 @@ class SettingsPage extends StatelessWidget {
       await save();
     } catch (error) {
       debugPrint('Failed to save app setting: $error');
+
       if (!context.mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Unable to save setting. Try again.')),
       );
     }
   }
 
-  // Reusable settings tile
   Widget _settingsTile({
     required BuildContext context,
     required IconData icon,
@@ -296,7 +382,6 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  // Built-in About dialog
   void _showAboutDialog(BuildContext context) {
     showAboutDialog(
       context: context,
@@ -305,7 +390,7 @@ class SettingsPage extends StatelessWidget {
       children: [
         const SizedBox(height: 8),
         const Text('• Frontend: Vite + TanStack Router'),
-        const Text('• Backend: NestJS + PrismaORM'),
+        const Text('• Backend: NestJS + Prisma ORM'),
         const Text('• Mobile: Flutter'),
         const Text('• Database: Prisma Postgres'),
         const Text('• Authentication: Better Auth'),
@@ -313,131 +398,337 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  // Profile bottom sheet
-  void _showProfileSheet(BuildContext context) {
-    final user = context.read<AuthCubit>().state.user;
-    final email = user?.email ?? '';
-    final name = user?.name.trim().isNotEmpty == true
-        ? user!.name
-        : email.split('@').first;
+  Widget _trashPage() => Scaffold(
+    appBar: AppBar(title: const Text('Recently Deleted')),
+    body: const Center(
+      child: Padding(
+        padding: EdgeInsets.all(24),
+        child: Text(
+          'Deleted items are not available yet.',
+          textAlign: TextAlign.center,
+        ),
+      ),
+    ),
+  );
+}
 
-    showModalBottomSheet<void>(
-      context: context,
-      showDragHandle: true,
-      isScrollControlled: true,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      builder: (sheetContext) {
-        final theme = Theme.of(sheetContext);
-        final colorScheme = theme.colorScheme;
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
 
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+  static const details = [
+    (Icons.badge_outlined, 'Full Name', 'Aditya Kumar'),
+    (Icons.email_outlined, 'Email Address', 'ak19992017@gmail.com'),
+    (Icons.phone_outlined, 'Phone Number', '+91 00001111'),
+    (Icons.cake_outlined, 'Date of Birth', '2 June 2000'),
+    (Icons.location_on_outlined, 'Location', 'Noida, UP'),
+    (
+      Icons.description_outlined,
+      'About Me',
+      'Software developer interested in data engineering, '
+          'cloud technologies, and building open-source applications.',
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Personal Profile')),
+      body: ListView(
+        padding: const EdgeInsets.all(24),
+        children: [
+          Center(
+            child: SizedBox(
+              width: 280,
+              height: 280,
+              child: CircleText(child: const Placeholder()),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Card(
             child: Column(
-              mainAxisSize: MainAxisSize.min,
               children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 32,
-                      backgroundColor: colorScheme.primaryContainer,
-                      child: Icon(
-                        Icons.person_outline,
-                        size: 34,
-                        color: colorScheme.onPrimaryContainer,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            name,
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Divider(color: colorScheme.outlineVariant),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: Icon(
-                    Icons.email_outlined,
-                    color: colorScheme.primary,
+                for (final (icon, label, value) in details)
+                  ListTile(
+                    leading: Icon(icon),
+                    title: Text(label),
+                    subtitle: Text(value),
                   ),
-                  title: Text(email, style: theme.textTheme.bodyLarge),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.copy),
-                    tooltip: 'Copy email',
-                    onPressed: () async {
-                      await Clipboard.setData(ClipboardData(text: email));
-
-                      if (!sheetContext.mounted || !context.mounted) return;
-
-                      Navigator.pop(sheetContext);
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Email copied to clipboard'),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-
-                const SizedBox(height: 8),
-
-                SizedBox(
-                  width: double.infinity,
-                  child: BlocBuilder<AuthCubit, AuthState>(
-                    builder: (buttonContext, auth) {
-                      return FilledButton.icon(
-                        onPressed: auth.isLoading
-                            ? null
-                            : () async {
-                                final authCubit = buttonContext
-                                    .read<AuthCubit>();
-                                Navigator.pop(sheetContext);
-
-                                if (await authCubit.signOut()) return;
-
-                                if (!context.mounted) return;
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      authCubit.state.error ??
-                                          'Could not sign out.',
-                                    ),
-                                  ),
-                                );
-                              },
-                        icon: auth.isLoading
-                            ? const SizedBox.square(
-                                dimension: 18,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Icon(Icons.logout),
-                        label: Text(
-                          auth.isLoading ? 'Signing out...' : 'Sign out',
-                        ),
-                      );
-                    },
-                  ),
-                ),
               ],
             ),
           ),
-        );
-      },
+        ],
+      ),
+    );
+  }
+}
+
+const _logoToken = 'pk_ZTPJWS2aScqrREDBfeY-Bw';
+
+class AppStoreScreen extends StatelessWidget {
+  const AppStoreScreen({super.key});
+  static const _apps = <(String, String, String)>[
+    ('Notion', 'notion.com', 'One place for notes, docs, and ideas.'),
+    ('Figma', 'figma.com', 'Design together, from idea to interface.'),
+    ('Airbnb', 'airbnb.com', 'Find a place that feels like yours.'),
+    ('Slack', 'slack.com', 'Keep your team in the conversation.'),
+    ('UnitedHealthcare', 'uhc.com', 'Support for healthier days.'),
+    ('Google', 'google.com', 'Find answers and explore more.'),
+    ('Microsoft', 'microsoft.com', 'Tools to create, connect, and achieve.'),
+    ('Amazon', 'amazon.com', 'Find what you need, delivered.'),
+    ('Meta', 'meta.com', 'Connect with people and communities.'),
+    ('Adobe', 'adobe.com', 'Bring creative ideas to life.'),
+    ('GitLab', 'gitlab.com', 'Build and ship software together.'),
+    ('Stripe', 'stripe.com', 'Make online payments feel simple.'),
+    ('Shopify', 'shopify.com', 'Turn your ideas into a business.'),
+    ('Uber', 'uber.com', 'Get where you need to go.'),
+    ('Expedia', 'expedia.com', 'Plan the trip you have in mind.'),
+    ('Starbucks', 'starbucks.com', 'A familiar cup, wherever you are.'),
+    ('Samsung', 'samsung.com', 'Technology for everyday possibilities.'),
+    ('NVIDIA', 'nvidia.com', 'Powering the next wave of computing.'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      floatingActionButton: M3EShapeContainer.square(
+        width: 64,
+        height: 64,
+        color: Theme.of(context).colorScheme.primary,
+        child: IconButton(
+          tooltip: 'Search',
+          icon: Icon(
+            Icons.search,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+          onPressed: () {},
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final width = constraints.maxWidth;
+            final columns = width >= 720
+                ? 4
+                : width >= 480
+                ? 3
+                : 2;
+            const gap = 16.0;
+            final itemWidth = (width - gap * (columns - 1)) / columns;
+            final shapeSize = itemWidth < 160 ? 96.0 : 120.0;
+
+            return Wrap(
+              spacing: gap,
+              runSpacing: 24,
+              children: [
+                for (final (name, logoPath, about) in _apps)
+                  SizedBox(
+                    width: itemWidth,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(24),
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => AppDetailsPage(
+                            name: name,
+                            logoPath: logoPath,
+                            about: about,
+                          ),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Column(
+                          children: [
+                            Hero(
+                              tag: logoPath,
+                              child: LogoShape(
+                                logoPath: logoPath,
+                                size: shapeSize,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              name,
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class AppDetailsPage extends StatefulWidget {
+  const AppDetailsPage({
+    required this.name,
+    required this.logoPath,
+    required this.about,
+    super.key,
+  });
+
+  final String name;
+  final String logoPath;
+  final String about;
+
+  @override
+  State<AppDetailsPage> createState() => _AppDetailsPageState();
+}
+
+class _AppDetailsPageState extends State<AppDetailsPage> {
+  bool _installing = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Hero(
+              tag: widget.logoPath,
+              child: LogoShape(logoPath: widget.logoPath, size: 220),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              widget.name,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                textStyle: Theme.of(context).textTheme.headlineMedium,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              widget.about,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            const SizedBox(height: 8),
+            M3EChip(
+              label: 'Productivity',
+              type: M3EChipType.suggestion,
+              onPressed: () {},
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              height: 96,
+              child: Center(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 250),
+                  switchInCurve: Curves.easeOutCubic,
+                  switchOutCurve: Curves.easeInCubic,
+                  child: _installing
+                      ? Column(
+                          key: const ValueKey('progress'),
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              width: 220,
+                              child: M3EProgressIndicator.linearWavy(
+                                value: 0.60,
+                                linearSize: M3EProgressIndicatorSize.s,
+                                strokeWidth: 4,
+                                trackStrokeWidth: 4,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            M3EButton(
+                              onPressed: () =>
+                                  setState(() => _installing = false),
+                              style: M3EButtonStyle.outlined,
+                              size: M3EButtonSize.md,
+                              shape: M3EButtonShape.square,
+                              child: const Text('Cancel'),
+                            ),
+                          ],
+                        )
+                      : Row(
+                          key: const ValueKey('install'),
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            M3EButton(
+                              onPressed: () =>
+                                  setState(() => _installing = true),
+                              style: M3EButtonStyle.filled,
+                              size: M3EButtonSize.md,
+                              shape: M3EButtonShape.square,
+                              child: const Text('Install'),
+                            ),
+                            const SizedBox(width: 12),
+                            M3EIconButton(
+                              icon: const Icon(
+                                M3EIcons.favorite,
+                                color: Colors.red,
+                              ),
+                              onPressed: () {},
+                              variant: M3EIconButtonVariant.tonal,
+                              size: M3EIconButtonSize.md,
+                              shape: M3EIconButtonShapeVariant.round,
+                              width: M3EIconButtonWidth.defaultWidth,
+                            ),
+                          ],
+                        ),
+                ),
+              ),
+            ),
+            const Text(
+              'TODO: About, Rating, Report issue, Request feature',
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class LogoShape extends StatelessWidget {
+  const LogoShape({required this.logoPath, required this.size, super.key});
+
+  final String logoPath;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final logoUrl = Uri.https('img.logo.dev', '/$logoPath', {
+      'token': _logoToken,
+      'size': '150',
+      'format': 'png',
+      'retina': 'true',
+      'theme': 'dark',
+    }).toString();
+
+    return M3EShapeContainer(
+      kind: M3EShapeKind.cookie12Sided,
+      width: size,
+      height: size,
+      color: scheme.primaryContainer,
+      child: Center(
+        child: Image.network(
+          logoUrl,
+          width: size * .5,
+          height: size * .5,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) => Icon(
+            Icons.error,
+            size: size * .4,
+            color: scheme.onPrimaryContainer,
+          ),
+        ),
+      ),
     );
   }
 }
