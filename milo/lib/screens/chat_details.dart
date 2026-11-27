@@ -62,68 +62,38 @@ class _ChatDetailsState extends State<ChatDetails> {
   }
 
   void _showAttachmentSheet() {
+    final attachments = [
+      ('Files', LucideIcons.folder),
+      ('Camera', LucideIcons.camera),
+      ('Gallery', LucideIcons.image),
+      ('Audio', LucideIcons.headphones),
+      ('Location', LucideIcons.pin),
+      ('Contact', LucideIcons.user),
+      ('Block', LucideIcons.ban),
+      ('Delete chat', LucideIcons.trash2),
+      ('Report', LucideIcons.thumbsDown),
+    ];
+
     showModalBottomSheet(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       context: context,
-      constraints: const BoxConstraints(maxWidth: 500),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  CircularIconButton(
-                    label: 'Files',
-                    icon: LucideIcons.folder,
-                    color: Colors.purple,
-                    onPress: () {},
-                  ),
-                  CircularIconButton(
-                    label: 'Camera',
-                    icon: LucideIcons.camera,
-                    color: Colors.red,
-                    onPress: () {},
-                  ),
-                  CircularIconButton(
-                    label: 'Gallery',
-                    icon: LucideIcons.image,
-                    color: Colors.pink,
-                    onPress: () {},
-                  ),
-                ],
+      useSafeArea: true,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(12),
+        child: GridView.count(
+          shrinkWrap: true,
+          crossAxisCount: 3,
+          mainAxisSpacing: 16,
+          children: [
+            for (final (label, icon) in attachments)
+              CircularIconButton(
+                label: label,
+                icon: icon,
+                onPress: () => Navigator.pop(context),
               ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  CircularIconButton(
-                    label: 'Audio',
-                    icon: LucideIcons.headphones,
-                    color: Colors.orange,
-                    onPress: () {},
-                  ),
-                  CircularIconButton(
-                    label: 'Location',
-                    icon: LucideIcons.pin,
-                    color: Colors.green,
-                    onPress: () {},
-                  ),
-                  CircularIconButton(
-                    label: 'Contact',
-                    icon: LucideIcons.user,
-                    color: Colors.blue,
-                    onPress: () {},
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-            ],
-          ),
-        );
-      },
+          ],
+        ),
+      ),
     );
   }
 
@@ -225,25 +195,6 @@ class _ChatDetailsState extends State<ChatDetails> {
             icon: const Icon(LucideIcons.phone),
             tooltip: 'Voice call',
           ),
-          PopupMenuButton<String>(
-            tooltip: 'More options',
-            enableFeedback: true,
-            icon: const Icon(LucideIcons.ellipsisVertical),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            onSelected: handleClick,
-            itemBuilder: (context) {
-              return {'View profile', 'Search', 'Mute notifications'}.map((
-                String choice,
-              ) {
-                return PopupMenuItem<String>(
-                  value: choice,
-                  child: Text(choice),
-                );
-              }).toList();
-            },
-          ),
         ],
       ),
       body: Column(
@@ -279,63 +230,11 @@ class _ChatDetailsState extends State<ChatDetails> {
             controller: _messageController,
             onSend: _handleSend,
             onAttach: _showAttachmentSheet,
-            onCamera: () => _showComingSoon('Camera'),
             onVoice: () => _showComingSoon('Voice messages'),
             canSend: _canSend,
           ),
         ],
       ),
-      endDrawer: ClipRRect(
-        child: Drawer(
-          child: Column(
-            children: [
-              UserAccountsDrawerHeader(
-                currentAccountPicture: ClipRRect(
-                  borderRadius: BorderRadius.circular(30),
-                  child: Image.asset(
-                    selectedUser.imageURL,
-                    width: 120,
-                    height: 120,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                accountEmail: const Text('ak19992017@gmail.com'),
-                accountName: Text(selectedUser.name),
-              ),
-              ListTile(
-                leading: const Icon(LucideIcons.paperclip),
-                title: const Text('Media, links and docs'),
-                onTap: () {},
-              ),
-              ListTile(
-                leading: const Icon(LucideIcons.ban),
-                title: const Text('Block'),
-                onTap: () {},
-              ),
-              ListTile(
-                leading: const Icon(LucideIcons.trash2),
-                title: const Text('Delete chat'),
-                onTap: () {},
-              ),
-              ListTile(
-                leading: const Icon(LucideIcons.thumbsDown),
-                title: const Text('Report'),
-                onTap: () {},
-              ),
-            ],
-          ),
-        ),
-      ),
     );
-  }
-
-  void handleClick(String value) {
-    switch (value) {
-      case 'View profile':
-        _scaffoldKey.currentState!.openEndDrawer();
-        break;
-      default:
-        break;
-    }
   }
 }

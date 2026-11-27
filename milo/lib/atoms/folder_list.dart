@@ -198,13 +198,22 @@ class _FolderListState extends State<FolderList> {
           );
         },
       ),
-      floatingActionButton: SpeedFab(
-        onNewNote: () => context.push('/notebook/addTask'),
-        onTranscribeAudio: () =>
-            _showFeatureComingSoon(context, 'Transcribe Audio'),
-        onNewFolder: () => _showFeatureComingSoon(context, 'New folder'),
-        onUpload: () =>
-            _showFeatureComingSoon(context, 'Upload files & photos'),
+      floatingActionButton: ActionFab(
+        expandIcon: const Icon(LucideIcons.plus),
+        collapseIcon: const Icon(LucideIcons.x),
+        actions: [
+          FabAction(icon: const Icon(LucideIcons.mic), label: 'Record'),
+          FabAction(icon: const Icon(LucideIcons.upload), label: 'Upload'),
+          FabAction(
+            icon: const Icon(LucideIcons.folderPlus),
+            label: 'New Folder',
+          ),
+          FabAction(
+            icon: const Icon(LucideIcons.filePlus),
+            label: 'New Note',
+            onPressed: () => context.push('/notebook/addTask'),
+          ),
+        ],
       ),
     );
   }
@@ -213,11 +222,5 @@ class _FolderListState extends State<FolderList> {
     final date = DateTime.tryParse(value?.toString() ?? '');
     if (date == null) return '';
     return DateFormat.yMMMd().add_jm().format(date.toLocal());
-  }
-
-  void _showFeatureComingSoon(BuildContext context, String feature) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('$feature will be available soon.')));
   }
 }

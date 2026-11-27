@@ -7,7 +7,6 @@ class ChatInputBar extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
   final VoidCallback onAttach;
-  final VoidCallback onCamera;
   final VoidCallback onVoice;
   final bool canSend;
 
@@ -16,7 +15,6 @@ class ChatInputBar extends StatelessWidget {
     required this.controller,
     required this.onSend,
     required this.onAttach,
-    required this.onCamera,
     required this.onVoice,
     required this.canSend,
   });
@@ -59,12 +57,6 @@ class ChatInputBar extends StatelessWidget {
                       icon: const Icon(LucideIcons.paperclip),
                       onPressed: onAttach,
                     ),
-                    if (!canSend)
-                      IconButton(
-                        tooltip: 'Camera',
-                        icon: const Icon(Icons.photo_camera_outlined),
-                        onPressed: onCamera,
-                      ),
                   ],
                 ),
               ),
@@ -193,34 +185,34 @@ class ProfilePhotoViewer extends StatelessWidget {
 }
 
 class CircularIconButton extends StatelessWidget {
-  final Color color;
-  final String label;
-  final IconData icon;
-  final void Function()? onPress;
-
   const CircularIconButton({
     super.key,
-    required this.color,
     required this.label,
     required this.icon,
-    required this.onPress,
+    this.onPress,
   });
+
+  final String label;
+  final IconData icon;
+  final VoidCallback? onPress;
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
-          decoration: BoxDecoration(shape: BoxShape.circle, color: color),
-          margin: const EdgeInsets.all(16),
-          height: 60,
-          width: 60,
-          child: IconButton(
-            icon: Icon(icon, color: Colors.white, size: 30),
-            onPressed: onPress,
+        IconButton(
+          onPressed: onPress,
+          icon: Icon(icon, size: 28),
+          style: IconButton.styleFrom(
+            backgroundColor: colors.surfaceContainerHighest,
+            shape: const CircleBorder(),
           ),
         ),
-        Text(label),
+        Text(label, textAlign: TextAlign.center),
       ],
     );
   }

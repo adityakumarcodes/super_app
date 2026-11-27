@@ -1,12 +1,12 @@
 import 'dart:ui';
 
-import 'package:milo/atoms/chat_fab.dart';
 import 'package:milo/atoms/constants.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:milo/atoms/my_app_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:milo/atoms/speed_fab.dart';
 import 'package:milo/features/chat/chat_cubit.dart';
 
 class ChatPage extends StatelessWidget {
@@ -14,140 +14,95 @@ class ChatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    <({String label, IconData icon, VoidCallback onPressed})>[
-      (
-        label: 'Schedule meeting',
-        icon: LucideIcons.video,
-        onPressed: () => _showComingSoon(context, 'Meeting scheduling'),
-      ),
-      (
-        label: 'Calendar',
-        icon: LucideIcons.calendarDays,
-        onPressed: () => context.push('/calendar'),
-      ),
-      (
-        label: 'Send file',
-        icon: LucideIcons.paperclip,
-        onPressed: () => _showComingSoon(context, 'File sharing'),
-      ),
-      (
-        label: 'Share location',
-        icon: LucideIcons.mapPin,
-        onPressed: () => _showComingSoon(context, 'Location sharing'),
-      ),
-      (
-        label: 'Create group',
-        icon: LucideIcons.users,
-        onPressed: () => _showComingSoon(context, 'Group creation'),
-      ),
-    ];
-
     return Scaffold(
       appBar: const MyAppBar(title: 'Chat'),
-      body: BlocBuilder<ChatCubit, ChatState>(
-        builder: (context, chatState) {
-          final selectedIndex = chatState.selectedIndex;
-          return Column(
-            children: [
-              const SizedBox(height: 16),
-              Expanded(
-                child: ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: chatUsers.length,
-                  padding: const EdgeInsets.only(top: 8, bottom: 80),
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      onTap: () {
-                        context.read<ChatCubit>().selectConversation(index);
-                        context.push('/chat/details');
-                      },
-                      shape: Border(
-                        top: index == 0
-                            ? const BorderSide(color: Colors.black, width: 2)
-                            : BorderSide.none,
-                        bottom: index == chatUsers.length - 1
-                            ? BorderSide.none
-                            : const BorderSide(color: Colors.black, width: 2),
+      body: BlocSelector<ChatCubit, ChatState, int>(
+        selector: (state) => state.selectedIndex,
+        builder: (context, selectedIndex) {
+          return ListView.builder(
+            physics: const BouncingScrollPhysics(),
+            itemCount: chatUsers.length,
+            padding: const EdgeInsets.only(top: 8, bottom: 80),
+            itemBuilder: (context, index) {
+              return ListTile(
+                onTap: () {
+                  context.read<ChatCubit>().selectConversation(index);
+                  context.push('/chat/details');
+                },
+                tileColor: selectedIndex == index
+                    ? Theme.of(context).colorScheme.primaryContainer
+                    : Colors.transparent,
+                leading: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    GestureDetector(
+                      onTap: () =>
+                          _showProfilePreview(context, chatUsers[index]),
+                      child: Semantics(
+                        button: true,
+                        label: 'Preview ${chatUsers[index].name} profile photo',
+                        child: Hero(
+                          tag: 'chat-profile-${chatUsers[index].imageURL}',
+                          child: CircleAvatar(
+                            backgroundImage: AssetImage(
+                              chatUsers[index].imageURL,
+                            ),
+                            maxRadius: 30,
+                          ),
+                        ),
                       ),
-                      tileColor: selectedIndex == index
-                          ? Theme.of(context).colorScheme.primaryContainer
-                          : Colors.transparent,
-                      leading: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          GestureDetector(
-                            onTap: () =>
-                                _showProfilePreview(context, chatUsers[index]),
-                            child: Semantics(
-                              button: true,
-                              label:
-                                  'Preview ${chatUsers[index].name} profile photo',
-                              child: Hero(
-                                tag:
-                                    'chat-profile-${chatUsers[index].imageURL}',
-                                child: CircleAvatar(
-                                  backgroundImage: AssetImage(
-                                    chatUsers[index].imageURL,
-                                  ),
-                                  maxRadius: 30,
-                                ),
-                              ),
+                    ),
+                    if (index % 3 != 0)
+                      Positioned(
+                        bottom: 2,
+                        right: 2,
+                        child: Container(
+                          height: 15,
+                          width: 15,
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Theme.of(context).scaffoldBackgroundColor,
                             ),
                           ),
-                          if (index % 3 != 0)
-                            Positioned(
-                              bottom: 2,
-                              right: 2,
-                              child: Container(
-                                height: 15,
-                                width: 15,
-                                decoration: BoxDecoration(
-                                  color: Colors.green,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Theme.of(context)
-                                        .scaffoldBackgroundColor,
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
+                        ),
                       ),
-                      title: Text(
-                        chatUsers[index].name,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                      subtitle: Text(chatUsers[index].messageText),
-                      trailing: Text(chatUsers[index].time),
-                    );
-                  },
+                  ],
                 ),
-              ),
-            ],
+                title: Text(
+                  chatUsers[index].name,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                subtitle: Text(chatUsers[index].messageText),
+                trailing: Text(chatUsers[index].time),
+              );
+            },
           );
         },
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {},
-      //   tooltip: 'New chat',
-      //   child: const Icon(LucideIcons.messageSquarePlus),
-      // ),
-      floatingActionButton: ChatFab(
-        onNewChat: () => _showComingSoon(context, 'New chat'),
-        onScheduleMeeting: () => _showComingSoon(context, 'Schedule meeting'),
-        onCalendar: () => context.push('/calendar'),
-        onSendFile: () => _showComingSoon(context, 'File sharing'),
-        onShareLocation: () => _showComingSoon(context, 'Location sharing'),
-        onCreateGroup: () => _showComingSoon(context, 'Group creation'),
+      floatingActionButton: ActionFab(
+        expandIcon: const Icon(LucideIcons.messagesCircle),
+        collapseIcon: const Icon(LucideIcons.x),
+        actions: [
+          FabAction(
+            icon: const Icon(LucideIcons.calendarDays),
+            label: 'Calendar',
+            onPressed: () => context.push('/calendar'),
+          ),
+          FabAction(icon: const Icon(LucideIcons.users), label: 'Create Group'),
+          FabAction(
+            icon: const Icon(LucideIcons.video),
+            label: 'Schedule Meet',
+          ),
+          FabAction(
+            icon: const Icon(LucideIcons.messageSquarePlus),
+            label: 'New Chat',
+          ),
+        ],
       ),
     );
   }
-}
-
-void _showComingSoon(BuildContext context, String feature) {
-  ScaffoldMessenger.of(
-    context,
-  ).showSnackBar(SnackBar(content: Text('$feature will be available soon.')));
 }
 
 void _showProfilePreview(BuildContext context, ChatUsers user) {

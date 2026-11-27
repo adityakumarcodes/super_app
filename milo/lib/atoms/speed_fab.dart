@@ -1,65 +1,77 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-class SpeedFab extends StatelessWidget {
-  const SpeedFab({
+class FabAction {
+  const FabAction({required this.icon, required this.label, this.onPressed});
+
+  final Icon icon;
+  final String label;
+  final VoidCallback? onPressed;
+}
+
+class ActionFab extends StatelessWidget {
+  const ActionFab({
     super.key,
-    this.onNewNote,
-    this.onTranscribeAudio,
-    this.onNewFolder,
-    this.onUpload,
+    required this.actions,
+    this.expandIcon,
+    this.collapseIcon,
+    this.position = M3EFabMenuPosition.right,
+    this.size = M3EFabSize.regular,
+    this.color = M3EFabColor.primary,
   });
 
-  final VoidCallback? onNewNote;
-  final VoidCallback? onTranscribeAudio;
-  final VoidCallback? onNewFolder;
-  final VoidCallback? onUpload;
+  final List<FabAction> actions;
+  final Icon? expandIcon;
+  final Icon? collapseIcon;
+  final M3EFabMenuPosition position;
+  final M3EFabSize size;
+  final M3EFabColor color;
+
+  void _showComingSoon(BuildContext context, String feature) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('$feature will be available soon.')));
+  }
+
+  void _handleAction(BuildContext context, FabAction action) {
+    if (action.onPressed != null) {
+      action.onPressed!();
+    } else {
+      _showComingSoon(context, action.label);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final items = <M3EFabMenuItem>[
-      if (onNewNote != null)
-        M3EFabMenuItem(
-          icon: const Icon(LucideIcons.filePlus),
-          label: 'New Note',
-          onPressed: onNewNote,
-        ),
-      if (onTranscribeAudio != null)
-        M3EFabMenuItem(
-          icon: const Icon(LucideIcons.mic),
-          label: 'Record',
-          onPressed: onTranscribeAudio,
-        ),
-      if (onUpload != null)
-        M3EFabMenuItem(
-          icon: const Icon(LucideIcons.upload),
-          label: 'Upload',
-          onPressed: onUpload,
-        ),
-      if (onNewFolder != null)
-        M3EFabMenuItem(
-          icon: const Icon(LucideIcons.folderPlus),
-          label: 'New Folder',
-          onPressed: onNewFolder,
-        ),
-    ];
-
-    if (items.isEmpty) return const SizedBox.shrink();
-
-    // M3EFabMenu supports 2–6 items.
-    if (items.length == 1) {
-      return M3EFab(icon: items.first.icon, onPressed: items.first.onPressed);
+    if (actions.isEmpty) {
+      return const SizedBox.shrink();
     }
 
+    // Single action: regular FAB
+    if (actions.length == 1) {
+      return M3EFab(
+        icon: actions.first.icon,
+        onPressed: () => _handleAction(context, actions.first),
+      );
+    }
+
+    // Multiple actions: expandable FAB menu
     return M3EFabMenu(
-      position: M3EFabMenuPosition.right,
-      size: M3EFabSize.regular,
-      color: M3EFabColor.primary,
-      expandIcon: const Icon(LucideIcons.plus),
-      collapseIcon: const Icon(LucideIcons.x),
+      position: position,
+      size: size,
+      color: color,
+      expandIcon: expandIcon ?? const Icon(Icons.add),
+      collapseIcon: collapseIcon ?? const Icon(Icons.close),
       closeOnItemTap: true,
-      items: items,
+      items: actions
+          .map(
+            (action) => M3EFabMenuItem(
+              icon: action.icon,
+              label: action.label,
+              onPressed: () => _handleAction(context, action),
+            ),
+          )
+          .toList(),
     );
   }
 }

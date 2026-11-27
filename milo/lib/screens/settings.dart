@@ -35,8 +35,8 @@ class SettingsPage extends StatelessWidget {
                 _settingsTile(
                   context: context,
                   icon: Icons.person_outline,
-                  title: 'Personal Profile',
-                  subtitle: 'Manage your personal information',
+                  title: 'Profile',
+                  subtitle: 'Manage your personal info',
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute<void>(
                       builder: (_) => const ProfilePage(),
@@ -53,7 +53,7 @@ class SettingsPage extends StatelessWidget {
                   context: context,
                   icon: Icons.storefront_outlined,
                   title: 'App Store',
-                  subtitle: 'Discover and explore available apps',
+                  subtitle: 'Explore new apps',
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute<void>(
                       builder: (_) => const AppStoreScreen(),
@@ -65,8 +65,8 @@ class SettingsPage extends StatelessWidget {
                 _settingsTile(
                   context: context,
                   icon: Icons.delete_outline,
-                  title: 'Recently Deleted',
-                  subtitle: 'View and restore deleted items',
+                  title: 'Trash',
+                  subtitle: 'Restore deleted items',
                   onTap: () => Navigator.of(
                     context,
                   ).push(MaterialPageRoute<void>(builder: (_) => _trashPage())),
@@ -77,7 +77,7 @@ class SettingsPage extends StatelessWidget {
                   context: context,
                   icon: Icons.info_outline,
                   title: 'About Milo',
-                  subtitle: 'App information, version and credits',
+                  subtitle: 'App info, version & credits',
                   onTap: () => _showAboutDialog(context),
                 ),
               ],
@@ -147,9 +147,9 @@ class SettingsPage extends StatelessWidget {
       data: theme.copyWith(dividerColor: Colors.transparent),
       child: ExpansionTile(
         leading: Icon(Icons.palette_outlined, color: colorScheme.primary),
-        title: const Text('Appearance & Navigation'),
+        title: const Text('Appearance'),
         subtitle: Text(
-          'Customize your theme and navigation preferences',
+          'Customize your theme and navigation',
           style: theme.textTheme.bodySmall,
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -179,13 +179,13 @@ class SettingsPage extends StatelessWidget {
 
                 ...sectionGap,
 
-                _sectionTitle(context, 'Navigation Layout'),
+                _sectionTitle(context, 'Nav Layout'),
                 const SizedBox(height: 16),
                 _navigationViewPicker(context, navigationState.view),
 
                 ...sectionGap,
 
-                _sectionTitle(context, 'Customize Navigation'),
+                _sectionTitle(context, 'Nav items'),
                 _navigationItems(context, navigationState),
 
                 const SizedBox(height: 8),
@@ -399,7 +399,7 @@ class SettingsPage extends StatelessWidget {
   }
 
   Widget _trashPage() => Scaffold(
-    appBar: AppBar(title: const Text('Recently Deleted')),
+    appBar: AppBar(title: const Text('Trash')),
     body: const Center(
       child: Padding(
         padding: EdgeInsets.all(24),
@@ -417,22 +417,17 @@ class ProfilePage extends StatelessWidget {
 
   static const details = [
     (Icons.badge_outlined, 'Full Name', 'Aditya Kumar'),
-    (Icons.email_outlined, 'Email Address', 'ak19992017@gmail.com'),
-    (Icons.phone_outlined, 'Phone Number', '+91 00001111'),
-    (Icons.cake_outlined, 'Date of Birth', '2 June 2000'),
+    (Icons.email_outlined, 'Email', 'ak19992017@gmail.com'),
+    (Icons.phone_outlined, 'Phone', '+91 8658927977'),
+    (Icons.cake_outlined, 'DOB', '2 June 2000'),
     (Icons.location_on_outlined, 'Location', 'Noida, UP'),
-    (
-      Icons.description_outlined,
-      'About Me',
-      'Software developer interested in data engineering, '
-          'cloud technologies, and building open-source applications.',
-    ),
+    (Icons.description_outlined, 'Bio', 'Trying new thing everyday'),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Personal Profile')),
+      appBar: AppBar(title: const Text('Profile')),
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
@@ -448,10 +443,10 @@ class ProfilePage extends StatelessWidget {
             child: Column(
               children: [
                 for (final (icon, label, value) in details)
-                  ListTile(
+                  M3EListItem(
                     leading: Icon(icon),
-                    title: Text(label),
-                    subtitle: Text(value),
+                    headline: label,
+                    supportingText: value,
                   ),
               ],
             ),
@@ -490,6 +485,7 @@ class AppStoreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text('App Store')),
       floatingActionButton: M3EShapeContainer.square(
         width: 64,
         height: 64,
