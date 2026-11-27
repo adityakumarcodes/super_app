@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:milo/atoms/action_button.dart';
 import 'package:milo/atoms/constants.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:milo/atoms/my_app_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';

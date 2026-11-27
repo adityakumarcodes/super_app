@@ -1,6 +1,6 @@
 import 'package:milo/atoms/speed_fab.dart';
 import 'package:milo/atoms/uibuilder.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';

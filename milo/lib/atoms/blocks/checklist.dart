@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:milo/atoms/blocks/editorjs_utils.dart';
 
 /// Editor.js `list` block with `checklist` style. Ticking a box only changes

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Editor.js `header` block (levels 1-6).
 class HeadingWidget extends StatelessWidget {

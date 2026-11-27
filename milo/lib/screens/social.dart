@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:milo/atoms/my_app_bar.dart';
 
 class SocialPage extends StatefulWidget {

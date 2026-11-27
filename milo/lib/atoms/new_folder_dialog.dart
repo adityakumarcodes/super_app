@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Asks for a folder name. Returns the trimmed name, or null when the dialog
 /// is cancelled or the name is empty.

@@ -3,7 +3,7 @@
 import 'dart:async';
 
 import 'package:flutter_better_auth/flutter_better_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:milo/atoms/folder_list.dart';

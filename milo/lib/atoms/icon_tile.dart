@@ -1,6 +1,6 @@
 import 'package:milo/atoms/scrolling_text.dart';
 import 'package:milo/screens/home.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class IconTile extends StatelessWidget {
   final CategoryItem item;

@@ -5,7 +5,7 @@ import 'package:milo/atoms/icon_tile.dart';
 import 'package:milo/atoms/new_folder_dialog.dart';
 import 'package:milo/core/task.dart';
 import 'package:milo/features/notes/task_cubit.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
