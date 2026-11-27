@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:milo/atoms/action_button.dart';
 import 'package:milo/atoms/chat_fab.dart';
 import 'package:milo/atoms/constants.dart';
 import 'package:material_ui/material_ui.dart';
@@ -15,7 +14,7 @@ class ChatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final actions = <({String label, IconData icon, VoidCallback onPressed})>[
+    <({String label, IconData icon, VoidCallback onPressed})>[
       (
         label: 'Schedule meeting',
         icon: LucideIcons.video,
